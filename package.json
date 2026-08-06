@@ -1,0 +1,36 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build"
+    },
+    "dependencies": {
+        "@headlessui/react": "^2.2.10",
+        "@inertiajs/progress": "^0.2.7",
+        "@inertiajs/react": "^2.3.23",
+        "axios": "^1.11.0",
+        "framer-motion": "^13.0.0",
+        "lucide-react": "^0.525.0",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "react-icons": "^5.6.0",
+        "react-router-dom": "^7.15.0",
+        "react-stately": "^3.47.0",
+        "recharts": "^3.8.1"
+    },
+    "devDependencies": {
+        "@headlessui/react": "^2.0.0",
+        "@inertiajs/react": "^2.0.0",
+        "@tailwindcss/forms": "^0.5.3",
+        "@vitejs/plugin-react": "^4.2.0",
+        "autoprefixer": "^10.4.12",
+        "laravel-vite-plugin": "^2.0.0",
+        "postcss": "^8.4.31",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "tailwindcss": "^3.2.1",
+        "vite": "^7.0.7"
+    }
+}
