@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import CourseCard from '@/Components/Course/CourseCard';
-import { Select, Input } from '@/Components/UI';
+import Input from '@/Components/UI/Input';
+import Select from '@/Components/UI/Select';
 
 /**
  * Courses/Catalog.jsx (public)

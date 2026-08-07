@@ -31,7 +31,7 @@ class AuthController extends Controller
             'is_verified' => false,
         ]);
 
-        $token = $user->createToken('sharptechlearners_token')->plainTextToken;
+        $token = $user->createToken('runutridiet_token')->plainTextToken;
 
         return response()->json([
             'message' => 'User registered successfully',
@@ -63,7 +63,7 @@ class AuthController extends Controller
         // revoke old tokens (optional security)
         $user->tokens()->delete();
 
-        $token = $user->createToken('sharptechlearners_token')->plainTextToken;
+        $token = $user->createToken('runutridiet_token')->plainTextToken;
 
         return response()->json([
             'message' => 'Login successful',

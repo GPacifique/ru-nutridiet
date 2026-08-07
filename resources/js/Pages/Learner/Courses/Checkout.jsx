@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { Button, Input } from '@/Components/UI';
-
+import Input from '@/Components/UI/Input';
 /**
  * Courses/Checkout.jsx
  * ------------------------

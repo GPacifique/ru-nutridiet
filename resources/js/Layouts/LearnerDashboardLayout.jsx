@@ -1,51 +1,42 @@
 import React from "react";
 import { Link, usePage } from "@inertiajs/react";
 
-export default function DashboardLayout({ children }) {
+export default function LearnerDashboardLayout({ children }) {
 
     const { auth } = usePage().props;
+
 
     const menuItems = [
         {
             name: "Dashboard",
-            href: route("dashboard"),
+            href: route("learner.dashboard"),
             icon: "🏠",
         },
         {
-            name: "My Profile",
-            href: "#",
+            name: "My Courses",
+            href: route("learner.courses.index"),
+            icon: "📚",
+        },
+        {
+            name: "My Enrollments",
+            href: route("learner.courseenrollments.index"),
+            icon: "📝",
+        },
+        {
+            name: "Certificates",
+            href: route("learner.certificates.index"),
+            icon: "🏆",
+        },
+        {
+            name: "Profile",
+            href: route("profile.edit"),
+
             icon: "👤",
-        },
-        {
-            name: "Meal Plans",
-            href: "#",
-            icon: "🥗",
-        },
-        {
-            name: "Appointments",
-            href: "#",
-            icon: "📅",
-        },
-        {
-            name: "Progress Tracking",
-            href: "#",
-            icon: "📈",
-        },
-        {
-            name: "Messages",
-            href: "#",
-            icon: "💬",
-        },
-        {
-            name: "Health Articles",
-            href: "#",
-            icon: "📰",
         },
     ];
 
 
     return (
-
         <div className="min-h-screen bg-gray-100 flex">
 
 
@@ -53,21 +44,23 @@ export default function DashboardLayout({ children }) {
             <aside className="w-64 bg-green-900 text-white hidden md:flex flex-col">
 
 
+                {/* Logo */}
                 <div className="p-6 border-b border-green-700">
 
-                    <h1 className="text-2xl font-bold">
-                        RUNUTRIDIET
+                    <h1 className="text-xl font-bold">
+                        RUNUTRIDIET-CPT
                     </h1>
 
-                    <p className="text-green-200 text-sm">
-                        Nutrition Clinic
+                    <p className="text-sm text-green-200">
+                        Learning Portal
                     </p>
 
                 </div>
 
 
-                <nav className="flex-1 p-4 space-y-2">
 
+                {/* Navigation */}
+                <nav className="flex-1 p-4 space-y-2">
 
                     {menuItems.map((item, index) => (
 
@@ -89,12 +82,12 @@ export default function DashboardLayout({ children }) {
 
                     ))}
 
-
                 </nav>
 
 
-                <div className="p-4 border-t border-green-700">
 
+                {/* Logout */}
+                <div className="p-4 border-t border-green-700">
 
                     <Link
                         href={route("logout")}
@@ -107,7 +100,6 @@ export default function DashboardLayout({ children }) {
 
                     </Link>
 
-
                 </div>
 
 
@@ -115,7 +107,8 @@ export default function DashboardLayout({ children }) {
 
 
 
-            {/* Main Area */}
+
+            {/* Main Content */}
             <div className="flex-1 flex flex-col">
 
 
@@ -126,30 +119,34 @@ export default function DashboardLayout({ children }) {
                     <div>
 
                         <h2 className="text-xl font-semibold text-gray-800">
-                            Nutrition Portal
+                            Learner Portal
                         </h2>
+
+                        <p className="text-sm text-gray-500">
+                            Nutrition & Wellness Education
+                        </p>
 
                     </div>
 
 
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
 
 
                         <div className="text-right">
 
-                            <p className="font-medium text-gray-800">
+                            <p className="font-semibold">
                                 {auth?.user?.name}
                             </p>
 
                             <p className="text-sm text-gray-500">
-                                Patient
+                                Learner
                             </p>
 
                         </div>
 
 
-                        <div className="w-10 h-10 bg-green-700 text-white rounded-full flex items-center justify-center font-bold">
+                        <div className="w-10 h-10 rounded-full bg-green-700 text-white flex items-center justify-center font-bold">
 
                             {auth?.user?.name?.charAt(0)}
 
@@ -163,6 +160,7 @@ export default function DashboardLayout({ children }) {
 
 
 
+
                 {/* Page Content */}
                 <main className="flex-1 p-6">
 
@@ -171,11 +169,9 @@ export default function DashboardLayout({ children }) {
                 </main>
 
 
-
             </div>
 
 
         </div>
-
     );
 }

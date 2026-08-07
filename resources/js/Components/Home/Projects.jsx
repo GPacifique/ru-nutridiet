@@ -1,132 +1,146 @@
 import React from "react";
-import { Link } from "@inertiajs/react";
+import GuestLayout from "@/Layouts/GuestLayout";
 
-export default function Projects({ projects = [] }) {
-    const fallbackProjects = [
+export default function Projects() {
+
+    const projects = [
         {
-            id: 1,
-            title: "Build a SaaS Dashboard with Laravel & React",
-            budget: "$500 - $800",
-            deadline: "7 days left",
-            category: "Web Development",
-            proposals: 12,
-            level: "Intermediate",
+            title: "Healthy Weight Management Program",
+            description:
+                "A personalized nutrition program designed to help individuals achieve sustainable weight loss or healthy weight gain through balanced diets and lifestyle changes.",
+            icon: "⚖️",
         },
+
         {
-            id: 2,
-            title: "Design a Modern Mobile App UI/UX",
-            budget: "$200 - $400",
-            deadline: "3 days left",
-            category: "UI/UX Design",
-            proposals: 8,
-            level: "Beginner",
+            title: "Community Nutrition Awareness",
+            description:
+                "Educational sessions that promote healthy eating habits, disease prevention, and better nutrition choices within communities.",
+            icon: "🌱",
         },
+
         {
-            id: 3,
-            title: "Fix Bugs in React E-commerce App",
-            budget: "$100 - $250",
-            deadline: "2 days left",
-            category: "Frontend Development",
-            proposals: 5,
-            level: "Expert",
+            title: "Sports Nutrition Program",
+            description:
+                "Nutrition support for athletes and active people to improve performance, recovery, and overall physical wellbeing.",
+            icon: "🏃",
+        },
+
+        {
+            title: "Maternal & Child Nutrition Support",
+            description:
+                "Nutrition guidance supporting mothers and children with healthy meal planning and improved nutritional outcomes.",
+            icon: "👩‍👧",
+        },
+
+        {
+            title: "Corporate Wellness Program",
+            description:
+                "Workplace nutrition programs helping organizations improve employee health, productivity, and wellness culture.",
+            icon: "🏢",
+        },
+
+        {
+            title: "Nutrition Education Platform",
+            description:
+                "Digital resources, articles, and learning materials to make professional nutrition knowledge accessible to more people.",
+            icon: "📚",
         },
     ];
 
-    const data = projects.length ? projects : fallbackProjects;
 
     return (
-        <section className="py-20 bg-gray-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <GuestLayout>
+
+            <div className="max-w-7xl mx-auto px-6 py-16">
+
 
                 {/* Header */}
-                <div className="text-center mb-14">
-                    <span className="inline-flex px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-medium">
-                        Latest Projects
-                    </span>
+                <section className="text-center mb-12">
 
-                    <h2 className="mt-4 text-4xl font-bold text-gray-900">
-                        Freelance Opportunities Waiting for You
-                    </h2>
+                    <h1 className="text-4xl font-bold text-green-700">
+                        Our Projects & Programs
+                    </h1>
 
-                    <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
-                        Browse client projects, submit proposals, and start earning
-                        as a verified freelancer on SharpTechLearners.
+                    <p className="mt-4 text-gray-600 max-w-3xl mx-auto">
+                        At RUNUTRIDIET-CPT, we develop nutrition programs and
+                        wellness initiatives that improve health outcomes for
+                        individuals, families, athletes, and organizations.
                     </p>
-                </div>
+
+                </section>
+
+
 
                 {/* Projects Grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {data.map((project) => (
+                <div className="grid md:grid-cols-3 gap-8">
+
+
+                    {projects.map((project, index) => (
+
                         <div
-                            key={project.id}
-                            className="bg-white rounded-2xl border shadow-sm hover:shadow-lg transition p-6"
+                            key={index}
+                            className="bg-white shadow rounded-xl p-8 hover:shadow-lg transition"
                         >
-                            {/* Category Badge */}
-                            <span className="inline-block px-3 py-1 text-xs bg-indigo-100 text-indigo-700 rounded-full mb-4">
-                                {project.category}
-                            </span>
 
-                            {/* Title */}
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">
+                            <div className="text-4xl mb-5">
+                                {project.icon}
+                            </div>
+
+
+                            <h2 className="text-xl font-bold mb-3">
                                 {project.title}
-                            </h3>
+                            </h2>
 
-                            {/* Info */}
-                            <div className="space-y-2 text-sm text-gray-600">
-                                <div className="flex justify-between">
-                                    <span>Budget:</span>
-                                    <span className="font-semibold text-gray-900">
-                                        {project.budget}
-                                    </span>
-                                </div>
 
-                                <div className="flex justify-between">
-                                    <span>Deadline:</span>
-                                    <span>{project.deadline}</span>
-                                </div>
+                            <p className="text-gray-600 leading-relaxed">
+                                {project.description}
+                            </p>
 
-                                <div className="flex justify-between">
-                                    <span>Level:</span>
-                                    <span>{project.level}</span>
-                                </div>
 
-                                <div className="flex justify-between">
-                                    <span>Proposals:</span>
-                                    <span>{project.proposals}</span>
-                                </div>
-                            </div>
+                            <button
+                                className="mt-5 text-green-700 font-semibold"
+                            >
+                                Learn More →
+                            </button>
 
-                            {/* Action */}
-                            <div className="mt-6 flex items-center justify-between">
-                                <Link
-                                    href={`/projects/${project.id}`}
-                                    className="text-indigo-600 font-semibold hover:text-indigo-800"
-                                >
-                                    View Details →
-                                </Link>
 
-                                <Link
-                                    href={`/projects/${project.id}/apply`}
-                                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm"
-                                >
-                                    Apply
-                                </Link>
-                            </div>
                         </div>
+
                     ))}
+
+
                 </div>
 
-                {/* CTA */}
-                <div className="text-center mt-12">
-                    <Link
-                        href="/projects"
-                        className="inline-flex px-8 py-4 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700"
+
+
+                {/* Partnership CTA */}
+                <section className="mt-16 bg-green-700 text-white rounded-xl p-10 text-center">
+
+                    <h2 className="text-3xl font-bold">
+                        Partner With RUNUTRIDIET-CPT
+                    </h2>
+
+
+                    <p className="mt-4 text-green-100 max-w-3xl mx-auto">
+                        We collaborate with schools, companies, fitness
+                        centers, healthcare providers, and communities to
+                        promote healthier lifestyles.
+                    </p>
+
+
+                    <a
+                        href="/contact"
+                        className="inline-block mt-6 bg-white text-green-700 px-8 py-3 rounded-lg font-semibold"
                     >
-                        Browse All Projects
-                    </Link>
-                </div>
+                        Contact Us
+                    </a>
+
+
+                </section>
+
 
             </div>
-        </section>
+
+        </GuestLayout>
     );
 }

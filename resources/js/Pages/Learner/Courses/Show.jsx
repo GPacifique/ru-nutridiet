@@ -40,7 +40,7 @@ export default function Show({
             <div className="space-y-8">
                 {/* Back Button */}
                 <Link
-                    href={route('enrollments.index')}
+                    href={route('courseenrollments.index')}
                     className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
                 >
                     <ArrowLeft className="h-4 w-4" />

@@ -13,7 +13,7 @@ import {
     GraduationCap,
 } from 'lucide-react';
 
-import DashboardLayout from '@/Layouts/DashboardLayout';
+import LearnerDashboardLayout from '@/Layouts/LearnerDashboardLayout';
 
 export default function Dashboard({
     stats = {},
@@ -69,7 +69,7 @@ export default function Dashboard({
     };
 
     return (
-        <DashboardLayout>
+        <LearnerDashboardLayout>
             <Head title="Learner Dashboard" />
 
             <div className="space-y-8">
@@ -142,7 +142,7 @@ export default function Dashboard({
                     </Link>
 
                     <Link
-                        href={route('enrollments.index')}
+                        href={route('learner.courseenrollments.index')}
                         className="group flex items-center justify-between rounded-xl bg-purple-600 p-5 text-white transition hover:bg-purple-700"
                     >
                         <div className="flex items-center gap-4">
@@ -198,7 +198,7 @@ export default function Dashboard({
                         </div>
 
                         <Link
-                            href={route('enrollments.index')}
+                            href={route('learner.courseenrollments.index')}
                             className="text-sm font-medium text-blue-600 hover:text-blue-700"
                         >
                             View All
@@ -229,7 +229,7 @@ export default function Dashboard({
 
                                         <Link
                                             href={route(
-                                                'enrollments.show',
+                                                'learner.courseenrollments.show',
                                                 enrollment.id
                                             )}
                                             className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
@@ -409,6 +409,6 @@ export default function Dashboard({
                     </div>
                 </div>
             </div>
-        </DashboardLayout>
+        </LearnerDashboardLayout>
     );
 }

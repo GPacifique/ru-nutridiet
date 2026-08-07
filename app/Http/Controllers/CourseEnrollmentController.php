@@ -37,7 +37,7 @@ class CourseEnrollmentController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return Inertia::render('CourseEnrollments/Index', [
+        return Inertia::render('Learner/CourseEnrollments/Index', [
             'enrollments' => $enrollments,
             'filters' => [
                 'search' => $request->search,
@@ -64,7 +64,7 @@ class CourseEnrollmentController extends Controller
             ->orderBy('title')
             ->get();
 
-        return Inertia::render('CourseEnrollments/Create', [
+        return Inertia::render('Admin/CourseEnrollments/Create', [
             'users' => $users,
             'courses' => $courses,
         ]);
@@ -131,7 +131,7 @@ class CourseEnrollmentController extends Controller
         CourseEnrollment::create($validated);
 
         return redirect()
-            ->route('enrollments.index')
+            ->route('learner.courseenrollments.index')
             ->with(
                 'success',
                 'Course enrollment created successfully.'
@@ -151,7 +151,7 @@ class CourseEnrollmentController extends Controller
         ]);
 
         return Inertia::render(
-            'CourseEnrollments/Show',
+            'Learner/CourseEnrollments/Show',
             [
                 'enrollment' => $enrollment,
             ]
@@ -176,7 +176,7 @@ class CourseEnrollmentController extends Controller
             ->get();
 
         return Inertia::render(
-            'CourseEnrollments/Edit',
+            'Admin/CourseEnrollments/Edit',
             [
                 'enrollment' => $enrollment,
                 'users' => $users,
@@ -249,7 +249,7 @@ class CourseEnrollmentController extends Controller
         $enrollment->update($validated);
 
         return redirect()
-            ->route('enrollments.index')
+            ->route('courseenrollments.index')
             ->with(
                 'success',
                 'Course enrollment updated successfully.'
@@ -265,7 +265,7 @@ class CourseEnrollmentController extends Controller
         $enrollment->delete();
 
         return redirect()
-            ->route('enrollments.index')
+            ->route('courseenrollments.index')
             ->with(
                 'success',
                 'Course enrollment deleted successfully.'

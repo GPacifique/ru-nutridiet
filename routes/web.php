@@ -41,7 +41,54 @@ use App\Http\Controllers\Learner\CertificateController as LearnerCertificateCont
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\PaymentController as LearnerPaymentController;
 use App\Http\Controllers\EnrollmentController as LearnerEnrollmentController;
+use App\Http\Controllers\CourseEnrollmentController;
 
+
+Route::middleware('auth')
+->prefix('learner')
+->name('learner.')
+->group(function(){
+
+    Route::get('/profile',
+        [ProfileController::class,'edit']
+    )->name('profile.edit');
+
+
+});
+
+
+Route::middleware(['auth'])->prefix('learner')->name('learner.')->group(function () {
+
+    Route::get('/course-enrollments', [
+        CourseEnrollmentController::class,
+        'index'
+    ])->name('courseenrollments.index');
+
+
+});
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::resource(
+        'certificates',
+        CertificateController::class
+    )->only([
+        'index',
+        'show'
+    ]);
+
+});
+Route::prefix('learner')
+    ->name('learner.')
+    ->middleware(['auth'])
+    ->group(function () {
+
+        Route::resource(
+            'courseenrollments',
+            CourseEnrollmentController::class
+        );
+
+    });
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes

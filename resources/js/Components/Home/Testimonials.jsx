@@ -1,142 +1,125 @@
 import React from "react";
+import GuestLayout from "@/Layouts/GuestLayout";
 
 export default function Testimonials() {
+
     const testimonials = [
         {
-            id: 1,
-            name: "Sarah Johnson",
-            role: "Business Owner",
-            image: "https://i.pravatar.cc/150?img=32",
-            rating: 5,
-            review:
-                "SharpTechLearners helped me find an experienced developer within days. The project was delivered on time and exceeded my expectations.",
+            name: "Sarah Mukamana",
+            role: "Weight Management Client",
+            message:
+                "RUNUTRIDIET-CPT helped me understand my eating habits and create a healthier lifestyle. I achieved my goals with professional guidance and support.",
         },
+
         {
-            id: 2,
-            name: "Michael Brown",
-            role: "Laravel Developer",
-            image: "https://i.pravatar.cc/150?img=12",
-            rating: 5,
-            review:
-                "I've sold multiple Laravel projects on SharpTechLearners. The platform makes it easy to reach customers worldwide and manage sales.",
+            name: "Jean Claude",
+            role: "Sports Nutrition Client",
+            message:
+                "The nutrition advice improved my energy levels and my training performance. The meal plan was practical and easy to follow.",
         },
+
         {
-            id: 3,
-            name: "Emily Davis",
-            role: "UI/UX Designer",
-            image: "https://i.pravatar.cc/150?img=47",
-            rating: 5,
-            review:
-                "The freelancing marketplace is fantastic. I consistently receive project invitations and secure payments without hassle.",
+            name: "Grace Uwase",
+            role: "Nutrition Consultation Client",
+            message:
+                "I received personalized advice based on my health needs. The follow-up and support made my journey much easier.",
         },
     ];
 
+
     return (
-        <section className="py-20 bg-white">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <GuestLayout>
+
+            <div className="max-w-7xl mx-auto px-6 py-16">
+
 
                 {/* Header */}
-                <div className="text-center mb-16">
-                    <span className="inline-flex px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-medium">
-                        Testimonials
-                    </span>
+                <section className="text-center mb-12">
 
-                    <h2 className="mt-4 text-4xl font-bold text-gray-900">
-                        Trusted by Thousands Worldwide
-                    </h2>
+                    <h1 className="text-4xl font-bold text-green-700">
+                        Our Client Testimonials
+                    </h1>
 
-                    <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
-                        See what buyers, freelancers, and digital creators
-                        are saying about their experience with SharpTechLearners.
+                    <p className="mt-4 text-gray-600 max-w-3xl mx-auto">
+                        Discover how RUNUTRIDIET-CPT has helped clients improve
+                        their nutrition, health, and lifestyle through
+                        personalized care.
                     </p>
-                </div>
 
-                {/* Testimonials Grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                </section>
 
-                    {testimonials.map((testimonial) => (
+
+
+                {/* Testimonials */}
+                <div className="grid md:grid-cols-3 gap-8">
+
+
+                    {testimonials.map((testimonial, index) => (
+
                         <div
-                            key={testimonial.id}
-                            className="bg-gray-50 rounded-2xl p-8 border border-gray-100 hover:shadow-lg transition"
+                            key={index}
+                            className="bg-white shadow rounded-xl p-8"
                         >
-                            {/* Rating */}
-                            <div className="flex mb-4">
-                                {[...Array(testimonial.rating)].map((_, index) => (
-                                    <span key={index} className="text-yellow-400 text-xl">
-                                        ★
-                                    </span>
-                                ))}
+
+                            <div className="text-green-700 text-4xl mb-4">
+                                "
                             </div>
 
-                            {/* Review */}
-                            <p className="text-gray-600 leading-relaxed mb-6">
-                                "{testimonial.review}"
+
+                            <p className="text-gray-600 leading-relaxed">
+                                {testimonial.message}
                             </p>
 
-                            {/* User */}
-                            <div className="flex items-center gap-4">
-                                <img
-                                    src={testimonial.image}
-                                    alt={testimonial.name}
-                                    className="w-14 h-14 rounded-full object-cover"
-                                />
 
-                                <div>
-                                    <h4 className="font-semibold text-gray-900">
-                                        {testimonial.name}
-                                    </h4>
+                            <div className="mt-6 border-t pt-4">
 
-                                    <p className="text-sm text-gray-500">
-                                        {testimonial.role}
-                                    </p>
-                                </div>
+                                <h3 className="font-bold text-lg">
+                                    {testimonial.name}
+                                </h3>
+
+                                <p className="text-green-700 text-sm">
+                                    {testimonial.role}
+                                </p>
+
                             </div>
+
+
                         </div>
+
                     ))}
 
-                </div>
-
-                {/* Statistics */}
-                <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6">
-
-                    <div className="text-center bg-gray-50 rounded-xl p-6">
-                        <h3 className="text-3xl font-bold text-indigo-600">
-                            50K+
-                        </h3>
-                        <p className="text-gray-600 mt-2">
-                            Completed Orders
-                        </p>
-                    </div>
-
-                    <div className="text-center bg-gray-50 rounded-xl p-6">
-                        <h3 className="text-3xl font-bold text-green-600">
-                            10K+
-                        </h3>
-                        <p className="text-gray-600 mt-2">
-                            Digital Products
-                        </p>
-                    </div>
-
-                    <div className="text-center bg-gray-50 rounded-xl p-6">
-                        <h3 className="text-3xl font-bold text-yellow-500">
-                            5K+
-                        </h3>
-                        <p className="text-gray-600 mt-2">
-                            Freelancers
-                        </p>
-                    </div>
-
-                    <div className="text-center bg-gray-50 rounded-xl p-6">
-                        <h3 className="text-3xl font-bold text-purple-600">
-                            4.9/5
-                        </h3>
-                        <p className="text-gray-600 mt-2">
-                            Average Rating
-                        </p>
-                    </div>
 
                 </div>
+
+
+
+                {/* CTA */}
+                <section className="mt-16 bg-green-700 text-white rounded-xl p-10 text-center">
+
+                    <h2 className="text-3xl font-bold">
+                        Start Your Health Transformation Today
+                    </h2>
+
+
+                    <p className="mt-3 text-green-100">
+                        Get professional nutrition support designed around your
+                        personal goals.
+                    </p>
+
+
+                    <a
+                        href="/contact"
+                        className="inline-block mt-6 bg-white text-green-700 px-8 py-3 rounded-lg font-semibold"
+                    >
+                        Book Consultation
+                    </a>
+
+
+                </section>
+
+
             </div>
-        </section>
+
+        </GuestLayout>
     );
 }
