@@ -1577,10 +1577,10 @@ function Footer() {
             </p>
             <div className="mt-5 space-y-2 text-sm text-slate-500">
               <p className="inline-flex items-center gap-2">
-                <Mail className="h-4 w-4 text-emerald-700" aria-hidden="true" /> hello@runutridiet.com
+                <Mail className="h-4 w-4 text-emerald-700" aria-hidden="true" /> info@runutridiet.com
               </p>
               <p className="inline-flex items-center gap-2">
-                <Phone className="h-4 w-4 text-emerald-700" aria-hidden="true" /> +250 788 000 000
+                <Phone className="h-4 w-4 text-emerald-700" aria-hidden="true" /> +250785221105
               </p>
               <p className="inline-flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-emerald-700" aria-hidden="true" /> Kigali, Rwanda
