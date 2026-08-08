@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import ApplicationLogo from "@/Components/ApplicationLogo"
 import {
@@ -210,88 +210,9 @@ const STATISTICS = [
   { value: 50, suffix: "+", label: "Countries reached" },
 ];
 
-const CPD_COURSES = [
-  {
-    title: "Clinical Nutrition Foundations",
-    instructor: "Dr. Amara Nkusi, RD, PhD",
-    credits: 12,
-    duration: "6 weeks",
-    students: "2,140",
-    price: "$149",
-    rating: "4.9",
-    img: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=700&q=80&auto=format&fit=crop",
-  },
-  {
-    title: "Sports Nutrition for Performance",
-    instructor: "Coach Lena Bauer, MSc",
-    credits: 10,
-    duration: "5 weeks",
-    students: "1,860",
-    price: "$129",
-    rating: "4.8",
-    img: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=700&q=80&auto=format&fit=crop",
-  },
-  {
-    title: "Renal Nutrition Management",
-    instructor: "Dr. Priya Raman, RD",
-    credits: 14,
-    duration: "7 weeks",
-    students: "980",
-    price: "$169",
-    rating: "4.9",
-    img: "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=700&q=80&auto=format&fit=crop",
-  },
-  {
-    title: "Diabetes Nutrition Management",
-    instructor: "ALPHONSINE KANZAYIRE, RD, CDE",
-    credits: 12,
-    duration: "6 weeks",
-    students: "2,410",
-    price: "$149",
-    rating: "4.9",
-    img: "https://images.unsplash.com/photo-1584362917165-526a968579e8?w=700&q=80&auto=format&fit=crop",
-  },
-  {
-    title: "Pediatric Nutrition Essentials",
-    instructor: "Dr. Hana Kobayashi, RD",
-    credits: 10,
-    duration: "5 weeks",
-    students: "1,320",
-    price: "$129",
-    rating: "4.7",
-    img: "https://images.unsplash.com/photo-1519689680058-324335c77eba?w=700&q=80&auto=format&fit=crop",
-  },
-  {
-    title: "Maternal & Perinatal Nutrition",
-    instructor: "Dr. Elena Cross, RD, IBCLC",
-    credits: 12,
-    duration: "6 weeks",
-    students: "1,540",
-    price: "$149",
-    rating: "4.9",
-    img: "https://images.unsplash.com/photo-1595924692361-53cc4173977f?w=700&q=80&auto=format&fit=crop",
-  },
-  {
-    title: "Food Safety & Hygiene",
-    instructor: "Marcus Feldt, MPH",
-    credits: 8,
-    duration: "3 weeks",
-    students: "3,210",
-    price: "$89",
-    rating: "4.6",
-    img: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=700&q=80&auto=format&fit=crop",
-  },
-  {
-    title: "Public Health Nutrition",
-    instructor: "Dr. Grace Mwangi, MPH, RD",
-    credits: 14,
-    duration: "8 weeks",
-    students: "1,110",
-    price: "$169",
-    rating: "4.8",
-    img: "https://images.unsplash.com/photo-1591189863430-ab87e120f312?w=700&q=80&auto=format&fit=crop",
-  },
-];
+/* CPD_COURSES, EXPERTS, TESTIMONIALS, and ARTICLES now come from the
+   backend via Inertia props — see the `Home` component signature and
+   the prop-shape comment near the bottom of this file. */
 
 const LEARNING_FEATURES = [
   { title: "Video lessons", desc: "Bite-sized, expert-recorded lectures you can rewatch anytime.", icon: MonitorPlay },
@@ -338,78 +259,9 @@ const MARKETPLACE_CATEGORIES = [
   { title: "Digital Products", desc: "Trackers, templates, and planners you can use immediately.", icon: Download },
 ];
 
-const EXPERTS = [
-  {
-    name: "ALPHONSINE KANZAYIRE",
-    qualification: "RD, PhD",
-    focus: "Clinical Nutrition",
-    experience: "14 yrs",
-    img: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=500&q=80&auto=format&fit=crop",
-  },
-  {
-    name: "ALPHONSINE KANZAYIRE",
-    qualification: "RD, CDE",
-    focus: "Diabetes & Metabolic Health",
-    experience: "11 yrs",
-    img: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=500&q=80&auto=format&fit=crop",
-  },
-  {
-    name: "ALPHONSINE KANZAYIRE",
-    qualification: "RD",
-    focus: "Renal Nutrition",
-    experience: "9 yrs",
-    img: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=500&q=80&auto=format&fit=crop",
-  },
-  {
-    name: "ALPHONSINE KANZAYIRE",
-    qualification: "MSc Sports Nutrition",
-    focus: "Athletic Performance",
-    experience: "8 yrs",
-    img: "https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=500&q=80&auto=format&fit=crop",
-  },
-];
+/* EXPERTS (practitioners) and TESTIMONIALS (learners) come from props. */
 
-const TESTIMONIALS = [
-  {
-    quote:
-      "My A1C dropped for the first time in six years, and it's the first plan I've actually been able to keep up with.",
-    name: "Marie T.",
-    role: "Patient, Diabetes Nutrition Program",
-  },
-  {
-    quote:
-      "The CPD Academy courses are the most clinically rigorous continuing education I've taken online, and the credits transferred without a single issue.",
-    name: "James O.",
-    role: "Registered Dietitian, Course Graduate",
-  },
-  {
-    quote:
-      "We rolled RUNUTRIDIET out to 400 employees. Sick-day requests tied to metabolic issues dropped within the first quarter.",
-    name: "Aline K.",
-    role: "HR Director, Corporate Wellness Client",
-  },
-];
-
-const ARTICLES = [
-  {
-    title: "What Your Fasting Glucose Actually Tells You",
-    category: "Nutrition Tips",
-    date: "Jul 28, 2026",
-    img: "https://images.unsplash.com/photo-1576671081837-49000212a370?w=700&q=80&auto=format&fit=crop",
-  },
-  {
-    title: "A Dietitian's Guide to Reading a Lipid Panel",
-    category: "Medical Research",
-    date: "Jul 19, 2026",
-    img: "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=700&q=80&auto=format&fit=crop",
-  },
-  {
-    title: "Iron Deficiency Is Common and Commonly Missed",
-    category: "Clinical Insight",
-    date: "Jul 6, 2026",
-    img: "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=700&q=80&auto=format&fit=crop",
-  },
-];
+/* ARTICLES comes from props. */
 
 const FOOTER_COLUMNS = [
   {
@@ -550,10 +402,12 @@ function Navbar() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-white-700 text-white">
-            <ApplicationLogo className="block h-9 w-9 max-h-6 max-w-6 object-contain" />
+          <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-emerald-700 text-white">
+            <ApplicationLogo className="block h-6 w-6 max-h-6 max-w-6 object-contain" />
           </span>
-         
+          <span className="font-display text-lg font-semibold tracking-tight text-slate-900">
+            RUNUTRIDIET
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
@@ -987,6 +841,14 @@ function Statistics() {
 /* -------------------------------- CPD Academy ------------------------------ */
 
 function CourseCard({ course }) {
+  const { auth } = usePage().props;
+  const isAuthenticated = Boolean(auth?.user);
+  const identifier = course.slug ?? course.id;
+  const enrollHref = isAuthenticated
+    ? `/courses/${identifier}/enroll`
+    : `/login?redirect=${encodeURIComponent(`/courses/${identifier}/enroll`)}`;
+  const imageSrc = course.image ?? course.img ?? course.thumbnail;
+
   return (
     <motion.div
       variants={fadeUp}
@@ -994,7 +856,7 @@ function CourseCard({ course }) {
     >
       <div className="relative h-44 overflow-hidden">
         <img
-          src={course.img}
+          src={imageSrc}
           alt={`Illustration for the ${course.title} course`}
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
@@ -1023,25 +885,19 @@ function CourseCard({ course }) {
 
         <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
           <span className="font-mono text-lg font-semibold text-slate-900">{course.price}</span>
-          <a
-            href="#enroll"
+          <Link
+            href={enrollHref}
             className="rounded-full bg-emerald-700 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-800"
           >
             Enroll
-          </a>
+          </Link>
         </div>
       </div>
     </motion.div>
   );
 }
 
-function CPDAcademy() {
-  const [loaded, setLoaded] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setLoaded(true), 400);
-    return () => clearTimeout(t);
-  }, []);
-
+function CPDAcademy({ courses = [] }) {
   return (
     <section id="academy" className="bg-gradient-to-b from-sky-50/70 to-white py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
@@ -1076,9 +932,15 @@ function CPDAcademy() {
         </div>
 
         <Stagger className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {loaded
-            ? CPD_COURSES.map((course) => <CourseCard key={course.title} course={course} />)
-            : Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
+          {courses.length > 0 ? (
+            courses.map((course) => (
+              <CourseCard key={course.id ?? course.slug} course={course} />
+            ))
+          ) : (
+            <p className="col-span-full text-sm text-slate-500">
+              No courses are published yet.
+            </p>
+          )}
         </Stagger>
       </div>
     </section>
@@ -1182,7 +1044,52 @@ function Webinars() {
 
 /* ------------------------------ Marketplace --------------------------------- */
 
-function Marketplace() {
+function ProductCard({ product }) {
+  return (
+    <motion.div
+      variants={fadeUp}
+      className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-900/5 transition-all hover:-translate-y-1 hover:shadow-lg"
+    >
+      <div className="relative h-44 overflow-hidden">
+        <img
+          src={product.image ?? product.img ?? product.thumbnail}
+          alt={product.name}
+          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+        />
+        {product.tag && (
+          <span className="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 font-mono text-[11px] font-semibold text-emerald-800 shadow-sm">
+            {product.tag}
+          </span>
+        )}
+      </div>
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-display text-base font-semibold leading-snug text-slate-900">
+          {product.name}
+        </h3>
+        {product.focus && <p className="mt-1 text-sm text-slate-500">{product.focus}</p>}
+
+        <div className="mt-4 space-y-1 font-mono text-xs text-slate-500">
+          {product.format && <p>{product.format}</p>}
+          {product.serving && <p>Serving: {product.serving}</p>}
+          {product.pairsWith && <p>Pairs with: {product.pairsWith}</p>}
+        </div>
+
+        <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+          <span className="font-mono text-lg font-semibold text-slate-900">{product.price}</span>
+          <Link
+            href={`/shop/${product.slug ?? product.id}`}
+            className="rounded-full bg-emerald-700 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-800"
+          >
+            View product
+          </Link>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function Marketplace({ products = [] }) {
   return (
     <section id="marketplace" className="py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
@@ -1209,16 +1116,38 @@ function Marketplace() {
                 {cat.title}
               </h3>
               <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{cat.desc}</p>
-              <a
-                href="#shop"
+              <Link
+                href={`/shop?category=${encodeURIComponent(cat.title)}`}
                 className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
               >
                 <ShoppingBag className="h-4 w-4" aria-hidden="true" />
                 Browse {cat.title.toLowerCase()}
-              </a>
+              </Link>
             </motion.div>
           ))}
         </Stagger>
+
+        {products.length > 0 && (
+          <div className="mt-16">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <h3 className="font-display text-2xl font-semibold tracking-tight text-slate-900">
+                Featured products
+              </h3>
+              <Link
+                href="/shop"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+              >
+                Browse full shop
+                <ChevronRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
+            <Stagger className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {products.map((product) => (
+                <ProductCard key={product.id ?? product.slug} product={product} />
+              ))}
+            </Stagger>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -1226,7 +1155,7 @@ function Marketplace() {
 
 /* -------------------------------- Experts ------------------------------------ */
 
-function Experts() {
+function Experts({ practitioners = [] }) {
   return (
     <section className="bg-slate-50/60 py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
@@ -1240,36 +1169,42 @@ function Experts() {
         </Reveal>
 
         <Stagger className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {EXPERTS.map((expert, i) => (
-            <motion.div
-              key={expert.id ?? `${expert.name}-${i}`}
-              variants={fadeUp}
-              className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-900/5 transition-shadow hover:shadow-lg"
-            >
-              <div className="h-56 overflow-hidden">
-                <img
-                  src={expert.img}
-                  alt={`Portrait of ${expert.name}, ${expert.qualification}`}
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="p-5">
-                <h3 className="font-display text-base font-semibold text-slate-900">
-                  {expert.name}
-                </h3>
-                <p className="text-sm text-emerald-700">{expert.qualification}</p>
-                <p className="mt-2 text-sm text-slate-600">{expert.focus}</p>
-                <Readout value={expert.experience} label="Experience" className="mt-3" />
-                <a
-                  href="#book"
-                  className="mt-4 inline-flex w-full items-center justify-center rounded-full border border-slate-300 py-2.5 text-xs font-semibold text-slate-700 transition-colors hover:border-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"
-                >
-                  Book Appointment
-                </a>
-              </div>
-            </motion.div>
-          ))}
+          {practitioners.length > 0 ? (
+            practitioners.map((expert, i) => (
+              <motion.div
+                key={expert.id ?? `${expert.name}-${i}`}
+                variants={fadeUp}
+                className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-900/5 transition-shadow hover:shadow-lg"
+              >
+                <div className="h-56 overflow-hidden">
+                  <img
+                    src={expert.image ?? expert.img ?? expert.photo}
+                    alt={`Portrait of ${expert.name}, ${expert.qualification}`}
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="p-5">
+                  <h3 className="font-display text-base font-semibold text-slate-900">
+                    {expert.name}
+                  </h3>
+                  <p className="text-sm text-emerald-700">{expert.qualification}</p>
+                  <p className="mt-2 text-sm text-slate-600">{expert.focus}</p>
+                  <Readout value={expert.experience} label="Experience" className="mt-3" />
+                  <a
+                    href="#book"
+                    className="mt-4 inline-flex w-full items-center justify-center rounded-full border border-slate-300 py-2.5 text-xs font-semibold text-slate-700 transition-colors hover:border-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"
+                  >
+                    Book Appointment
+                  </a>
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            <p className="col-span-full text-sm text-slate-500">
+              No practitioners listed yet.
+            </p>
+          )}
         </Stagger>
       </div>
     </section>
@@ -1278,19 +1213,25 @@ function Experts() {
 
 /* ----------------------------- Success Stories -------------------------------- */
 
-function Testimonials() {
+function Testimonials({ testimonials = [] }) {
   const [index, setIndex] = useState(0);
+  const count = testimonials.length;
 
-  const next = useCallback(() => setIndex((i) => (i + 1) % TESTIMONIALS.length), []);
+  const next = useCallback(() => setIndex((i) => (count ? (i + 1) % count : 0)), [count]);
   const prev = useCallback(
-    () => setIndex((i) => (i - 1 + TESTIMONIALS.length) % TESTIMONIALS.length),
-    []
+    () => setIndex((i) => (count ? (i - 1 + count) % count : 0)),
+    [count]
   );
 
   useEffect(() => {
+    if (count < 2) return;
     const t = setInterval(next, 6000);
     return () => clearInterval(t);
-  }, [next]);
+  }, [next, count]);
+
+  if (count === 0) return null;
+
+  const current = testimonials[index];
 
   return (
     <section className="py-20 lg:py-28" aria-roledescription="carousel" aria-label="Patient and professional testimonials">
@@ -1305,12 +1246,12 @@ function Testimonials() {
             transition={{ duration: 0.4 }}
           >
             <blockquote className="mt-6 font-display text-2xl font-medium leading-snug text-slate-800 sm:text-3xl">
-              &ldquo;{TESTIMONIALS[index].quote}&rdquo;
+              &ldquo;{current.quote}&rdquo;
             </blockquote>
             <p className="mt-6 text-sm font-semibold text-slate-900">
-              {TESTIMONIALS[index].name}
+              {current.name}
             </p>
-            <p className="text-sm text-slate-500">{TESTIMONIALS[index].role}</p>
+            <p className="text-sm text-slate-500">{current.role}</p>
           </motion.div>
         </AnimatePresence>
 
@@ -1324,9 +1265,9 @@ function Testimonials() {
             <ChevronLeft className="h-4 w-4" aria-hidden="true" />
           </button>
           <div className="flex gap-2">
-            {TESTIMONIALS.map((_, i) => (
+            {testimonials.map((t, i) => (
               <button
-                key={i}
+                key={t.id ?? i}
                 type="button"
                 onClick={() => setIndex(i)}
                 aria-label={`Go to testimonial ${i + 1}`}
@@ -1352,7 +1293,7 @@ function Testimonials() {
 
 /* ------------------------------ Research & Blog -------------------------------- */
 
-function ResearchBlog() {
+function ResearchBlog({ articles = [] }) {
   return (
     <section id="research" className="bg-slate-50/60 py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
@@ -1366,15 +1307,15 @@ function ResearchBlog() {
         </Reveal>
 
         <Stagger className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {ARTICLES.map((article) => (
+          {articles.length > 0 ? articles.map((article) => (
             <motion.article
-              key={article.title}
+              key={article.id ?? article.slug ?? article.title}
               variants={fadeUp}
               className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-900/5 transition-shadow hover:shadow-lg"
             >
               <div className="h-44 overflow-hidden">
                 <img
-                  src={article.img}
+                  src={article.image ?? article.img ?? article.thumbnail}
                   alt=""
                   loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
@@ -1389,17 +1330,21 @@ function ResearchBlog() {
                 </h3>
                 <div className="mt-4 flex items-center justify-between">
                   <span className="font-mono text-xs text-slate-400">{article.date}</span>
-                  <a
-                    href="#read"
+                  <Link
+                    href={`/blog/${article.slug ?? article.id}`}
                     className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
                   >
                     Read more
                     <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-                  </a>
+                  </Link>
                 </div>
               </div>
             </motion.article>
-          ))}
+          )) : (
+            <p className="col-span-full text-sm text-slate-500">
+              No articles published yet.
+            </p>
+          )}
         </Stagger>
       </div>
     </section>
@@ -1568,8 +1513,8 @@ function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(5,1fr)] lg:gap-8">
           <div>
             <div className="flex items-center gap-2">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-white text-white">
-                <ApplicationLogo className="h-5 w-5" aria-hidden="true" />
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-emerald-700 text-white">
+                <Sparkle className="h-5 w-5" aria-hidden="true" />
               </span>
               <span className="font-display text-lg font-semibold text-slate-900">
                 RUNUTRIDIET
@@ -1584,7 +1529,7 @@ function Footer() {
                 <Mail className="h-4 w-4 text-emerald-700" aria-hidden="true" /> info@runutridiet.com
               </p>
               <p className="inline-flex items-center gap-2">
-                <Phone className="h-4 w-4 text-emerald-700" aria-hidden="true" /> +250 785 221 105
+                <Phone className="h-4 w-4 text-emerald-700" aria-hidden="true" /> +250785221105
               </p>
               <p className="inline-flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-emerald-700" aria-hidden="true" /> Kigali, Rwanda
@@ -1661,7 +1606,29 @@ function ScrollToTop() {
 
 /* ------------------------------------ Page --------------------------------------- */
 
-export default function Home() {
+/**
+ * Props expected from HomeController@index, e.g.:
+ *
+ *   return Inertia::render('Home', [
+ *       'courses'       => ...,
+ *       'articles'      => ...,
+ *       'practitioners' => ...,
+ *       'testimonials'  => ...,
+ *       'products'      => ...,
+ *   ]);
+ *
+ * Field names below (image, slug, id, etc.) are read with fallbacks
+ * (course.image ?? course.img ?? course.thumbnail) to tolerate minor
+ * naming differences — adjust the resources/controllers to match
+ * whichever names your resource transformers actually emit.
+ */
+export default function Home({
+  courses = [],
+  articles = [],
+  practitioners = [],
+  testimonials = [],
+  products = [],
+}) {
   return (
     <div className="min-h-screen bg-white font-sans text-slate-800 antialiased">
       <style>{`
@@ -1684,13 +1651,13 @@ export default function Home() {
         <Services />
         <WhyChooseUs />
         <Statistics />
-        <CPDAcademy />
+        <CPDAcademy courses={courses} />
         <LearningFeatures />
         <Webinars />
-        <Marketplace />
-        <Experts />
-        <Testimonials />
-        <ResearchBlog />
+        <Marketplace products={products} />
+        <Experts practitioners={practitioners} />
+        <Testimonials testimonials={testimonials} />
+        <ResearchBlog articles={articles} />
         <AppCTA />
         <Newsletter />
         <FinalCTA />

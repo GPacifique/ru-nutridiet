@@ -6,33 +6,51 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-       Schema::create('certificates', function (Blueprint $table) {
-    $table->id();
+        Schema::create('certificates', function (Blueprint $table) {
+            $table->id();
 
-    $table->foreignId('user_id')
-        ->constrained()
-        ->cascadeOnDelete();
+            // USER WHO EARNED THE CERTIFICATE
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
 
-    $table->foreignId('course_id')
-        ->constrained()
-        ->cascadeOnDelete();
+            // COMPLETED COURSE
+            $table->foreignId('course_id')
+                ->constrained('courses')
+                ->cascadeOnDelete();
 
-    $table->string('certificate_number')->unique();
+            // PASSED EXAM ATTEMPT
+            $table->foreignId('exam_attempt_id')
+                ->nullable()
+                ->constrained('exam_attempts')
+                ->nullOnDelete();
 
-    $table->timestamp('issued_at');
+            // CERTIFICATE IDENTIFICATION
+            $table->string('certificate_number')
+                ->unique();
 
-    $table->timestamps();
-});
+            // PROFESSIONAL CREDIT HOURS
+            $table->decimal('credit_hours', 8, 2);
+
+            // ISSUE DATE
+            $table->timestamp('issued_at')
+                ->nullable();
+
+            // PUBLIC VERIFICATION CODE
+            $table->string('verification_code')
+                ->unique();
+
+            $table->timestamps();
+
+            $table->unique([
+    'user_id',
+    'course_id',
+]);
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('certificates');
