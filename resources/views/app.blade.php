@@ -7,7 +7,40 @@
 
     {{-- Basic SEO --}}
     <title inertia>{{ config('app.name', 'Runutridiet') }}</title>
+<title inertia>{{ config('app.name', 'RUNUTRIDIET') }}</title>
 
+<meta
+    name="description"
+    content="RUNUTRIDIET provides evidence-based clinical nutrition care, professional education, CPD courses, certifications, lifestyle coaching, and personalized nutrition programs."
+/>
+
+<meta name="keywords" content="nutrition, dietitian, clinical nutrition, CPD courses, nutrition education, lifestyle coaching, Rwanda, RUNUTRIDIET">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RUNUTRIDIET">
+<meta property="og:title" content="RUNUTRIDIET — Clinical Nutrition & Professional Education">
+<meta
+    property="og:description"
+    content="Evidence-based nutrition care, accredited CPD training, professional certifications, and personalized health programs."
+>
+<meta property="og:url" content="https://runutridiet.com/">
+<meta property="og:image" content="https://runutridiet.com/images/runutridiet-social-preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="RUNUTRIDIET — Clinical Nutrition & Professional Education">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RUNUTRIDIET — Clinical Nutrition & Professional Education">
+<meta
+    name="twitter:description"
+    content="Evidence-based nutrition care, CPD training, professional certifications, and personalized nutrition programs."
+>
+<meta name="twitter:image" content="https://runutridiet.com/images/runutridiet-social-preview.jpg">
+
+<!-- Mobile -->
+<meta name="theme-color" content="#047857">
     <meta
         name="description"
         content="RUNUTRIDIET helps you improve your nutrition, fitness, healthy lifestyle and overall wellbeing through expert guidance, courses and personalized coaching."
