@@ -43,6 +43,8 @@ use App\Http\Controllers\PaymentController as LearnerPaymentController;
 use App\Http\Controllers\EnrollmentController as LearnerEnrollmentController;
 use App\Http\Controllers\CourseEnrollmentController;
 
+Route::get('/blog/{slug}', [BlogController::class, 'show'])
+    ->name('blog.show');
 
 Route::middleware('auth')
 ->prefix('learner')
