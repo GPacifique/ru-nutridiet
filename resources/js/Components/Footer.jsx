@@ -106,12 +106,12 @@ export default function Footer() {
                     <div className="space-y-3 text-sm">
                         <p className="flex items-center gap-2">
                             <FaEnvelope className="text-blue-400" />
-                            support@inzunest.com
+                            support@runutridiet.com
                         </p>
 
                         <p className="flex items-center gap-2">
                             <FaPhoneAlt className="text-blue-400" />
-                            +250 787 457 398
+                            +250 785 221 105
                         </p>
 
                         <p className="flex items-center gap-2">

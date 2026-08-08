@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "@inertiajs/react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
+import ApplicationLogo from "@/Components/ApplicationLogo"
 import {
   Menu,
   X,
@@ -182,6 +183,11 @@ const SERVICES = [
     desc: "A dietitian walks you through your bloodwork in plain language and turns it into next steps.",
     icon: FlaskConical,
   },
+  {
+    title: "Lifestyle Coaching",
+    desc: "Ongoing, one-on-one coaching on sleep, stress, and daily habits, built to support your nutrition plan long term.",
+    icon: Sparkles,
+  },
 ];
 
 const WHY_CHOOSE_US = [
@@ -237,7 +243,7 @@ const CPD_COURSES = [
   },
   {
     title: "Diabetes Nutrition Management",
-    instructor: "Dr. Samuel Okoro, RD, CDE",
+    instructor: "ALPHONSINE KANZAYIRE, RD, CDE",
     credits: 12,
     duration: "6 weeks",
     students: "2,410",
@@ -311,14 +317,14 @@ const WEBINARS = [
     title: "Nutrition Strategy for Type 2 Remission",
     date: "Sep 4, 2026",
     time: "6:00 PM CAT",
-    speaker: "Dr. Samuel Okoro, RD, CDE",
+    speaker: "ALPHONSINE KANZAYIRE, RD, CDE",
     img: "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=700&q=80&auto=format&fit=crop",
   },
   {
     title: "Building a Corporate Wellness Program That Sticks",
     date: "Sep 18, 2026",
     time: "4:00 PM CAT",
-    speaker: "Grace Mwangi, MPH, RD",
+    speaker: "ALPHONSINE KANZAYIRE, MPH, RD",
     img: "https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=700&q=80&auto=format&fit=crop",
   },
 ];
@@ -334,28 +340,28 @@ const MARKETPLACE_CATEGORIES = [
 
 const EXPERTS = [
   {
-    name: "Dr. Amara Nkusi",
+    name: "ALPHONSINE KANZAYIRE",
     qualification: "RD, PhD",
     focus: "Clinical Nutrition",
     experience: "14 yrs",
     img: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=500&q=80&auto=format&fit=crop",
   },
   {
-    name: "Dr. Samuel Okoro",
+    name: "ALPHONSINE KANZAYIRE",
     qualification: "RD, CDE",
     focus: "Diabetes & Metabolic Health",
     experience: "11 yrs",
     img: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=500&q=80&auto=format&fit=crop",
   },
   {
-    name: "Dr. Priya Raman",
+    name: "ALPHONSINE KANZAYIRE",
     qualification: "RD",
     focus: "Renal Nutrition",
     experience: "9 yrs",
     img: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=500&q=80&auto=format&fit=crop",
   },
   {
-    name: "Coach Lena Bauer",
+    name: "ALPHONSINE KANZAYIRE",
     qualification: "MSc Sports Nutrition",
     focus: "Athletic Performance",
     experience: "8 yrs",
@@ -542,15 +548,13 @@ function Navbar() {
         scrolled ? "border-slate-200 bg-white/90 backdrop-blur-md shadow-sm" : "border-transparent bg-white/70 backdrop-blur-sm"
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
-        <a href="#home" className="flex items-center gap-2" aria-label="RUNUTRIDIET home">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-emerald-700 text-white shadow-sm">
-            <Sparkle className="h-5 w-5" aria-hidden="true" />
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 lg:px-8">
+        <Link href="/" className="flex items-center gap-2.5">
+          <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-white-700 text-white">
+            <ApplicationLogo className="block h-9 w-9 max-h-6 max-w-6 object-contain" />
           </span>
-          <span className="font-display text-lg font-semibold tracking-tight text-slate-900">
-            RUNUTRIDIET
-          </span>
-        </a>
+         
+        </Link>
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
           {NAV_LINKS.map((link) => (
@@ -1236,9 +1240,9 @@ function Experts() {
         </Reveal>
 
         <Stagger className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {EXPERTS.map((expert) => (
+          {EXPERTS.map((expert, i) => (
             <motion.div
-              key={expert.name}
+              key={expert.id ?? `${expert.name}-${i}`}
               variants={fadeUp}
               className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-900/5 transition-shadow hover:shadow-lg"
             >
@@ -1564,8 +1568,8 @@ function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(5,1fr)] lg:gap-8">
           <div>
             <div className="flex items-center gap-2">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-emerald-700 text-white">
-                <Sparkle className="h-5 w-5" aria-hidden="true" />
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-white text-white">
+                <ApplicationLogo className="h-5 w-5" aria-hidden="true" />
               </span>
               <span className="font-display text-lg font-semibold text-slate-900">
                 RUNUTRIDIET
@@ -1580,7 +1584,7 @@ function Footer() {
                 <Mail className="h-4 w-4 text-emerald-700" aria-hidden="true" /> info@runutridiet.com
               </p>
               <p className="inline-flex items-center gap-2">
-                <Phone className="h-4 w-4 text-emerald-700" aria-hidden="true" /> +250785221105
+                <Phone className="h-4 w-4 text-emerald-700" aria-hidden="true" /> +250 785 221 105
               </p>
               <p className="inline-flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-emerald-700" aria-hidden="true" /> Kigali, Rwanda

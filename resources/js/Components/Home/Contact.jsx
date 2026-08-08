@@ -53,7 +53,7 @@ export default function Contact() {
                                 </h3>
 
                                 <p>
-                                    +250 XXX XXX XXX
+                                     +250 785 221 105
                                 </p>
                             </div>
 

@@ -12,7 +12,7 @@ export default function Footer() {
                     {/* Brand */}
                     <div>
                         <h2 className="text-2xl font-bold mb-4">
-                            RUNUTRIDIET-CPT
+                            <ApplicationLogo className="block h-10 w-10 max-h-6 max-w-6 object-contain" />
                         </h2>
 
                         <p className="text-green-100 leading-relaxed">
@@ -104,7 +104,7 @@ export default function Footer() {
                             </li>
 
                             <li>
-                                📞 +250 XXX XXX XXX
+                                📞 +250 785 221 105
                             </li>
 
                             <li>
