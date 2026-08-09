@@ -36,7 +36,7 @@ export default function Show({
 
     const enroll = () => {
         router.post(
-            route('courses.enroll', course.id),
+            route('learner.courses.enroll', course.id),
             {},
             {
                 preserveScroll: true,
@@ -50,8 +50,8 @@ export default function Show({
 
             <div className="space-y-8">
                 {/* Back */}
-                <Link
-                    href={route('courses.catalog')}
+                <Link 
+                    href={route('courses.index')}
                     className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
                 >
                     <ArrowLeft className="h-4 w-4" />

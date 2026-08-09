@@ -10,11 +10,13 @@ return new class extends Migration
     {
         Schema::create('practitioners', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('SET NULL');
 
             // Basic information
             $table->string('name');
             $table->string('slug')->unique();
-
+            $table->string('speciality')->nullable();
             // Professional information
             $table->string('qualification')->nullable();
             $table->string('focus')->nullable();

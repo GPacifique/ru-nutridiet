@@ -27,7 +27,7 @@ export default function Catalog({
         e.preventDefault();
 
         router.get(
-            route('courses.catalog'),
+            route('courses.index'),
             {
                 search,
                 credit_type: creditType,
@@ -43,7 +43,7 @@ export default function Catalog({
         setSearch('');
         setCreditType('');
 
-        router.get(route('courses.catalog'));
+        router.get(route('courses.index'));
     };
 
     const formatPrice = (price) => {

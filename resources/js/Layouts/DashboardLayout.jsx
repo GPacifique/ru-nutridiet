@@ -143,7 +143,7 @@ export default function DashboardLayout({ children }) {
                             </p>
 
                             <p className="text-sm text-gray-500">
-                                Patient
+                                Client
                             </p>
 
                         </div>

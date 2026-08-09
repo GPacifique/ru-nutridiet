@@ -249,7 +249,7 @@ class CourseEnrollmentController extends Controller
         $enrollment->update($validated);
 
         return redirect()
-            ->route('courseenrollments.index')
+            ->route('learner.courseenrollments.index')
             ->with(
                 'success',
                 'Course enrollment updated successfully.'
@@ -265,7 +265,7 @@ class CourseEnrollmentController extends Controller
         $enrollment->delete();
 
         return redirect()
-            ->route('courseenrollments.index')
+            ->route('learner.courseenrollments.index')
             ->with(
                 'success',
                 'Course enrollment deleted successfully.'

@@ -85,8 +85,8 @@ const NAV_LINKS = [
 ];
 
 const HERO_STATS = [
-  { value: "4.9", suffix: "/5", label: "Patient rating", icon: Star },
-  { value: "20,000", suffix: "+", label: "Patients served", icon: Users },
+  { value: "4.9", suffix: "/5", label: "Client rating", icon: Star },
+  { value: "20,000", suffix: "+", label: "Clients served", icon: Users },
   { value: "8,000", suffix: "+", label: "Professionals trained", icon: GraduationCap },
   { value: "150", suffix: "+", label: "CPD courses", icon: BookOpen },
 ];
@@ -203,7 +203,7 @@ const WHY_CHOOSE_US = [
 ];
 
 const STATISTICS = [
-  { value: 20000, suffix: "+", label: "Patients served" },
+  { value: 20000, suffix: "+", label: "Clients served" },
   { value: 150, suffix: "+", label: "Courses" },
   { value: 8000, suffix: "+", label: "Certificates issued" },
   { value: 35, suffix: "+", label: "Nutrition experts" },
@@ -436,7 +436,7 @@ function Navbar() {
             Register
           </Link>
           <a
-            href="#book"
+            href="/book"
             className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-emerald-800/20 transition-transform hover:-translate-y-0.5 hover:bg-emerald-800"
           >
             Book Consultation
@@ -490,7 +490,7 @@ function Navbar() {
                   Register
                 </Link>
                 <a
-                  href="#book"
+                  href="/book"
                   className="rounded-full bg-emerald-700 px-4 py-2.5 text-center text-sm font-semibold text-white"
                 >
                   Book Consultation
@@ -549,7 +549,7 @@ function Hero() {
 
           <div className="mt-8 flex flex-wrap gap-3">
             <a
-              href="#book"
+              href="/book"
               className="inline-flex items-center gap-2 rounded-full bg-emerald-700 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-emerald-800/20 transition-transform hover:-translate-y-0.5 hover:bg-emerald-800"
             >
               Book Consultation
@@ -580,7 +580,7 @@ function Hero() {
           <div className="relative overflow-hidden rounded-[2rem] shadow-2xl shadow-emerald-900/10 ring-1 ring-slate-100">
             <img
               src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1000&q=80&auto=format&fit=crop"
-              alt="Registered dietitian reviewing a nutrition plan with a patient in a bright clinic room"
+              alt="Registered dietitian reviewing a nutrition plan with a client in a bright clinic room"
               className="h-[420px] w-full object-cover sm:h-[480px]"
             />
           </div>
@@ -596,7 +596,7 @@ function Hero() {
                 <Star key={i} className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
               ))}
             </div>
-            <Readout value="4.9 / 5" label="Patient rating" className="mt-1" />
+            <Readout value="4.9 / 5" label="Client rating" className="mt-1" />
           </motion.div>
         </motion.div>
       </div>
@@ -676,7 +676,7 @@ function About() {
             </h2>
             <p className="mt-5 text-base leading-relaxed text-slate-600">
               RUNUTRIDIET began as a single nutrition clinic and grew into an
-              integrated platform because our patients and our students kept
+              integrated platform because our clients and our students kept
               asking for the same thing: care and education they could
               actually trust. Today we run clinical consultations,
               corporate wellness programs, and an accredited CPD academy
@@ -767,7 +767,7 @@ function Services() {
                 {service.desc}
               </p>
               <a
-                href="#book"
+                href="/services"
                 className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
               >
                 Learn more
@@ -917,7 +917,7 @@ function CPDAcademy({ courses = [] }) {
           </Reveal>
           <div id="courses" className="flex gap-3">
             <a
-              href="#all-courses"
+              href="/courses"
               className="rounded-full bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800"
             >
               Browse Courses
@@ -1192,7 +1192,7 @@ function Experts({ practitioners = [] }) {
                   <p className="mt-2 text-sm text-slate-600">{expert.focus}</p>
                   <Readout value={expert.experience} label="Experience" className="mt-3" />
                   <a
-                    href="#book"
+                    href="/book"
                     className="mt-4 inline-flex w-full items-center justify-center rounded-full border border-slate-300 py-2.5 text-xs font-semibold text-slate-700 transition-colors hover:border-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"
                   >
                     Book Appointment
@@ -1234,7 +1234,7 @@ function Testimonials({ testimonials = [] }) {
   const current = testimonials[index];
 
   return (
-    <section className="py-20 lg:py-28" aria-roledescription="carousel" aria-label="Patient and professional testimonials">
+    <section className="py-20 lg:py-28" aria-roledescription="carousel" aria-label="Client and professional testimonials">
       <div className="mx-auto max-w-4xl px-5 text-center lg:px-8">
         <Quote className="mx-auto h-9 w-9 text-emerald-200" aria-hidden="true" />
         <AnimatePresence mode="wait">
@@ -1485,7 +1485,7 @@ function FinalCTA() {
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <a
-              href="#book-now"
+              href="/book"
               className="inline-flex items-center gap-2 rounded-full bg-emerald-700 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-emerald-800/20 transition-transform hover:-translate-y-0.5 hover:bg-emerald-800"
             >
               Book Consultation

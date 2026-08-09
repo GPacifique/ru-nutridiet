@@ -27,16 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\HandleInertiaRequests::class,
         ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | Role Middleware Aliases (YOUR SYSTEM)
-        |--------------------------------------------------------------------------
-        | admin  -> full system control
-        | agent  -> manages properties + inquiries
-        | owner  -> posts properties
-        | buyer  -> views + favorites + inquiries
-        |--------------------------------------------------------------------------
-        */
+       
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
@@ -45,3 +36,5 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
+
+   

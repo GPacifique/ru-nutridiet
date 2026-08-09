@@ -33,7 +33,9 @@ return new class extends Migration
 
             $table->timestamp('completed_at')
                 ->nullable();
-
+              $table->timestamp('expired_at')
+                ->nullable();
+                $table->enum('status', ['in_progress', 'completed', 'expired'])->default('in_progress');
             $table->timestamps();
         });
     }

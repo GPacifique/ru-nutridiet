@@ -1,7 +1,13 @@
 <?php
 
 namespace App\Models;
-
+use App\Models\User;
+use App\Models\CourseLesson;
+use App\Models\Exam;
+use App\Models\CourseEnrollment;
+use App\Models\CreditRecord;
+use App\Models\Certificate;
+use App\Models\CourseCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
@@ -81,4 +87,8 @@ public function courselesson(): BelongsTo
             'courselesson_id'
         );
     }
+    public function category(): BelongsTo
+{
+    return $this->belongsTo(CourseCategory::class);
+}
 }

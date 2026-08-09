@@ -46,10 +46,10 @@ class ReportController extends Controller
             ->whereBetween('created_at', [$startDate, $endDate])
             ->count();
 
-        $certificates = Certificate::query()
-            ->where('status', 'issued')
-            ->whereBetween('issued_at', [$startDate, $endDate])
-            ->count();
+        
+            $certificates = Certificate::query()
+    ->whereBetween('issued_at', [$startDate, $endDate])
+    ->count();
 
         $newLearners = User::query()
             ->where('role', 'learner')

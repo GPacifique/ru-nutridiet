@@ -20,7 +20,7 @@ return new class extends Migration
         ->nullOnDelete();
 
     $table->string('name');
-    $table->string('role')->nullable(); // Patient, Nutritionist, CPD Learner, etc.
+    $table->string('role')->nullable(); // Client, Nutritionist, CPD Learner, etc.
     $table->string('title')->nullable(); // e.g. "Weight Management Journey"
     $table->text('content');
 
@@ -30,11 +30,13 @@ return new class extends Migration
     $table->string('image')->nullable();
 
     $table->enum('type', [
-        'patient',
-        'professional',
-        'cpd',
-        'corporate',
-    ])->default('patient');
+        'client',
+        'instructor',
+        'practitioner',
+        'staff',
+        'super-admin',
+        'admin',
+    ])->default('client');
 
     $table->boolean('is_featured')->default(false);
     $table->boolean('is_approved')->default(false);

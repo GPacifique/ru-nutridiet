@@ -67,10 +67,12 @@ class TestimonialController extends Controller
     {
         return Inertia::render('Admin/Testimonials/Create', [
             'types' => [
-                'patient',
-                'professional',
-                'cpd',
-                'corporate',
+                'client',
+                'instructor',
+                'practitioner',
+                'staff',
+                'super-admin',
+                'admin',
             ],
         ]);
     }
@@ -126,7 +128,7 @@ class TestimonialController extends Controller
 
             'type' => [
                 'required',
-                'in:patient,professional,cpd,corporate',
+                'in:client,instructor,practitioner,staff,super-admin,admin',
             ],
 
             'is_featured' => [
@@ -175,10 +177,12 @@ class TestimonialController extends Controller
         return Inertia::render('Admin/Testimonials/Edit', [
             'testimonial' => $testimonial,
             'types' => [
-                'patient',
-                'professional',
-                'cpd',
-                'corporate',
+                'client',
+                'instructor',
+                'practitioner',
+                'staff',
+                'super-admin',
+                'admin',
             ],
         ]);
     }
@@ -234,7 +238,7 @@ class TestimonialController extends Controller
 
             'type' => [
                 'required',
-                'in:patient,professional,cpd,corporate',
+                'in:client,instructor,practitioner,staff,super-admin,admin',
             ],
 
             'is_featured' => [

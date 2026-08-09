@@ -163,7 +163,7 @@ export default function Dashboard({
                     </Link>
 
                     <Link
-                        href={route('certificates.index')}
+                        href={route('learner.certificates.index')}
                         className="group flex items-center justify-between rounded-xl bg-green-600 p-5 text-white transition hover:bg-green-700"
                     >
                         <div className="flex items-center gap-4">

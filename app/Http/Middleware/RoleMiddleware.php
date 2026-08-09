@@ -8,12 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class RoleMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * Roles supported:
-     * admin, agent, owner, buyer
-     */
+    
     public function handle(Request $request, Closure $next, ...$roles)
     {
         // 1. Check if user is logged in

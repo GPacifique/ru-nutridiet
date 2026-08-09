@@ -337,7 +337,7 @@ export default function Results({
                     </Link>
 
                     <Link
-                        href={route('courses.catalog')}
+                        href={route('courses.index')}
                         className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-700"
                     >
                         <BookOpen className="h-4 w-4" />

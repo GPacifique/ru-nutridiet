@@ -32,7 +32,7 @@ export default function Index({ courses = defaultCourses }) {
     const [query, setQuery] = useState('');
 
     const filtered = useMemo(() => {
-        return courses.filter((c) => {
+        return courses.data.filter((c) => {
             const matchesFilter = filter === 'all' || c.status === filter;
             const matchesQuery = c.title.toLowerCase().includes(query.toLowerCase());
             return matchesFilter && matchesQuery;

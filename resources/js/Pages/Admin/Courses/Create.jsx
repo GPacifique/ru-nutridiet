@@ -2,11 +2,6 @@ import { Link, useForm } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 import AdminLayout from '@/Layouts/AdminLayout';
 
-const defaultCreditTypes = [
-    { id: 1, name: 'CPEU' },
-    { id: 2, name: 'State CE' },
-];
-
 function slugify(text) {
     return text
         .toLowerCase()
@@ -31,33 +26,23 @@ function Field({ label, htmlFor, error, hint, children }) {
 const inputClass =
     'w-full rounded border border-[#D8DDD5] bg-white px-3 py-2 text-sm text-[#1F2A24] placeholder:text-[#98A398] focus:border-[#2F6F5E] focus:outline-none focus:ring-2 focus:ring-[#2F6F5E]/20';
 
-export default function Create({ creditTypes = defaultCreditTypes }) {
-    const { data, setData, post, processing, errors, transform } = useForm({
+// `categories` comes from Admin\CourseController@create,
+// which passes CourseCategory::orderBy('name')->get(['id', 'name'])
+export default function Create({ categories = [] }) {
+    const { data, setData, post, processing, errors } = useForm({
         title: '',
-        slug: '',
+        course_category_id: categories[0]?.id ?? '',
         description: '',
-        credit_type_id: creditTypes[0]?.id ?? '',
-        credit_hours: '',
         price: '',
-        status: 'draft',
+        thumbnail: null,
+        is_published: false,
     });
-
-    // Slug follows the title until someone edits it directly.
-    function handleTitleChange(value) {
-        setData((prevData) => ({
-            ...prevData,
-            title: value,
-            slug: prevData._slugEdited ? prevData.slug : slugify(value),
-        }));
-    }
 
     function submit(e) {
         e.preventDefault();
-        transform((formData) => {
-            const { _slugEdited, ...rest } = formData;
-            return rest;
+        post('/admin/courses', {
+            forceFormData: true, // required so the thumbnail file uploads correctly
         });
-        post('/admin/courses');
     }
 
     return (
@@ -78,26 +63,30 @@ export default function Create({ creditTypes = defaultCreditTypes }) {
                                 id="title"
                                 type="text"
                                 value={data.title}
-                                onChange={(e) => handleTitleChange(e.target.value)}
+                                onChange={(e) => setData('title', e.target.value)}
                                 placeholder="e.g. Clinical Nutrition Assessment"
                                 className={inputClass}
                             />
                         </Field>
 
                         <Field
-                            label="Slug"
-                            htmlFor="slug"
-                            error={errors.slug}
-                            hint="Used in the public course URL — auto-filled from the title, editable if you want something shorter."
+                            label="Category"
+                            htmlFor="course_category_id"
+                            error={errors.course_category_id}
+                            hint={categories.length === 0 ? 'No categories yet — create one first.' : undefined}
                         >
-                            <input
-                                id="slug"
-                                type="text"
-                                value={data.slug}
-                                onChange={(e) => setData((d) => ({ ...d, slug: e.target.value, _slugEdited: true }))}
-                                placeholder="clinical-nutrition-assessment"
-                                className={`${inputClass} font-['IBM_Plex_Mono']`}
-                            />
+                            <select
+                                id="course_category_id"
+                                value={data.course_category_id}
+                                onChange={(e) => setData('course_category_id', Number(e.target.value))}
+                                className={inputClass}
+                            >
+                                {categories.map((cat) => (
+                                    <option key={cat.id} value={cat.id}>
+                                        {cat.name}
+                                    </option>
+                                ))}
+                            </select>
                         </Field>
 
                         <Field label="Description" htmlFor="description" error={errors.description}>
@@ -111,62 +100,38 @@ export default function Create({ creditTypes = defaultCreditTypes }) {
                             />
                         </Field>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <Field label="Credit type" htmlFor="credit_type_id" error={errors.credit_type_id}>
-                                <select
-                                    id="credit_type_id"
-                                    value={data.credit_type_id}
-                                    onChange={(e) => setData('credit_type_id', Number(e.target.value))}
-                                    className={inputClass}
-                                >
-                                    {creditTypes.map((ct) => (
-                                        <option key={ct.id} value={ct.id}>
-                                            {ct.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </Field>
+                        <Field label="Price (USD)" htmlFor="price" error={errors.price}>
+                            <input
+                                id="price"
+                                type="number"
+                                step="1"
+                                min="0"
+                                value={data.price}
+                                onChange={(e) => setData('price', e.target.value)}
+                                placeholder="89"
+                                className={`${inputClass} font-['IBM_Plex_Mono']`}
+                            />
+                        </Field>
 
-                            <Field label="Credit hours" htmlFor="credit_hours" error={errors.credit_hours}>
-                                <input
-                                    id="credit_hours"
-                                    type="number"
-                                    step="0.5"
-                                    min="0"
-                                    value={data.credit_hours}
-                                    onChange={(e) => setData('credit_hours', e.target.value)}
-                                    placeholder="3"
-                                    className={`${inputClass} font-['IBM_Plex_Mono']`}
-                                />
-                            </Field>
-                        </div>
+                        <Field label="Thumbnail" htmlFor="thumbnail" error={errors.thumbnail} hint="JPG, PNG, or WEBP, up to 2MB.">
+                            <input
+                                id="thumbnail"
+                                type="file"
+                                accept="image/png,image/jpeg,image/webp"
+                                onChange={(e) => setData('thumbnail', e.target.files[0] ?? null)}
+                                className={inputClass}
+                            />
+                        </Field>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <Field label="Price (USD)" htmlFor="price" error={errors.price}>
-                                <input
-                                    id="price"
-                                    type="number"
-                                    step="1"
-                                    min="0"
-                                    value={data.price}
-                                    onChange={(e) => setData('price', e.target.value)}
-                                    placeholder="89"
-                                    className={`${inputClass} font-['IBM_Plex_Mono']`}
-                                />
-                            </Field>
-
-                            <Field label="Status" htmlFor="status" error={errors.status} hint="You can publish later once lessons and the exam are ready.">
-                                <select
-                                    id="status"
-                                    value={data.status}
-                                    onChange={(e) => setData('status', e.target.value)}
-                                    className={inputClass}
-                                >
-                                    <option value="draft">Draft</option>
-                                    <option value="published">Published</option>
-                                </select>
-                            </Field>
-                        </div>
+                        <label className="flex items-center gap-2 text-sm text-[#1F2A24]">
+                            <input
+                                type="checkbox"
+                                checked={data.is_published}
+                                onChange={(e) => setData('is_published', e.target.checked)}
+                                className="h-4 w-4 rounded border-[#D8DDD5] text-[#2F6F5E] focus:ring-[#2F6F5E]/20"
+                            />
+                            Publish immediately
+                        </label>
                     </div>
                 </div>
 

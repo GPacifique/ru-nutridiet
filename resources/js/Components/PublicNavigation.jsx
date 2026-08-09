@@ -1,172 +1,162 @@
-import React, { useState } from "react";
-import { Link } from "@inertiajs/react";
-import {
-  FaChevronDown,
-  FaHeart,
-  FaPlus,
-  FaUser,
-} from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { Link, usePage } from "@inertiajs/react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X } from "lucide-react";
+import ApplicationLogo from "@/Components/ApplicationLogo";
 
-export default function Navbar() {
-  const [openDropdown, setOpenDropdown] = useState(null);
+/* ------------------------------------------------------------------ */
+/*  PublicNav — shared header for public-facing pages                  */
+/*                                                                     */
+/*  Extracted from Home.jsx's Navbar so every public page (Home,       */
+/*  Courses/Index, Courses/Show, Blog, etc.) shares one nav instead    */
+/*  of each page re-declaring its own copy. Same "clinical readout"    */
+/*  language: Space Grotesk display, emerald accent, sticky/blurred    */
+/*  on scroll.                                                         */
+/*                                                                     */
+/*  Section anchors (#services, #academy, etc.) only resolve on the    */
+/*  homepage. On other pages they link back to "/" + the hash so       */
+/*  clicking "Services" from /courses still lands on the right         */
+/*  section instead of doing nothing.                                  */
+/* ------------------------------------------------------------------ */
 
-  const toggleDropdown = (menu) => {
-    setOpenDropdown(openDropdown === menu ? null : menu);
+const NAV_LINKS = [
+  { label: "Home", href: "/" },
+  { label: "Clinic", href: "/#clinic" },
+  { label: "Services", href: "/#services" },
+  { label: "CPD Academy", href: "/#academy" },
+  { label: "Courses", href: "/courses" },
+  { label: "Marketplace", href: "/#marketplace" },
+  { label: "Research", href: "/#research" },
+  { label: "Contact", href: "/#contact" },
+];
+
+export default function PublicNav() {
+  const { url } = usePage();
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const isActive = (href) => {
+    if (href === "/") return url === "/";
+    if (href.startsWith("/#")) return false; // section anchors never "active" off-page
+    return url.startsWith(href);
   };
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex justify-between items-center h-20">
+    <header
+      className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
+        scrolled
+          ? "border-slate-200 bg-white/90 backdrop-blur-md shadow-sm"
+          : "border-transparent bg-white/70 backdrop-blur-sm"
+      }`}
+    >
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 lg:px-8">
+        <Link href="/" className="flex items-center gap-2.5">
+          <span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl text-white">
+            <ApplicationLogo className="block h-12 w-12 max-h-12 max-w-12 object-contain" />
+          </span>
+        </Link>
 
-          {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-blue-600">
-            InzuNest
+        <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              className={`text-sm font-medium transition-colors hover:text-emerald-700 focus-visible:text-emerald-700 ${
+                isActive(link.href) ? "text-emerald-700" : "text-slate-600"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="hidden items-center gap-3 lg:flex">
+          <Link
+            href="/login"
+            className="text-sm font-medium text-slate-600 hover:text-emerald-700"
+          >
+            Login
           </Link>
-
-          {/* Navigation Links */}
-          <div className="hidden md:flex items-center gap-8">
-
-            {/* Categories Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => toggleDropdown("categories")}
-                className="flex items-center gap-1 hover:text-blue-600"
-              >
-                Categories <FaChevronDown size={12} />
-              </button>
-
-              {openDropdown === "categories" && (
-                <div className="absolute top-10 left-0 bg-white shadow-lg rounded-lg w-48 py-2">
-                  <Link href="/rent-properties" className="block px-4 py-2 hover:bg-gray-100">
-                    Houses for Rent
-                  </Link>
-                  <Link href="/sale-properties" className="block px-4 py-2 hover:bg-gray-100">
-                    Houses for Sale
-                  </Link>
-                  <Link href="/apartments" className="block px-4 py-2 hover:bg-gray-100">
-                    Apartments
-                  </Link>
-                  <Link href="/land" className="block px-4 py-2 hover:bg-gray-100">
-                    Land
-                  </Link>
-                  <Link href="/car" className="block px-4 py-2 hover:bg-gray-100">
-                    Car
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            {/* Support Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => toggleDropdown("support")}
-                className="flex items-center gap-1 hover:text-blue-600"
-              >
-                Support <FaChevronDown size={12} />
-              </button>
-
-              {openDropdown === "support" && (
-                <div className="absolute top-10 left-0 bg-white shadow-lg rounded-lg w-48 py-2">
-                  <Link href="/help-center" className="block px-4 py-2 hover:bg-gray-100">
-                    Help Center
-                  </Link>
-                  <Link href="/contact" className="block px-4 py-2 hover:bg-gray-100">
-                    Contact Us
-                  </Link>
-                  <Link href="/faq" className="block px-4 py-2 hover:bg-gray-100">
-                    FAQs
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            {/* Legal Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => toggleDropdown("legal")}
-                className="flex items-center gap-1 hover:text-blue-600"
-              >
-                Legal <FaChevronDown size={12} />
-              </button>
-
-              {openDropdown === "legal" && (
-                <div className="absolute top-10 left-0 bg-white shadow-lg rounded-lg w-48 py-2">
-                  <Link href="/privacy-policy" className="block px-4 py-2 hover:bg-gray-100">
-                    Privacy Policy
-                  </Link>
-                  <Link href="/terms" className="block px-4 py-2 hover:bg-gray-100">
-                    Terms & Conditions
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            {/* Static Links */}
-            <Link href="/how-it-works" className="hover:text-blue-600">
-              How It Works
-            </Link>
-
-            <Link href="/about" className="hover:text-blue-600">
-              About
-            </Link>
-
-            {/* Language Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => toggleDropdown("language")}
-                className="flex items-center gap-1 hover:text-blue-600"
-              >
-                🇺🇸 English <FaChevronDown size={12} />
-              </button>
-
-              {openDropdown === "language" && (
-                <div className="absolute top-10 right-0 bg-white shadow-lg rounded-lg w-40 py-2">
-                  <button className="block w-full text-left px-4 py-2 hover:bg-gray-100">
-                    🇺🇸 English
-                  </button>
-                  <button className="block w-full text-left px-4 py-2 hover:bg-gray-100">
-                    🇷🇼 Kinyarwanda
-                  </button>
-                  <button className="block w-full text-left px-4 py-2 hover:bg-gray-100">
-                    🇫🇷 French
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Right Side Actions */}
-          <div className="flex items-center gap-4">
-
-            <Link
-              href="/favorites"
-              className="flex items-center gap-2 hover:text-red-500"
-            >
-              <FaHeart />
-              <span className="hidden md:block">Favorites</span>
-            </Link>
-
-            <Link
-              href="/owner/properties/create"
-              className="bg-blue-600 text-white px-4 py-2 rounded-full flex items-center gap-2 hover:bg-blue-700"
-            >
-              <FaPlus />
-              Create Listing
-            </Link>
-
-            <Link
-              href="/login"
-              className="flex items-center gap-2 border px-4 py-2 rounded-full hover:bg-gray-100"
-            >
-              <FaUser />
-              Login
-            </Link>
-
-          </div>
-
+          <Link
+            href="/register"
+            className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-emerald-600 hover:text-emerald-700"
+          >
+            Register
+          </Link>
+          <Link
+            href="/book"
+            className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-emerald-800/20 transition-transform hover:-translate-y-0.5 hover:bg-emerald-800"
+          >
+            Book Consultation
+          </Link>
         </div>
+
+        <button
+          type="button"
+          className="grid h-10 w-10 place-items-center rounded-lg text-slate-700 lg:hidden"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          onClick={() => setOpen((o) => !o)}
+        >
+          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
       </div>
-    </nav>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden border-t border-slate-200 bg-white lg:hidden"
+          >
+            <nav className="flex flex-col gap-1 px-5 py-4" aria-label="Mobile">
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className={`rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-emerald-50 hover:text-emerald-700 ${
+                    isActive(link.href) ? "text-emerald-700" : "text-slate-700"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <div className="mt-2 flex flex-col gap-2 border-t border-slate-100 pt-3">
+                <Link
+                  href="/login"
+                  onClick={() => setOpen(false)}
+                  className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setOpen(false)}
+                  className="rounded-full border border-slate-300 px-4 py-2.5 text-center text-sm font-medium text-slate-700"
+                >
+                  Register
+                </Link>
+                <Link
+                  href="/book"
+                  onClick={() => setOpen(false)}
+                  className="rounded-full bg-emerald-700 px-4 py-2.5 text-center text-sm font-semibold text-white"
+                >
+                  Book Consultation
+                </Link>
+              </div>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
   );
 }

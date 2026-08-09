@@ -1,0 +1,83 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Quiz;
+use App\Models\QuizQuestion;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class QuestionController extends Controller
+{
+    public function store(Request $request, Quiz $quiz): RedirectResponse
+    {
+        $validated = $this->validatedQuestion($request);
+
+        DB::transaction(function () use ($quiz, $validated) {
+            $question = $quiz->questions()->create([
+                'question' => $validated['question'],
+                'question_type' => $validated['question_type'],
+                'points' => $validated['points'],
+                'sort_order' => $quiz->questions()->max('sort_order') + 1,
+            ]);
+
+            $this->syncOptions($question, $validated);
+        });
+
+        return back()->with('success', 'Question added.');
+    }
+
+    public function update(Request $request, QuizQuestion $question): RedirectResponse
+    {
+        $validated = $this->validatedQuestion($request);
+
+        DB::transaction(function () use ($question, $validated) {
+            $question->update([
+                'question' => $validated['question'],
+                'question_type' => $validated['question_type'],
+                'points' => $validated['points'],
+            ]);
+
+            $question->options()->delete();
+            $this->syncOptions($question, $validated);
+        });
+
+        return back()->with('success', 'Question updated.');
+    }
+
+    public function destroy(QuizQuestion $question): RedirectResponse
+    {
+        $question->delete(); // options cascade via FK
+
+        return back()->with('success', 'Question removed.');
+    }
+
+    private function validatedQuestion(Request $request): array
+    {
+        return $request->validate([
+            'question' => ['required', 'string'],
+            'question_type' => ['required', 'in:single_choice,multiple_choice,true_false,short_answer'],
+            'points' => ['required', 'integer', 'min:1'],
+            'options' => ['required_unless:question_type,short_answer', 'array', 'min:2'],
+            'options.*.option_text' => ['required', 'string'],
+            'options.*.is_correct' => ['boolean'],
+        ]);
+    }
+
+    private function syncOptions(QuizQuestion $question, array $validated): void
+    {
+        if ($validated['question_type'] === 'short_answer') {
+            return; // short answer has no predefined options
+        }
+
+        foreach ($validated['options'] as $i => $option) {
+            $question->options()->create([
+                'option_text' => $option['option_text'],
+                'is_correct' => $option['is_correct'] ?? false,
+                'sort_order' => $i,
+            ]);
+        }
+    }
+}

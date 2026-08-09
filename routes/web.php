@@ -63,7 +63,13 @@ use App\Http\Controllers\Learner\CertificateController as LearnerCertificateCont
 
 use App\Http\Controllers\CourseEnrollmentController;
 
+use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardController;
+use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
+use App\Http\Controllers\Practitioner\DashboardController as PractitionerDashboardController;
+use App\Http\Controllers\AppointmentController;
 
+Route::get('/book', [AppointmentController::class, 'create'])->name('book');
+Route::post('/book', [AppointmentController::class, 'store'])->name('book.store');
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -90,7 +96,14 @@ Route::get(
     [CertificateVerificationController::class, 'verify']
 )->name('certificate.verify');
 
+Route::post('/quizzes/{quiz}/questions', [QuestionController::class, 'store'])
+    ->name('questions.store');
 
+Route::put('/questions/{question}', [QuestionController::class, 'update'])
+    ->name('questions.update');
+
+Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])
+    ->name('questions.destroy');
 /*
 |--------------------------------------------------------------------------
 | Authenticated Dashboard Redirect
@@ -105,6 +118,11 @@ Route::middleware('auth')->get('/dashboard', function () {
     $user = auth()->user();
 
     return match ($user->role) {
+        'instructor' => redirect()->route('instructor.dashboard'),
+        'practitioner' => redirect()->route('practitioner.dashboard'),
+        'client' => redirect()->route('client.dashboard'),
+        'staff' => redirect()->route('staff.dashboard'),
+        'super-admin' => redirect()->route('superadmin.dashboard'),
 
         'admin' => redirect()->route('admin.dashboard'),
 
@@ -115,7 +133,73 @@ Route::middleware('auth')->get('/dashboard', function () {
     };
 
 })->name('dashboard');
+/*
+|--------------------------------------------------------------------------
+| Instructor Routes
+|--------------------------------------------------------------------------
+*/
 
+Route::middleware([
+    'auth',
+    'verified',
+    'role:instructor'
+])
+    ->prefix('instructor')
+    ->name('instructor.')
+    ->group(function () {
+
+        Route::get('/dashboard', [
+            InstructorDashboardController::class,
+            'index'
+        ])->name('dashboard');
+
+    });
+
+
+/*
+|--------------------------------------------------------------------------
+| Client Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware([
+    'auth',
+    'verified',
+    'role:client'
+])
+    ->prefix('client')
+    ->name('client.')
+    ->group(function () {
+
+        Route::get('/dashboard', [
+            ClientDashboardController::class,
+            'index'
+        ])->name('dashboard');
+
+    });
+
+
+/*
+|--------------------------------------------------------------------------
+| Practitioner Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware([
+    'auth',
+    'verified',
+    'role:practitioner'
+])
+    ->prefix('practitioner')
+    ->name('practitioner.')
+    ->group(function () {
+
+        Route::get('/dashboard', [
+            PractitionerDashboardController::class,
+            'index'
+        ])->name('dashboard');
+
+    });
 
 /*
 |--------------------------------------------------------------------------
