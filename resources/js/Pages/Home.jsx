@@ -402,11 +402,11 @@ function Navbar() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-emerald-700 text-white">
-            <ApplicationLogo className="block h-6 w-6 max-h-6 max-w-6 object-contain" />
+          <span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-white-700 text-white">
+            <ApplicationLogo className="block h-12 w-12 max-h-12 max-w-12 object-contain" />
           </span>
           <span className="font-display text-lg font-semibold tracking-tight text-slate-900">
-            RUNUTRIDIET
+            
           </span>
         </Link>
 
@@ -1513,8 +1513,8 @@ function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(5,1fr)] lg:gap-8">
           <div>
             <div className="flex items-center gap-2">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-emerald-700 text-white">
-                <Sparkle className="h-5 w-5" aria-hidden="true" />
+              <span className="grid h-12 w-12 place-items-center rounded-xl bg-white-700 text-white">
+                <ApplicationLogo className="h-9 w-9" aria-hidden="true" />
               </span>
               <span className="font-display text-lg font-semibold text-slate-900">
                 RUNUTRIDIET
@@ -1566,7 +1566,7 @@ function Footer() {
         </div>
 
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-slate-100 py-6 text-xs text-slate-400 sm:flex-row">
-          <p>&copy; {new Date().getFullYear()} RUNUTRIDIET. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()}  RUNUTRIDIET. All rights reserved.</p>
           <p>Registered dietitians · Licensed clinicians · Accredited CPD provider</p>
         </div>
       </div>
