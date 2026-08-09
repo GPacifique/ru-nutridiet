@@ -2,18 +2,35 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Public Controllers
+/*
+|--------------------------------------------------------------------------
+| Public Controllers
+|--------------------------------------------------------------------------
+*/
+
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CertificateVerificationController;
 
-// Authentication Controllers
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
+/*
+|--------------------------------------------------------------------------
+| Profile / Account Controllers
+|--------------------------------------------------------------------------
+*/
 
-// Admin Controllers
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AccountSettingsController;
+use App\Http\Controllers\AccountSecurityController;
+use App\Http\Controllers\AccountNotificationsController;
+use App\Http\Controllers\AccountBillingController;
+
+/*
+|--------------------------------------------------------------------------
+| Admin Controllers
+|--------------------------------------------------------------------------
+*/
+
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Admin\CourseCategoryController;
@@ -26,80 +43,26 @@ use App\Http\Controllers\Admin\CertificateController as AdminCertificateControll
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ReportController;
 
-// Account Controllers
-use App\Http\Controllers\AccountSettingsController;
-use App\Http\Controllers\AccountSecurityController;
-use App\Http\Controllers\AccountNotificationsController;
-use App\Http\Controllers\AccountBillingController;
+/*
+|--------------------------------------------------------------------------
+| Learner Controllers
+|--------------------------------------------------------------------------
+*/
 
-// Learner Controllers
 use App\Http\Controllers\Learner\DashboardController as LearnerDashboardController;
 use App\Http\Controllers\Learner\CourseController as LearnerCourseController;
 use App\Http\Controllers\Learner\LessonController;
 use App\Http\Controllers\Learner\QuizController as LearnerQuizController;
 use App\Http\Controllers\Learner\CertificateController as LearnerCertificateController;
-use App\Http\Controllers\CertificateController;
-use App\Http\Controllers\PaymentController as LearnerPaymentController;
+
+/*
+|--------------------------------------------------------------------------
+| Course Enrollment
+|--------------------------------------------------------------------------
+*/
+
 use App\Http\Controllers\CourseEnrollmentController;
 
-Route::middleware('auth')
-->prefix('learner')
-->name('learner.')
-->group(function(){
-
-    Route::get('/profile',
-        [ProfileController::class,'edit']
-    )->name('profile.edit');
-
-
-});
-
-
-Route::middleware(['auth'])->prefix('learner')->name('learner.')->group(function () {
-
-    Route::get('/course-enrollments', [
-        CourseEnrollmentController::class,
-        'index'
-    ])->name('courseenrollments.index');
-
-
-});
-
-Route::middleware(['auth'])->group(function () {
-
-    Route::resource(
-        'certificates',
-        CertificateController::class
-    )->only([
-        'index',
-        'show'
-    ]);
-
-});
-
-/*
-|--------------------------------------------------------------------------
-| Authentication Routes
-|--------------------------------------------------------------------------
-| Single source of truth for login/register/logout. Nothing else in this
-| file (and nothing required at the bottom) should redefine these names.
-*/
-
-/*
-|--------------------------------------------------------------------------
-| Post-login landing
-|--------------------------------------------------------------------------
-| Central redirect target so controllers/middleware can send users to
-| "dashboard" without knowing their role in advance.
-*/
-
-Route::middleware('auth')->get('/dashboard', function () {
-    return match (auth()->user()->role) {
-        'admin' => redirect()->route('admin.dashboard'),
-        'learner' => redirect()->route('learner.dashboard'),
-        default => redirect('/'),
-    };
-})->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------
@@ -107,18 +70,52 @@ Route::middleware('auth')->get('/dashboard', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])
+    ->name('home');
 
-Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
-Route::get('/courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
+Route::get('/courses', [CourseController::class, 'index'])
+    ->name('courses.index');
 
-Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
-Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/courses/{course:slug}', [CourseController::class, 'show'])
+    ->name('courses.show');
+
+Route::get('/blog', [BlogController::class, 'index'])
+    ->name('blog.index');
+
+Route::get('/blog/{post:slug}', [BlogController::class, 'show'])
+    ->name('blog.show');
 
 Route::get(
     '/certificate/verify/{code}',
     [CertificateVerificationController::class, 'verify']
 )->name('certificate.verify');
+
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Dashboard Redirect
+|--------------------------------------------------------------------------
+|
+| After login, users are redirected according to their role.
+|
+*/
+
+Route::middleware('auth')->get('/dashboard', function () {
+
+    $user = auth()->user();
+
+    return match ($user->role) {
+
+        'admin' => redirect()->route('admin.dashboard'),
+
+        'learner' => redirect()->route('learner.dashboard'),
+
+        default => redirect()->route('home'),
+
+    };
+
+})->name('dashboard');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -128,15 +125,57 @@ Route::get(
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::get('/profile', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
+    Route::get('/profile', [
+        ProfileController::class,
+        'edit'
+    ])->name('profile.edit');
 
-    Route::patch('/profile', [ProfileController::class, 'update'])
-        ->name('profile.update');
+    Route::patch('/profile', [
+        ProfileController::class,
+        'update'
+    ])->name('profile.update');
 
-    Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->name('profile.destroy');
+    Route::delete('/profile', [
+        ProfileController::class,
+        'destroy'
+    ])->name('profile.destroy');
+
 });
+
+
+/*
+|--------------------------------------------------------------------------
+| Account Settings
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'verified'])
+    ->prefix('account')
+    ->name('account.')
+    ->group(function () {
+
+        Route::get('/settings', [
+            AccountSettingsController::class,
+            'index'
+        ])->name('settings');
+
+        Route::get('/security', [
+            AccountSecurityController::class,
+            'index'
+        ])->name('security');
+
+        Route::get('/notifications', [
+            AccountNotificationsController::class,
+            'index'
+        ])->name('notifications');
+
+        Route::get('/billing', [
+            AccountBillingController::class,
+            'index'
+        ])->name('billing');
+
+    });
+
 
 /*
 |--------------------------------------------------------------------------
@@ -144,88 +183,322 @@ Route::middleware(['auth', 'verified'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'verified', 'role:admin'])
+Route::middleware([
+    'auth',
+    'verified',
+    'role:admin'
+])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
 
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
-            ->name('dashboard');
+        /*
+        |--------------------------------------------------------------------------
+        | Dashboard
+        |--------------------------------------------------------------------------
+        */
 
-        Route::resource('courses', AdminCourseController::class);
+        Route::get('/dashboard', [
+            AdminDashboardController::class,
+            'index'
+        ])->name('dashboard');
 
-        Route::resource('course-categories', CourseCategoryController::class);
 
-        Route::resource('lessons', AdminLessonController::class);
+        /*
+        |--------------------------------------------------------------------------
+        | Courses
+        |--------------------------------------------------------------------------
+        */
 
-        Route::resource('quizzes', AdminQuizController::class);
+        Route::resource(
+            'courses',
+            AdminCourseController::class
+        );
 
-        Route::resource('questions', QuestionController::class);
 
-        Route::resource('users', UserController::class);
+        /*
+        |--------------------------------------------------------------------------
+        | Course Categories
+        |--------------------------------------------------------------------------
+        */
 
-        Route::resource('enrollments', AdminEnrollmentController::class)
-            ->only(['index', 'show', 'destroy']);
+        Route::resource(
+            'course-categories',
+            CourseCategoryController::class
+        );
 
-        Route::resource('certificates', AdminCertificateController::class);
 
-        Route::resource('payments', PaymentController::class)
-            ->only(['index', 'show']);
+        /*
+        |--------------------------------------------------------------------------
+        | Lessons
+        |--------------------------------------------------------------------------
+        */
 
-        Route::get('/reports', [ReportController::class, 'index'])
-            ->name('reports.index');
+        Route::resource(
+            'lessons',
+            AdminLessonController::class
+        );
 
-        Route::get('/reports/revenue', [ReportController::class, 'revenue'])
-            ->name('reports.revenue');
 
-        Route::get('/reports/enrollments', [ReportController::class, 'enrollments'])
-            ->name('reports.enrollments');
+        /*
+        |--------------------------------------------------------------------------
+        | Quizzes
+        |--------------------------------------------------------------------------
+        */
 
-        Route::get('/reports/certificates', [ReportController::class, 'certificates'])
-            ->name('reports.certificates');
+        Route::resource(
+            'quizzes',
+            AdminQuizController::class
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Questions
+        |--------------------------------------------------------------------------
+        */
+
+        Route::resource(
+            'questions',
+            QuestionController::class
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Users
+        |--------------------------------------------------------------------------
+        */
+
+        Route::resource(
+            'users',
+            UserController::class
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Enrollments
+        |--------------------------------------------------------------------------
+        */
+
+        Route::resource(
+            'enrollments',
+            AdminEnrollmentController::class
+        )->only([
+            'index',
+            'show',
+            'destroy'
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Certificates
+        |--------------------------------------------------------------------------
+        */
+
+        Route::resource(
+            'certificates',
+            AdminCertificateController::class
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payments
+        |--------------------------------------------------------------------------
+        */
+
+        Route::resource(
+            'payments',
+            PaymentController::class
+        )->only([
+            'index',
+            'show'
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reports
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/reports', [
+            ReportController::class,
+            'index'
+        ])->name('reports.index');
+
+        Route::get('/reports/revenue', [
+            ReportController::class,
+            'revenue'
+        ])->name('reports.revenue');
+
+        Route::get('/reports/enrollments', [
+            ReportController::class,
+            'enrollments'
+        ])->name('reports.enrollments');
+
+        Route::get('/reports/certificates', [
+            ReportController::class,
+            'certificates'
+        ])->name('reports.certificates');
+
     });
+
 
 /*
 |--------------------------------------------------------------------------
 | Learner Routes
 |--------------------------------------------------------------------------
+|
+| IMPORTANT:
+| All learner routes are inside ONE group.
+| This prevents duplicate learner route names.
+|
 */
 
-Route::middleware(['auth', 'verified', 'role:learner'])
+Route::middleware([
+    'auth',
+    'verified',
+    'role:learner'
+])
     ->prefix('learner')
     ->name('learner.')
     ->group(function () {
 
-        Route::get('/dashboard', [LearnerDashboardController::class, 'index'])
-            ->name('dashboard');
+        /*
+        |--------------------------------------------------------------------------
+        | Dashboard
+        |--------------------------------------------------------------------------
+        */
 
-        Route::get('/courses', [LearnerCourseController::class, 'index'])
-            ->name('courses.index');
+        Route::get('/dashboard', [
+            LearnerDashboardController::class,
+            'index'
+        ])->name('dashboard');
 
-        Route::get('/courses/{course:slug}', [LearnerCourseController::class, 'show'])
-            ->name('courses.show');
 
-        Route::post('/courses/{course}/enroll', [LearnerCourseController::class, 'enroll'])
-            ->name('courses.enroll');
+        /*
+        |--------------------------------------------------------------------------
+        | Courses
+        |--------------------------------------------------------------------------
+        */
 
-        Route::get('/lessons/{lesson}', [LessonController::class, 'show'])
-            ->name('lessons.show');
+        Route::get('/courses', [
+            LearnerCourseController::class,
+            'index'
+        ])->name('courses.index');
 
-        Route::post('/lessons/{lesson}/complete', [LessonController::class, 'complete'])
-            ->name('lessons.complete');
+        Route::get('/courses/{course:slug}', [
+            LearnerCourseController::class,
+            'show'
+        ])->name('courses.show');
 
-        Route::get('/quizzes/{quiz}', [LearnerQuizController::class, 'show'])
-            ->name('quizzes.show');
 
-        Route::post('/quizzes/{quiz}/submit', [LearnerQuizController::class, 'submit'])
-            ->name('quizzes.submit');
+        /*
+        |--------------------------------------------------------------------------
+        | Course Enrollment
+        |--------------------------------------------------------------------------
+        |
+        | Learners enroll themselves through the course page.
+        |
+        */
 
-        Route::get('/certificates', [LearnerCertificateController::class, 'index'])
-            ->name('certificates.index');
+        Route::post('/courses/{course}/enroll', [
+            LearnerCourseController::class,
+            'enroll'
+        ])->name('courses.enroll');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Course Enrollments
+        |--------------------------------------------------------------------------
+        |
+        | Single canonical index route.
+        |
+        */
+
+        Route::get('/course-enrollments', [
+            CourseEnrollmentController::class,
+            'index'
+        ])->name('courseenrollments.index');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Lessons
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/lessons/{lesson}', [
+            LessonController::class,
+            'show'
+        ])->name('lessons.show');
+
+        Route::post('/lessons/{lesson}/complete', [
+            LessonController::class,
+            'complete'
+        ])->name('lessons.complete');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Quizzes
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/quizzes/{quiz}', [
+            LearnerQuizController::class,
+            'show'
+        ])->name('quizzes.show');
+
+        Route::post('/quizzes/{quiz}/submit', [
+            LearnerQuizController::class,
+            'submit'
+        ])->name('quizzes.submit');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Certificates
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/certificates', [
+            LearnerCertificateController::class,
+            'index'
+        ])->name('certificates.index');
 
         Route::get(
             '/certificates/{certificate}/download',
-            [LearnerCertificateController::class, 'download']
+            [
+                LearnerCertificateController::class,
+                'download'
+            ]
         )->name('certificates.download');
+
     });
-    require __DIR__.'/auth.php';
+
+
+/*
+|--------------------------------------------------------------------------
+| Breeze Authentication Routes
+|--------------------------------------------------------------------------
+|
+| IMPORTANT:
+| Do not manually define login/register/logout routes here.
+|
+| Breeze owns:
+|
+| login
+| register
+| logout
+| password reset
+| email verification
+|
+*/
+
+require __DIR__ . '/auth.php';
