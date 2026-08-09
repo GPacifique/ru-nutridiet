@@ -40,11 +40,7 @@ use App\Http\Controllers\Learner\QuizController as LearnerQuizController;
 use App\Http\Controllers\Learner\CertificateController as LearnerCertificateController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\PaymentController as LearnerPaymentController;
-use App\Http\Controllers\EnrollmentController as LearnerEnrollmentController;
 use App\Http\Controllers\CourseEnrollmentController;
-
-Route::get('/blog/{slug}', [BlogController::class, 'show'])
-    ->name('blog.show');
 
 Route::middleware('auth')
 ->prefix('learner')
@@ -80,17 +76,7 @@ Route::middleware(['auth'])->group(function () {
     ]);
 
 });
-Route::prefix('learner')
-    ->name('learner.')
-    ->middleware(['auth'])
-    ->group(function () {
 
-        Route::resource(
-            'courseenrollments',
-            CourseEnrollmentController::class
-        );
-
-    });
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes
@@ -98,18 +84,6 @@ Route::prefix('learner')
 | Single source of truth for login/register/logout. Nothing else in this
 | file (and nothing required at the bottom) should redefine these names.
 */
-
-Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-
-    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/register', [RegisteredUserController::class, 'store']);
-});
-
-Route::middleware('auth')->group(function () {
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-});
 
 /*
 |--------------------------------------------------------------------------
@@ -254,3 +228,4 @@ Route::middleware(['auth', 'verified', 'role:learner'])
             [LearnerCertificateController::class, 'download']
         )->name('certificates.download');
     });
+    require __DIR__.'/auth.php';
