@@ -68,7 +68,61 @@ use App\Http\Controllers\Client\DashboardController as ClientDashboardController
 use App\Http\Controllers\Practitioner\DashboardController as PractitionerDashboardController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrderController;
 
+Route::get('/marketplace', [ProductController::class, 'index'])
+    ->name('marketplace');
+
+Route::get('/products/{product}', [ProductController::class, 'show'])
+    ->name('products.show');
+
+
+/*
+|--------------------------------------------------------------------------
+| Cart
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/cart', [CartController::class, 'index'])
+    ->name('cart');
+
+Route::post('/cart', [CartController::class, 'store'])
+    ->name('cart.store');
+
+Route::patch('/cart/{cart}', [CartController::class, 'update'])
+    ->name('cart.update');
+
+Route::delete('/cart/{cart}', [CartController::class, 'destroy'])
+    ->name('cart.destroy');
+
+
+/*
+|--------------------------------------------------------------------------
+| Checkout
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/checkout', [CheckoutController::class, 'index'])
+    ->name('checkout');
+
+Route::post('/checkout', [CheckoutController::class, 'store'])
+    ->name('checkout.store');
+
+
+/*
+|--------------------------------------------------------------------------
+| Orders
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/orders', [OrderController::class, 'index'])
+    ->name('orders.index');
+
+Route::get('/orders/{order}', [OrderController::class, 'show'])
+    ->name('orders.show');
 Route::get('/shop', [ShopController::class, 'index'])
     ->name('shop');
 Route::get('/book', [AppointmentController::class, 'create'])->name('book');
