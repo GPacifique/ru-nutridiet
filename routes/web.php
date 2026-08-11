@@ -72,7 +72,11 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use Inertia\Inertia;
 
+Route::get('/services', function () {
+    return Inertia::render('Services/Index');
+})->name('services');
 Route::get('/marketplace', [ProductController::class, 'index'])
     ->name('marketplace');
 
