@@ -8,45 +8,36 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+       Schema::create('orders', function (Blueprint $table) {
+    $table->id();
 
-            $table->id();
+    $table->foreignId('user_id')
+        ->nullable()
+        ->constrained('users')
+        ->nullOnDelete();
 
-            $table->foreignId('buyer_id')
-                ->constrained('users')
-                ->cascadeOnDelete();
+    $table->string('first_name');
+    $table->string('last_name');
 
-            $table->foreignId('product_id')
-                ->nullable()
-                ->constrained()
-                ->nullOnDelete();
+    $table->string('email');
+    $table->string('phone');
 
-            $table->string('order_number')->unique();
+    $table->text('address');
+    $table->string('city');
 
-            $table->decimal('subtotal', 12, 2)->default(0);
-            $table->decimal('tax', 12, 2)->default(0);
-            $table->decimal('discount', 12, 2)->default(0);
+    $table->string('payment_method');
+    $table->text('notes')->nullable();
 
-            $table->decimal('total_amount', 12, 2);
+    $table->decimal('subtotal', 12, 2);
+    $table->decimal('total', 12, 2);
 
-            $table->enum('payment_status', [
-                'pending',
-                'paid',
-                'failed',
-                'refunded'
-            ])->default('pending');
+    $table->string('status')->default('pending');
 
-            $table->enum('status', [
-                'pending',
-                'processing',
-                'completed',
-                'cancelled'
-            ])->default('pending');
+    $table->string('payment_status')
+        ->default('pending');
 
-            $table->timestamp('paid_at')->nullable();
-
-            $table->timestamps();
-        });
+    $table->timestamps();
+});
     }
 
     public function down(): void

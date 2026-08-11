@@ -3,33 +3,39 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
     protected $fillable = [
-        'buyer_id',
-        'product_id',
-        'order_number',
+        'user_id',
+        'first_name',
+        'last_name',
+        'email',
+        'phone',
+        'address',
+        'city',
+        'payment_method',
+        'notes',
         'subtotal',
-        'tax',
-        'discount',
-        'total_amount',
-        'payment_status',
+        'total',
         'status',
-        'paid_at'
+        'payment_status',
     ];
 
     protected $casts = [
-        'paid_at' => 'datetime',
+        'subtotal' => 'decimal:2',
+        'total' => 'decimal:2',
     ];
 
-    public function buyer()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'buyer_id');
+        return $this->belongsTo(User::class);
     }
 
-    public function product()
+    public function items(): HasMany
     {
-        return $this->belongsTo(Product::class);
+        return $this->hasMany(OrderItem::class);
     }
 }
