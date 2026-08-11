@@ -67,7 +67,10 @@ use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardCo
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
 use App\Http\Controllers\Practitioner\DashboardController as PractitionerDashboardController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\ShopController;
 
+Route::get('/shop', [ShopController::class, 'index'])
+    ->name('shop');
 Route::get('/book', [AppointmentController::class, 'create'])->name('book');
 Route::post('/book', [AppointmentController::class, 'store'])->name('book.store');
 /*
