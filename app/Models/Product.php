@@ -1,7 +1,6 @@
 <?php
-
 namespace App\Models;
-
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
@@ -36,4 +35,5 @@ class Product extends Model
 {
     return $this->hasMany(Order::class);
 }
+
 }

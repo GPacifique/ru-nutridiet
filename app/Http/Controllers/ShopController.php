@@ -8,22 +8,25 @@ use Inertia\Inertia;
 
 class ShopController extends Controller
 {
-    public function index(Request $request)
-    {
-        $category = $request->query('category');
+   public function index(Request $request)
+{
+    $category = $request->get('category');
 
-        $products = Product::query()
-            ->when($category, function ($query) use ($category) {
-                $query->where('category', $category);
-            })
-            ->where('status', 'active')
-            ->latest()
-            ->paginate(12)
-            ->withQueryString();
+    $products = Product::query()
+        ->with('category')
+        ->when($category, function ($query) use ($category) {
+            $query->whereHas('category', function ($q) use ($category) {
+                $q->where('name', $category);
+            });
+        })
+        ->where('status', 'active')
+        ->latest()
+        ->paginate(12)
+        ->withQueryString();
 
-        return Inertia::render('Shop/Index', [
-            'products' => $products,
-            'category' => $category,
-        ]);
-    }
+    return Inertia::render('Shop/Index', [
+        'products' => $products,
+        'category' => $category,
+    ]);
+}
 }
