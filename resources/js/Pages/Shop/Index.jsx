@@ -1,5 +1,6 @@
 import React from "react";
 import { Head, Link, router } from "@inertiajs/react";
+import PublicNavigation from "@/Components/PublicNavigation";
 import {
     Search,
     ShoppingBag,
@@ -11,6 +12,7 @@ import {
     Package,
 } from "lucide-react";
 import { useState } from "react";
+import PublicNav from "@/Components/PublicNavigation";
 
 export default function Index({
     products,
@@ -109,6 +111,7 @@ export default function Index({
 
     return (
         <>
+        <PublicNavigation/>
             <Head>
                 <title>
                     {currentCategory
