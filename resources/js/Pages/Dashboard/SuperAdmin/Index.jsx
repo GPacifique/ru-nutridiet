@@ -3,11 +3,17 @@ import { Head } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import StatCard from '@/Components/StatCard';
 import WireStrip from '@/Components/WireStrip';
+import DashboardModules from '@/Components/DashboardModules';
 
 /**
  * props: { stats?: {}, users?: [], roleBreakdown?: [{ role, count }] }
  */
 export default function SuperAdminDashboard({ stats = {}, users = [], roleBreakdown = [] }) {
+    const modules = [
+        { key: 'system', title: 'System settings', desc: 'Configure global site settings', action: { href: '/admin/system', label: 'Open' } },
+        { key: 'roles', title: 'Roles & permissions', desc: 'Manage roles and access control', action: { href: '/admin/roles', label: 'Open' } },
+        { key: 'backups', title: 'Backups', desc: 'View and restore system backups', action: { href: '/admin/backups', label: 'Open' } },
+    ];
     return (
         <AuthenticatedLayout
             header={
@@ -69,6 +75,8 @@ export default function SuperAdminDashboard({ stats = {}, users = [], roleBreakd
                     </ul>
                 </div>
             </div>
+
+            <DashboardModules modules={modules} />
         </AuthenticatedLayout>
     );
 }

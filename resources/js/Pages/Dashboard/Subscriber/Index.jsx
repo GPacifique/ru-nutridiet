@@ -3,11 +3,17 @@ import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import ArticleCard from '@/Components/ArticleCard';
 import WireStrip from '@/Components/WireStrip';
+import DashboardModules from '@/Components/DashboardModules';
 
 /**
  * props: { saved?: Article[], recommended?: Article[] }
  */
 export default function SubscriberDashboard({ saved = [], recommended = [] }) {
+    const modules = [
+        { key: 'saved', title: 'Saved', desc: 'Your bookmarked stories', action: { href: '/saved', label: 'Open' } },
+        { key: 'recommended', title: 'Recommended', desc: 'Personalized suggestions', action: { href: '/recommended', label: 'Open' } },
+        { key: 'subscriptions', title: 'Subscription', desc: 'Manage your subscription', action: { href: '/account', label: 'Open' } },
+    ];
     return (
         <AuthenticatedLayout
             header={
@@ -47,6 +53,8 @@ export default function SubscriberDashboard({ saved = [], recommended = [] }) {
                     </p>
                 )}
             </section>
+
+            <DashboardModules modules={modules} />
         </AuthenticatedLayout>
     );
 }

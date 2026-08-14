@@ -3,6 +3,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import StatCard from '@/Components/StatCard';
 import WireStrip from '@/Components/WireStrip';
+import DashboardModules from '@/Components/DashboardModules';
 
 /**
  * props: { stats?: {}, comments?: Comment[] }
@@ -59,6 +60,14 @@ export default function ModeratorDashboard({ stats = {}, comments = [] }) {
                     <p className="font-mono text-xs uppercase tracking-wider text-[#3A4048]/50 py-6">Queue is clear.</p>
                 )}
             </div>
+
+            <DashboardModules
+                modules={[
+                    { key: 'flags', title: 'Flags', desc: 'Review flagged content and user reports', action: { href: '/moderation/flags', label: 'Open' } },
+                    { key: 'users', title: 'User warnings', desc: 'Issue warnings or bans to users', action: { href: '/moderation/users', label: 'Open' } },
+                    { key: 'settings', title: 'Moderation settings', desc: 'Adjust filtering and auto-moderation rules', action: { href: '/moderation/settings', label: 'Open' } },
+                ]}
+            />
         </AuthenticatedLayout>
     );
 }

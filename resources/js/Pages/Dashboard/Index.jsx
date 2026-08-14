@@ -3,12 +3,19 @@ import { Head, usePage, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import StatCard from '@/Components/StatCard';
 import WireStrip from '@/Components/WireStrip';
+import DashboardModules from '@/Components/DashboardModules';
 
 /**
  * props: { stats?: { articles, comments, views }, recent?: Article[] }
  */
 export default function Index({ stats = {}, recent = [] }) {
     const { auth } = usePage().props;
+
+    const modules = [
+        { key: 'progress', title: 'Progress', desc: 'View your learning progress and hours logged', action: { href: '/learner/progress', label: 'Open' } },
+        { key: 'courses', title: 'Courses', desc: 'Manage enrolled courses and continue learning', action: { href: '/courses', label: 'Open' } },
+        { key: 'certificates', title: 'Certificates', desc: 'View earned certificates and verifications', action: { href: '/learner/certificates', label: 'Open' } },
+    ];
 
     return (
         <AuthenticatedLayout
@@ -48,6 +55,8 @@ export default function Index({ stats = {}, recent = [] }) {
                     <p className="font-mono text-xs uppercase tracking-wider text-[#3A4048]/50">Nothing to show yet.</p>
                 )}
             </div>
+
+            <DashboardModules modules={modules} />
         </AuthenticatedLayout>
     );
 }

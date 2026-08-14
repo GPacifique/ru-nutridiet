@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "@inertiajs/react";
 import DashboardLayout from "@/Layouts/DashboardLayout";
+import DashboardModules from '@/Components/DashboardModules';
 
 export default function Dashboard({ auth }) {
     return (
@@ -20,6 +21,12 @@ export default function Dashboard({ auth }) {
                     </p>
 
                 </div>
+
+                <DashboardModules modules={[
+                    { key: 'mealplan', title: 'Meal Plan', desc: 'View your personalized meal plan', action: { href: '/student/mealplan', label: 'Open' } },
+                    { key: 'appointments', title: 'Appointments', desc: 'Manage consultations', action: { href: '/student/appointments', label: 'Open' } },
+                    { key: 'progress', title: 'Progress', desc: 'Track health metrics', action: { href: '/student/progress', label: 'Open' } },
+                ]} />
 
 
                 {/* Cards */}

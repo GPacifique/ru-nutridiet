@@ -3,11 +3,17 @@ import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import StatCard from '@/Components/StatCard';
 import WireStrip from '@/Components/WireStrip';
+import DashboardModules from '@/Components/DashboardModules';
 
 /**
  * props: { stats?: {}, pendingArticles?: Article[], categories?: [] }
  */
 export default function AdminDashboard({ stats = {}, pendingArticles = [], categories = [] }) {
+    const modules = [
+        { key: 'reports', title: 'Reports', desc: 'Site metrics, downloads and exports', action: { href: '/admin/reports', label: 'Open' } },
+        { key: 'users', title: 'User management', desc: 'Invite, suspend or change roles', action: { href: '/admin/users', label: 'Open' } },
+        { key: 'credits', title: 'Credits issued', desc: 'View CPD credits ledger and issuance', action: { href: '/admin/reports/credits', label: 'Open' } },
+    ];
     return (
         <AuthenticatedLayout
             header={
@@ -73,6 +79,8 @@ export default function AdminDashboard({ stats = {}, pendingArticles = [], categ
                     </ul>
                 </div>
             </div>
+
+            <DashboardModules modules={modules} />
         </AuthenticatedLayout>
     );
 }

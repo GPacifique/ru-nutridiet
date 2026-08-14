@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 
 import LearnerDashboardLayout from '@/Layouts/LearnerDashboardLayout';
+import DashboardModules from '@/Components/DashboardModules';
 
 export default function Dashboard({
     stats = {},
@@ -408,6 +409,13 @@ export default function Dashboard({
                         </div>
                     </div>
                 </div>
+                <DashboardModules
+                    modules={[
+                        { key: 'track', title: 'Progress tracking', desc: 'Detailed course progress and hours', action: { href: '/learner/progress', label: 'Open' } },
+                        { key: 'exams', title: 'Exams', desc: 'Upcoming and past exam attempts', action: { href: '/exams', label: 'Open' } },
+                        { key: 'downloads', title: 'Downloads', desc: 'Lecture slides and resources', action: { href: '/downloads', label: 'Open' } },
+                    ]}
+                />
             </div>
         </LearnerDashboardLayout>
     );

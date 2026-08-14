@@ -3,6 +3,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import StatCard from '@/Components/StatCard';
 import WireStrip from '@/Components/WireStrip';
+import DashboardModules from '@/Components/DashboardModules';
 
 /**
  * props: { stats?: {}, articles?: Article[] }
@@ -71,6 +72,14 @@ export default function AuthorDashboard({ stats = {}, articles = [] }) {
                     </p>
                 )}
             </div>
+
+            <DashboardModules
+                modules={[
+                    { key: 'submissions', title: 'Submissions', desc: 'View submitted articles and statuses', action: { href: '/author/submissions', label: 'Open' } },
+                    { key: 'drafts', title: 'Drafts', desc: 'Continue writing your drafts', action: { href: '/articles/drafts', label: 'Open' } },
+                    { key: 'calendar', title: 'Editorial calendar', desc: 'See scheduled publishing dates', action: { href: '/editor/calendar', label: 'Open' } },
+                ]}
+            />
         </AuthenticatedLayout>
     );
 }

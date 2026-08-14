@@ -1,5 +1,6 @@
 import React from "react";
 import DashboardLayout from "@/Layouts/DashboardLayout";
+import DashboardModules from "@/Components/DashboardModules";
 
 export default function BuyersDashboard({
     stats = [],
@@ -141,6 +142,12 @@ export default function BuyersDashboard({
                     </div>
 
                 </div>
+
+                <DashboardModules modules={[
+                    { key: 'orders', title: 'Orders', desc: 'Manage orders and invoices', action: { href: '/orders', label: 'Open' } },
+                    { key: 'invoices', title: 'Invoices', desc: 'View and download invoices', action: { href: '/invoices', label: 'Open' } },
+                    { key: 'support', title: 'Support', desc: 'Contact seller or support team', action: { href: '/support', label: 'Open' } },
+                ]} />
             </div>
         </DashboardLayout>
     );

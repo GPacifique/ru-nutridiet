@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import StatCard from '@/Components/StatCard';
 import WireStrip from '@/Components/WireStrip';
+import DashboardModules from '@/Components/DashboardModules';
 
 /**
  * props: { stats?: {}, submissions?: Article[] }
@@ -49,6 +50,14 @@ export default function EditorDashboard({ stats = {}, submissions = [] }) {
                     <p className="font-mono text-xs uppercase tracking-wider text-[#3A4048]/50 py-6">No submissions pending.</p>
                 )}
             </div>
+
+            <DashboardModules
+                modules={[
+                    { key: 'queue', title: 'Editorial queue', desc: 'Manage articles awaiting review', action: { href: '/editor/queue', label: 'Open' } },
+                    { key: 'styles', title: 'Style guide', desc: 'Reference writing and publication standards', action: { href: '/editor/style-guide', label: 'Open' } },
+                    { key: 'schedules', title: 'Schedules', desc: 'Assign publication slots and deadlines', action: { href: '/editor/schedules', label: 'Open' } },
+                ]}
+            />
         </AuthenticatedLayout>
     );
 }

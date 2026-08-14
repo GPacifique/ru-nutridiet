@@ -3,11 +3,17 @@ import { Head } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import ArticleCard from '@/Components/ArticleCard';
 import WireStrip from '@/Components/WireStrip';
+import DashboardModules from '@/Components/DashboardModules';
 
 /**
  * props: { exclusives?: Article[], plan?: { name, renews_at } }
  */
 export default function PremiumDashboard({ exclusives = [], plan = null }) {
+    const modules = [
+        { key: 'exclusives', title: 'Exclusives', desc: 'Featured premium content', action: { href: '/premium/exclusives', label: 'Open' } },
+        { key: 'account', title: 'Account', desc: 'Manage subscription and billing', action: { href: '/account/plan', label: 'Open' } },
+        { key: 'rewards', title: 'Rewards', desc: 'View loyalty rewards and perks', action: { href: '/premium/rewards', label: 'Open' } },
+    ];
     return (
         <AuthenticatedLayout
             header={
@@ -41,6 +47,8 @@ export default function PremiumDashboard({ exclusives = [], plan = null }) {
                     No exclusive stories published yet.
                 </p>
             )}
+
+            <DashboardModules modules={modules} />
         </AuthenticatedLayout>
     );
 }

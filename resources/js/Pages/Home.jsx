@@ -75,13 +75,13 @@ import {
 
 const NAV_LINKS = [
   { label: "Home", href: "#home" },
-  { label: "Clinic", href: "#clinic" },
+  { label: "About", href: "#clinic" },
   { label: "Services", href: "#services" },
-  { label: "CPD Academy", href: "#academy" },
-  { label: "Courses", href: "#courses" },
+  { label: "Experts", href: "#experts" },
+  { label: "Academy", href: "#academy" },
+  { label: "Webinars", href: "#webinars" },
   { label: "Marketplace", href: "#marketplace" },
   { label: "Research", href: "#research" },
-  { label: "Blog", href: "#research" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -118,17 +118,17 @@ const PARTNER_GROUPS = [
 const CORE_VALUES = [
   {
     title: "Evidence over trend",
-    copy: "Every protocol and every course module is built on peer-reviewed research, not the nutrition trend of the month.",
+    copy: "our clinic prioritizes scientifically supported, clinically informed approaches rather than following every new health, nutrition, or wellness trend. We translate reliable evidence into practical, personalized recommendations that people can confidently apply in everyday life.",
     icon: FlaskConical,
   },
   {
     title: "Access without compromise",
-    copy: "Clinical-grade care and accredited training, priced and scheduled so distance and cost stop being the barrier.",
+    copy: "making high-quality, compassionate, and evidence-based health and wellness services accessible to everyone—without sacrificing professional standards, personalized care, dignity, or the quality of the experience.",
     icon: Globe2,
   },
   {
     title: "Practitioners, not influencers",
-    copy: "Every clinician on our platform is licensed and verified; every instructor teaches from real caseload experience.",
+    copy: "our clinic is built around qualified professionals who use knowledge, experience, evidence, and ethical practice to guide care—not trends, popularity, or social media hype. We focus on understanding each individual, addressing real needs, and delivering practical solutions that create meaningful, sustainable health outcomes.",
     icon: ShieldCheck,
   },
 ];
@@ -403,7 +403,7 @@ function Navbar() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-white-700 text-white">
+          <span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-emerald-100">
             <ApplicationLogo className="block h-12 w-12 max-h-12 max-w-12 object-contain" />
           </span>
           <span className="font-display text-lg font-semibold tracking-tight text-slate-900">
@@ -426,13 +426,13 @@ function Navbar() {
         <div className="hidden items-center gap-3 lg:flex">
           <Link
             href="/login"
-            className="text-sm font-medium text-slate-600 hover:text-emerald-700"
+            className="text-sm font-medium text-slate-600 hover:text-emerald-700 transition duration-150 active:scale-95 active:translate-y-0.5"
           >
             Login
           </Link>
           <Link
             href="/register"
-            className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-emerald-600 hover:text-emerald-700"
+            className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition duration-150 hover:border-emerald-600 hover:text-emerald-700 active:scale-95 active:translate-y-0.5"
           >
             Register
           </Link>
@@ -479,14 +479,14 @@ function Navbar() {
                 <Link
                   href="/login"
                   onClick={() => setOpen(false)}
-                  className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600"
+                  className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition duration-150 active:scale-95 active:translate-y-0.5"
                 >
                   Login
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => setOpen(false)}
-                  className="rounded-full border border-slate-300 px-4 py-2.5 text-center text-sm font-medium text-slate-700"
+                  className="rounded-full border border-slate-300 px-4 py-2.5 text-center text-sm font-medium text-slate-700 transition duration-150 active:scale-95 active:translate-y-0.5"
                 >
                   Register
                 </Link>
@@ -510,7 +510,7 @@ function Navbar() {
 function Hero() {
   const heroImages = [
     "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1400&q=80&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1556228720-5c4fdf0b1a4d?w=1400&q=80&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1592417817038-d13fd7342605?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cGVvcGxlJTIwYW5kJTIwZm9vZHxlbnwwfHwwfHx8MA%3D%3D",
     "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1400&q=80&auto=format&fit=crop",
   ];
 
@@ -543,17 +543,15 @@ function Hero() {
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="h-[420px] sm:h-[480px] flex flex-col justify-center"
         >
           <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-emerald-700 ring-1 ring-emerald-100">
             <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
             Personalized, evidence-based nutrition & clinical care
           </span>
 
-          <h1 className="mt-6 font-display text-xl font-semibold leading-[1.08] tracking-tight text-slate-900 sm:text-5xl lg:text-[3.4rem]">
-            Build lasting health with
-            <span className="block text-emerald-700">personalized nutrition</span>
-            <span className="block text-sky-700">practical habits</span>
-            <span className="block text-emerald-700">and sustainable routines</span>
+          <h1 className="mt-6 font-display text-lg font-semibold leading-tight tracking-tight text-emerald-700 sm:text-2xl lg:text-3xl">
+            Our clinic focuses on the Art of Living, empowering people to achieve healthier, more balanced, and fulfilling lives through integrated nutrition, movement, mental well-being, preventive care, and sustainable lifestyle choices.
           </h1>
 
           <p className="mt-6 max-w-prose text-lg leading-relaxed text-slate-600">
@@ -576,10 +574,10 @@ function Hero() {
               Explore Courses
             </a>
             <a
-              href="#verify"
+              href="#services"
               className="inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-slate-600 hover:text-emerald-700"
             >
-              Verify Certificate
+              Our Services
               <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </a>
           </div>
@@ -591,7 +589,7 @@ function Hero() {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           className="relative"
         >
-          <div className="relative overflow-hidden rounded-2xl shadow-2xl shadow-emerald-900/10 ring-1 ring-slate-100 hover:shadow-2xl">
+          <div className="relative overflow-hidden rounded-[2rem] shadow-2xl shadow-emerald-900/15 ring-1 ring-white/80 hover:shadow-emerald-900/20">
             <img
               src={heroImages[index]}
               alt={`People and food — hero ${index + 1}`}
@@ -714,16 +712,19 @@ function About() {
               About RUNUTRIDIET
             </span>
             <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              A clinic and an academy, built on the same evidence.
+              A clinic , built on the same evidence.
             </h2>
             <p className="mt-5 text-base leading-relaxed text-slate-600">
-              RUNUTRIDIET began as a single nutrition clinic and grew into an
-              integrated platform because our clients and our students kept
-              asking for the same thing: care and education they could
-              actually trust. Today we run clinical consultations,
-              corporate wellness programs, and an accredited CPD academy
-              from the same evidence base — reviewed by the same panel of
-              registered dietitians and public health researchers.
+              Our clinic focuses on the Art of Living—helping people build healthier, more balanced, and
+               fulfilling lives through an integrated approach to physical health, nutrition, movement, 
+               mental well-being, and everyday lifestyle choices.
+                We believe true wellness is not simply the absence of illness,
+                 but the ability to live with energy, purpose, confidence, and balance. 
+                 Through personalized nutrition guidance, lifestyle coaching, wellness education,
+                  preventive care, and practical healthy-living strategies, we empower individuals and 
+                  families to understand their bodies, make better choices,
+                   and develop sustainable habits that support a healthier and happier life.
+
             </p>
             <div className="mt-8 grid gap-5 sm:grid-cols-3">
               <div>
@@ -861,7 +862,7 @@ function WhyChooseUs() {
 
 function Statistics() {
   return (
-    <section className="bg-emerald-800 py-16 text-white lg:py-20">
+    <section className="relative overflow-hidden bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-700 py-16 text-white lg:py-20">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
         <Stagger className="grid grid-cols-2 gap-8 sm:grid-cols-5">
           {STATISTICS.map((stat) => (
@@ -1032,7 +1033,7 @@ function LearningFeatures() {
 
 function Webinars() {
   return (
-    <section className="bg-slate-50/60 py-20 lg:py-28">
+    <section id="webinars" className="bg-slate-50/60 py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
         <Reveal className="max-w-2xl">
           <span className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
@@ -1227,7 +1228,7 @@ function Marketplace({ products = [] }) {
 
 function Experts({ practitioners = [] }) {
   return (
-    <section className="bg-slate-50/60 py-20 lg:py-28">
+    <section id="experts" className="bg-slate-50/60 py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
         <Reveal className="max-w-2xl">
           <span className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
@@ -1497,7 +1498,7 @@ function Newsletter() {
   };
 
   return (
-    <section className="border-y border-slate-100 bg-slate-50/60 py-16">
+    <section className="border-y border-emerald-100 bg-gradient-to-b from-emerald-50/60 to-white py-16">
       <div className="mx-auto max-w-3xl px-5 text-center lg:px-8">
         <Mail className="mx-auto h-8 w-8 text-emerald-700" aria-hidden="true" />
         <h2 className="mt-4 font-display text-2xl font-semibold text-slate-900 sm:text-3xl">
@@ -1543,7 +1544,7 @@ function Newsletter() {
 
 function FinalCTA() {
   return (
-    <section id="book" className="py-20 lg:py-24">
+    <section id="book" className="relative overflow-hidden py-20 lg:py-28">
       <div className="mx-auto max-w-5xl px-5 text-center lg:px-8">
         <Reveal>
           <h2 className="font-display text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
@@ -1578,12 +1579,12 @@ function FinalCTA() {
 
 function Footer() {
   return (
-    <footer id="contact" className="border-t border-slate-200 bg-white pt-16">
+    <footer id="contact" className="border-t border-slate-200 bg-white pt-16 shadow-[0_-20px_60px_rgba(15,23,42,0.03)]">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(5,1fr)] lg:gap-8">
           <div>
             <div className="flex items-center gap-2">
-              <span className="grid h-12 w-12 place-items-center rounded-xl bg-white-700 text-white">
+              <span className="grid h-12 w-12 place-items-center rounded-2xl bg-white shadow-md ring-1 ring-emerald-100">
                 <ApplicationLogo className="h-9 w-9" aria-hidden="true" />
               </span>
               <span className="font-display text-lg font-semibold text-slate-900">
@@ -1647,31 +1648,56 @@ function Footer() {
 /* ------------------------------ Scroll to Top ----------------------------------- */
 
 function FloatingWhatsApp() {
-  const phoneNumber = "250785221105"; // updated to provided number (no + sign)
-  const message = encodeURIComponent("Hello RUNUTRIDIET, I have a question about your services.");
+  const phoneNumber = "250785221105";
+  const message = encodeURIComponent(
+    "Hello RUNUTRIDIET, I have a question about your services."
+  );
   const [hover, setHover] = useState(false);
+
   return (
     <a
       href={`https://wa.me/${phoneNumber}?text=${message}`}
       target="_blank"
       rel="noreferrer"
-      aria-label="Chat on WhatsApp"
+      aria-label="Chat with RUNUTRIDIET on WhatsApp"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      className="fixed right-5 bottom-28 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg transition-colors hover:bg-emerald-700 sm:right-8 sm:bottom-8"
+      className="group fixed right-4 sm:right-8 top-1/2 z-[60] -translate-y-1/2 flex items-center"
     >
-      <div className="relative flex items-center">
+      <AnimatePresence>
         {hover && (
-          <div className="absolute -right-36 top-1/2 hidden -translate-y-1/2 rounded-md bg-black/90 px-3 py-1 text-xs text-white shadow sm:block">
-            Chat on WhatsApp
-          </div>
+          <motion.span
+            initial={{ opacity: 0, x: 10, scale: 0.95 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 10, scale: 0.95 }}
+            className="mr-3 hidden rounded-full bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white shadow-xl sm:block"
+          >
+            Chat with us on WhatsApp
+          </motion.span>
         )}
-        <Phone className="h-6 w-6" />
-      </div>
+      </AnimatePresence>
+
+      <span className="relative grid h-16 w-16 place-items-center rounded-full bg-[#25D366] text-white shadow-[0_12px_35px_rgba(37,211,102,0.40)] ring-4 ring-white transition-all duration-300 group-hover:scale-110 group-hover:bg-[#20bd5a] group-hover:shadow-[0_16px_42px_rgba(37,211,102,0.50)]">
+        <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-20" />
+
+        <svg
+          viewBox="0 0 32 32"
+          className="relative h-9 w-9"
+          aria-hidden="true"
+          fill="currentColor"
+        >
+          <path d="M16 3.2C8.93 3.2 3.2 8.93 3.2 16c0 2.25.59 4.37 1.72 6.23L3 29l6.94-1.82A12.72 12.72 0 0 0 16 28.8c7.07 0 12.8-5.73 12.8-12.8S23.07 3.2 16 3.2Zm0 23.27c-1.97 0-3.9-.53-5.58-1.53l-.4-.24-4.12 1.08 1.1-4.01-.26-.41A10.86 10.86 0 1 1 16 26.47Z" />
+          <path
+            d="M22.8 18.63c-.37-.19-2.16-1.07-2.49-1.19-.33-.12-.57-.19-.81.19-.24.37-.93 1.19-1.14 1.43-.21.24-.42.28-.79.09-.37-.19-1.56-.57-2.97-1.82-1.1-.98-1.84-2.19-2.05-2.56-.21-.37-.02-.57.16-.75.17-.17.37-.42.56-.63.19-.21.24-.36.37-.6.12-.24.06-.45-.03-.63-.09-.19-.81-1.95-1.11-2.67-.29-.7-.59-.61-.81-.62h-.69c-.24 0-.63.09-.96.45-.33.37-1.26 1.23-1.26 3s1.29 3.48 1.47 3.72c.18.24 2.54 3.88 6.16 5.44.86.37 1.53.59 2.05.75.86.27 1.64.23 2.26.14.69-.1 2.16-.88 2.46-1.73.3-.85.3-1.58.21-1.73-.09-.15-.33-.24-.69-.42Z"
+            fill="white"
+          />
+        </svg>
+
+        <span className="absolute bottom-0.5 right-0.5 h-4 w-4 rounded-full border-[3px] border-white bg-[#25D366]" />
+      </span>
     </a>
   );
 }
-
 function ScrollToTop() {
   const [visible, setVisible] = useState(false);
 
@@ -1726,13 +1752,20 @@ export default function Home({
   products = [],
 }) {
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-800 antialiased">
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-white via-white to-slate-50 font-sans text-slate-800 antialiased">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
         .font-display { font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif; }
         .font-sans { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
         .font-mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
         html { scroll-behavior: smooth; }
+        body { background: #f8fafc; }
+        ::selection { background: rgba(16, 185, 129, 0.18); color: #064e3b; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { background: #a7f3d0; border-radius: 999px; border: 2px solid #f8fafc; }
+        ::-webkit-scrollbar-thumb:hover { background: #34d399; }
+        a, button, input { -webkit-tap-highlight-color: transparent; }
         @media (prefers-reduced-motion: reduce) {
           html { scroll-behavior: auto; }
           *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
@@ -1744,14 +1777,14 @@ export default function Home({
         <Hero />
         <TrustedPartners />
         <About />
-        <Services />
         <WhyChooseUs />
+        <Services />
+        <Experts practitioners={practitioners} />
         <Statistics />
         <CPDAcademy courses={courses} />
         <LearningFeatures />
         <Webinars />
         <Marketplace products={products} />
-        <Experts practitioners={practitioners} />
         <Testimonials testimonials={testimonials} />
         <ResearchBlog articles={articles} />
         <AppCTA />

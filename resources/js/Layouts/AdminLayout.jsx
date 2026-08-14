@@ -6,12 +6,23 @@ import {
     Users,
     BarChart3,
     LogOut,
+    Layers,
+    FileText,
+    HelpCircle,
+    CreditCard,
+    Award,
 } from 'lucide-react';
 
 const NAV = [
     { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutGrid },
     { label: 'Courses', href: '/admin/courses', icon: BookOpen },
+    { label: 'Categories', href: '/admin/course-categories', icon: Layers },
+    { label: 'Lessons', href: '/admin/lessons', icon: FileText },
     { label: 'Quizzes', href: '/admin/quizzes', icon: ClipboardCheck },
+    { label: 'Questions', href: '/admin/questions', icon: HelpCircle },
+    { label: 'Enrollments', href: '/admin/enrollments', icon: Users },
+    { label: 'Certificates', href: '/admin/certificates', icon: Award },
+    { label: 'Payments', href: '/admin/payments', icon: CreditCard },
     { label: 'Users', href: '/admin/users', icon: Users },
     { label: 'Reports', href: '/admin/reports', icon: BarChart3 },
 ];

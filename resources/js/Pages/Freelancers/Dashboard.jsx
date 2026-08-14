@@ -1,5 +1,6 @@
 import React from "react";
 import DashboardLayout from "@/Layouts/DashboardLayout";
+import DashboardModules from '@/Components/DashboardModules';
 
 export default function FreelancerDashboard() {
     const stats = [
@@ -109,6 +110,12 @@ export default function FreelancerDashboard() {
                         </ul>
                     </div>
                 </div>
+
+                <DashboardModules modules={[
+                    { key: 'projects', title: 'Projects', desc: 'Manage your active projects', action: { href: '/freelancer/projects', label: 'Open' } },
+                    { key: 'proposals', title: 'Proposals', desc: 'Track and submit proposals', action: { href: '/freelancer/proposals', label: 'Open' } },
+                    { key: 'payments', title: 'Payments', desc: 'View earnings and invoices', action: { href: '/freelancer/payments', label: 'Open' } },
+                ]} />
             </div>
         </DashboardLayout>
     );

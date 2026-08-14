@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 
 import AdminLayout from '@/Layouts/AdminLayout';
+import DashboardModules from '@/Components/DashboardModules';
 
 
 function currency(value = 0) {
@@ -68,6 +69,22 @@ function StatCard({
                 )}
 
             </div>
+
+            {/* Quick links to all admin modules */}
+            <DashboardModules
+                modules={[
+                    { key: 'courses', title: 'Courses', desc: 'Manage courses, create new, edit or delete', action: { href: '/admin/courses', label: 'Open' } },
+                    { key: 'categories', title: 'Course Categories', desc: 'Organize course categories', action: { href: '/admin/course-categories', label: 'Open' } },
+                    { key: 'lessons', title: 'Lessons', desc: 'Manage course lessons', action: { href: '/admin/lessons', label: 'Open' } },
+                    { key: 'quizzes', title: 'Quizzes', desc: 'Create and manage quizzes', action: { href: '/admin/quizzes', label: 'Open' } },
+                    { key: 'questions', title: 'Questions', desc: 'Manage question bank', action: { href: '/admin/questions', label: 'Open' } },
+                    { key: 'users', title: 'Users', desc: 'Manage platform users', action: { href: '/admin/users', label: 'Open' } },
+                    { key: 'enrollments', title: 'Enrollments', desc: 'View learner enrollments', action: { href: '/admin/enrollments', label: 'Open' } },
+                    { key: 'certificates', title: 'Certificates', desc: 'Issue and manage certificates', action: { href: '/admin/certificates', label: 'Open' } },
+                    { key: 'payments', title: 'Payments', desc: 'Review payments and refunds', action: { href: '/admin/payments', label: 'Open' } },
+                    { key: 'reports', title: 'Reports', desc: 'Site analytics and exports', action: { href: '/admin/reports', label: 'Open' } },
+                ]}
+            />
 
 
             {delta !== undefined && (
