@@ -15,7 +15,18 @@
 />
 
 <meta name="keywords" content="nutrition, dietitian, clinical nutrition, CPD courses, nutrition education, lifestyle coaching, Rwanda, RUNUTRIDIET">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BS1KYRKYJ4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'G-BS1KYRKYJ4');
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9210012838252778"
+     crossorigin="anonymous"></script>
+     <meta name="google-adsense-account" content="ca-pub-9210012838252778">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="RUNUTRIDIET">
