@@ -74,6 +74,14 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use Inertia\Inertia;
 
+Route::get('/blog', [BlogController::class, 'index'])
+    ->name('blog.index');
+
+Route::get('/blog/{article:slug}', [BlogController::class, 'show'])
+    ->name('blog.show');
+Route::get('/blog', [BlogController::class, 'index'])
+    ->name('blog.index');
+
 Route::get('/services', function () {
     return Inertia::render('Services/Index');
 })->name('services');
@@ -145,12 +153,6 @@ Route::get('/courses', [CourseController::class, 'index'])
 
 Route::get('/courses/{course:slug}', [CourseController::class, 'show'])
     ->name('courses.show');
-
-Route::get('/blog', [BlogController::class, 'index'])
-    ->name('blog.index');
-
-Route::get('/blog/{post:slug}', [BlogController::class, 'show'])
-    ->name('blog.show');
 
 Route::get(
     '/certificate/verify/{code}',
