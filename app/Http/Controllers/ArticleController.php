@@ -17,18 +17,11 @@ class ArticleController extends Controller
      * ('Admin/Articles/Index') to wherever your admin pages actually
      * live.
      */
-    public function index(Request $request): Response
-    {
-        $articles = Article::query()
-            ->with('author')
-            ->latest()
-            ->paginate(15)
-            ->withQueryString();
-
-        return Inertia::render('Admin/Articles/Index', [
-            'articles' => $articles,
-        ]);
-    }
+    public function index()
+     { $articles = Article::with('author')
+    ->latest('created_at')
+    ->paginate(9);
+     return Inertia::render('Blog/Index', [ 'articles' => $articles, ]); }
 
     public function create(): Response
     {
@@ -88,21 +81,7 @@ class ArticleController extends Controller
      * 404s on anything not published, so unpublished/draft articles
      * can't be viewed by guessing the URL.
      */
-    public function show(Article $article): Response
-    {
-        abort_unless(
-            $article->status === 'published'
-                && $article->published_at
-                && $article->published_at->lte(now()),
-            404
-        );
-
-        $article->load('author');
-
-        return Inertia::render('Blog/Show', [
-            'article' => $article,
-        ]);
-    }
+   
 
     /**
      * Shared validation for store/update. $article is null on create.
@@ -144,4 +123,12 @@ class ArticleController extends Controller
 
         return $slug;
     }
+    public function show(string $slug)
+{
+    $article = Article::where('slug', $slug)->firstOrFail();
+
+    return Inertia::render('Blog/Show', [
+        'article' => $article,
+    ]);
+}
 }

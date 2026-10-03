@@ -527,7 +527,7 @@ function Hero() {
       {/* Parallax-style ambient background */}
       <motion.div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-emerald-100/70 blur-3xl"
+        className="pointer-events-none absolute -right-0 -top-10 h-[32rem] w-[32rem] rounded-full bg-emerald-100/70 blur-3xl"
         animate={{ y: [0, 24, 0] }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -550,14 +550,11 @@ function Hero() {
             Personalized, evidence-based nutrition & clinical care
           </span>
 
-          <h1 className="mt-6 font-display text-lg font-semibold leading-tight tracking-tight text-emerald-700 sm:text-2xl lg:text-3xl">
-            Our clinic focuses on the Art of Living, empowering people to achieve healthier, more balanced, and fulfilling lives through integrated nutrition, movement, mental well-being, preventive care, and sustainable lifestyle choices.
-          </h1>
 
-          <p className="mt-6 max-w-prose text-lg leading-relaxed text-slate-600">
+          <h1 className="mt-6 font-display text-lg font-semibold leading-tight tracking-tight text-emerald-700 sm:text-2xl lg:text-3xl">
             RUNUTRIDIET combines clinical expertise with accessible coaching: personalized meal plans, evidence-led protocols, and ongoing support to help you
             make small changes that last. No fads — just practical, measurable improvements.
-          </p>
+          </h1>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <a

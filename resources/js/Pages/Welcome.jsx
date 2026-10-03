@@ -1,361 +1,1799 @@
-import { Head, Link } from '@inertiajs/react';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Link, usePage } from "@inertiajs/react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
+import ApplicationLogo from "@/Components/ApplicationLogo"
+import {
+  Menu,
+  X,
+  Star,
+  ChevronRight,
+  ChevronLeft,
+  ArrowUpRight,
+  ArrowUp,
+  CheckCircle2,
+  PlayCircle,
+  Calendar,
+  Clock,
+  Users,
+  ShieldCheck,
+  GraduationCap,
+  Globe2,
+  Stethoscope,
+  Salad,
+  Scale,
+  Dumbbell,
+  Baby,
+  HeartPulse,
+  Building2,
+  Video,
+  ClipboardList,
+  FlaskConical,
+  Sparkles,
+  BadgeCheck,
+  MonitorPlay,
+  FileText,
+  HelpCircle,
+  ListChecks,
+  Trophy,
+  Download,
+  FolderDown,
+  MessagesSquare,
+  BarChart3,
+  ShoppingBag,
+  Apple,
+  BookOpen,
+  Dumbbell as Equipment,
+  Sparkle,
+  Mail,
+  Phone,
+  MapPin,
+  Instagram,
+  Twitter,
+  Linkedin,
+  Youtube,
+  Quote,
+  Search,
+  LucideHeading6,
+} from "lucide-react";
 
-export default function Welcome({ auth, laravelVersion, phpVersion }) {
-    const handleImageError = () => {
-        document
-            .getElementById('screenshot-container')
-            ?.classList.add('!hidden');
-        document.getElementById('docs-card')?.classList.add('!row-span-1');
-        document
-            .getElementById('docs-card-content')
-            ?.classList.add('!flex-row');
-        document.getElementById('background')?.classList.add('!hidden');
+/* ------------------------------------------------------------------ */
+/*  RUNUTRIDIET — Home.jsx                                             */
+/*                                                                     */
+/*  Design language: "clinical readout" — a healthcare + CPD academy   */
+/*  platform styled like a trustworthy lab report crossed with a       */
+/*  modern learning product. Display face (Space Grotesk) carries      */
+/*  the personality; IBM Plex Mono renders every metric, credit count, */
+/*  and rating like a data readout — the platform's signature device,  */
+/*  reused consistently from the hero stat cards through to CPD        */
+/*  credits and certificate numbers.                                   */
+/*                                                                     */
+/*  Palette: white / mist green / emerald / clinical blue / slate.     */
+/*  No dark theme, per brief.                                          */
+/* ------------------------------------------------------------------ */
+
+/* ----------------------------- Data -------------------------------- */
+
+const NAV_LINKS = [
+  { label: "Home", href: "#home" },
+  { label: "About", href: "#clinic" },
+  { label: "Services", href: "#services" },
+  { label: "Experts", href: "#experts" },
+  { label: "Academy", href: "#academy" },
+  { label: "Webinars", href: "#webinars" },
+  { label: "Marketplace", href: "#marketplace" },
+  { label: "Research", href: "#research" },
+  { label: "Contact", href: "#contact" },
+];
+
+const HERO_STATS = [
+  { value: "4.9", suffix: "/5", label: "Client rating", icon: Star },
+  { value: "20,000", suffix: "+", label: "Clients served", icon: Users },
+  { value: "8,000", suffix: "+", label: "Professionals trained", icon: GraduationCap },
+  { value: "150", suffix: "+", label: "CPD courses", icon: BookOpen },
+];
+
+const PARTNER_GROUPS = [
+  {
+    label: "Hospitals",
+    names: ["Northfield General", "St. Amara Medical", "Lakeside Regional", "Union Health"],
+  },
+  {
+    label: "Universities",
+    names: ["Belmore University", "Kavanti Institute", "Redcliff College", "Aster State University"],
+  },
+  {
+    label: "NGOs",
+    names: ["Global Nutrition Alliance", "FeedForward", "Wellness Without Borders"],
+  },
+  {
+    label: "Government",
+    names: ["Ministry of Health Programs", "National Nutrition Council"],
+  },
+  {
+    label: "Corporate",
+    names: ["Harrow & Finch", "Beacon Logistics", "Ferro Industries", "Clarity Bank"],
+  },
+];
+
+const CORE_VALUES = [
+  {
+    title: "Evidence over trend",
+    copy: "our clinic prioritizes scientifically supported, clinically informed approaches rather than following every new health, nutrition, or wellness trend. We translate reliable evidence into practical, personalized recommendations that people can confidently apply in everyday life.",
+    icon: FlaskConical,
+  },
+  {
+    title: "Access without compromise",
+    copy: "making high-quality, compassionate, and evidence-based health and wellness services accessible to everyone—without sacrificing professional standards, personalized care, dignity, or the quality of the experience.",
+    icon: Globe2,
+  },
+  {
+    title: "Practitioners, not influencers",
+    copy: "our clinic is built around qualified professionals who use knowledge, experience, evidence, and ethical practice to guide care—not trends, popularity, or social media hype. We focus on understanding each individual, addressing real needs, and delivering practical solutions that create meaningful, sustainable health outcomes.",
+    icon: ShieldCheck,
+  },
+];
+
+const SERVICES = [
+  {
+    title: "Nutrition Assessment",
+    desc: "A full intake: labs, history, and lifestyle, reviewed by a registered dietitian before any plan is written.",
+    icon: ClipboardList,
+  },
+  {
+    title: "Weight Management",
+    desc: "Structured, medically supervised programs built around sustainable change rather than short-term loss.",
+    icon: Scale,
+  },
+  {
+    title: "Clinical Nutrition",
+    desc: "Nutrition therapy for diabetes, renal disease, cardiovascular conditions, and other diagnosed conditions.",
+    icon: Stethoscope,
+  },
+  {
+    title: "Sports Nutrition",
+    desc: "Performance-focused fueling plans for competitive athletes, built around training load and recovery.",
+    icon: Dumbbell,
+  },
+  {
+    title: "Child Nutrition",
+    desc: "Growth-stage feeding guidance for infants through teens, developed with pediatric dietitians.",
+    icon: Baby,
+  },
+  {
+    title: "Pregnancy Nutrition",
+    desc: "Trimester-specific plans supporting maternal health and fetal development, coordinated with your OB.",
+    icon: HeartPulse,
+  },
+  {
+    title: "Corporate Wellness",
+    desc: "On-site and virtual nutrition programs that lower absenteeism and support employee health metrics.",
+    icon: Building2,
+  },
+  {
+    title: "Telehealth",
+    desc: "Full consultations over secure video, with the same clinical rigor as an in-person visit.",
+    icon: Video,
+  },
+  {
+    title: "Meal Planning",
+    desc: "Weekly, budget-aware meal plans generated from your labs, preferences, and household size.",
+    icon: Salad,
+  },
+  {
+    title: "Laboratory Interpretation",
+    desc: "A dietitian walks you through your bloodwork in plain language and turns it into next steps.",
+    icon: FlaskConical,
+  },
+  {
+    title: "Lifestyle Coaching",
+    desc: "Ongoing, one-on-one coaching on sleep, stress, and daily habits, built to support your nutrition plan long term.",
+    icon: Sparkles,
+  },
+];
+
+const WHY_CHOOSE_US = [
+  { title: "Evidence-based care", icon: FlaskConical },
+  { title: "Certified professionals", icon: BadgeCheck },
+  { title: "Personalized plans", icon: ClipboardList },
+  { title: "Digital health records", icon: FileText },
+  { title: "Teleconsultations", icon: Video },
+  { title: "Affordable care", icon: HeartPulse },
+  { title: "Accredited CPD", icon: GraduationCap },
+  { title: "Online learning", icon: MonitorPlay },
+  { title: "Certificate verification", icon: ShieldCheck },
+];
+
+const STATISTICS = [
+  { value: 20000, suffix: "+", label: "Clients served" },
+  { value: 150, suffix: "+", label: "Courses" },
+  { value: 8000, suffix: "+", label: "Certificates issued" },
+  { value: 35, suffix: "+", label: "Nutrition experts" },
+  { value: 50, suffix: "+", label: "Countries reached" },
+];
+
+/* CPD_COURSES, EXPERTS, TESTIMONIALS, and ARTICLES now come from the
+   backend via Inertia props — see the `Home` component signature and
+   the prop-shape comment near the bottom of this file. */
+
+const LEARNING_FEATURES = [
+  { title: "Video lessons", desc: "Bite-sized, expert-recorded lectures you can rewatch anytime.", icon: MonitorPlay },
+  { title: "Live classes", desc: "Scheduled sessions with real-time Q&A alongside your cohort.", icon: Video },
+  { title: "Assignments", desc: "Applied case studies reviewed with instructor feedback.", icon: ClipboardList },
+  { title: "Quizzes", desc: "Short knowledge checks after every module to lock in learning.", icon: HelpCircle },
+  { title: "Exams", desc: "Proctored final assessments required for CPD accreditation.", icon: ListChecks },
+  { title: "Certificates", desc: "A verifiable, shareable credential issued on completion.", icon: Trophy },
+  { title: "Progress tracking", desc: "A dashboard view of every module, score, and hour logged.", icon: BarChart3 },
+  { title: "Downloads", desc: "Slide decks, reference sheets, and templates for offline use.", icon: FolderDown },
+  { title: "Discussion forum", desc: "A moderated space to ask questions and compare notes.", icon: MessagesSquare },
+];
+
+const WEBINARS = [
+  {
+    title: "Reading Inflammatory Markers in Practice",
+    date: "Aug 21, 2026",
+    time: "5:00 PM CAT",
+    speaker: "Dr. Amara Nkusi, RD, PhD",
+    img: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=700&q=80&auto=format&fit=crop",
+  },
+  {
+    title: "Nutrition Strategy for Type 2 Remission",
+    date: "Sep 4, 2026",
+    time: "6:00 PM CAT",
+    speaker: "ALPHONSINE KANZAYIRE, RD, CDE",
+    img: "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=700&q=80&auto=format&fit=crop",
+  },
+  {
+    title: "Building a Corporate Wellness Program That Sticks",
+    date: "Sep 18, 2026",
+    time: "4:00 PM CAT",
+    speaker: "ALPHONSINE KANZAYIRE, MPH, RD",
+    img: "https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=700&q=80&auto=format&fit=crop",
+  },
+];
+
+const MARKETPLACE_CATEGORIES = [
+  { title: "Healthy Foods", desc: "Pantry staples and prepared meals vetted by our dietitians.", icon: Salad },
+  { title: "Supplements", desc: "Practitioner-formulated supplements for common deficiencies.", icon: FlaskConical },
+  { title: "Meal Plans", desc: "Downloadable, condition-specific plans ready to follow this week.", icon: ClipboardList },
+  { title: "Books", desc: "Clinical and consumer nutrition titles from our own faculty.", icon: BookOpen },
+  { title: "Equipment", desc: "Kitchen scales, portion tools, and home-testing kits.", icon: Equipment },
+  { title: "Digital Products", desc: "Trackers, templates, and planners you can use immediately.", icon: Download },
+];
+
+/* EXPERTS (practitioners) and TESTIMONIALS (learners) come from props. */
+
+/* ARTICLES comes from props. */
+
+const FOOTER_COLUMNS = [
+  {
+    title: "Clinic",
+    links: ["Book a Consultation", "Our Dietitians", "Conditions We Treat", "Telehealth"],
+  },
+  {
+    title: "Courses",
+    links: ["Browse Courses", "Become an Instructor", "CPD Accreditation", "Verify a Certificate"],
+  },
+  {
+    title: "Marketplace",
+    links: ["Supplements", "Meal Plans", "Digital Products", "Track an Order"],
+  },
+  {
+    title: "Resources",
+    links: ["Research & Blog", "Webinars", "Help Center", "Partner With Us"],
+  },
+  {
+    title: "Legal",
+    links: ["Privacy Policy", "Terms of Service", "Clinical Disclaimer", "Accessibility"],
+  },
+];
+
+/* --------------------------- Animations ----------------------------- */
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+};
+
+const staggerContainer = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+/* ----------------------------- Helpers -------------------------------- */
+
+function Reveal({ children, className = "", once = true, amount = 0.2 }) {
+  return (
+    <motion.div
+      className={className}
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once, amount }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function Stagger({ children, className = "" }) {
+  return (
+    <motion.div
+      className={className}
+      variants={staggerContainer}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.15 }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/** Signature "readout" chip: monospace metric used across hero, stats,
+ *  and CPD credit/rating badges — the platform's recurring data device. */
+function Readout({ value, label, className = "" }) {
+  return (
+    <div className={`font-mono ${className}`}>
+      <div className="text-sm font-semibold text-emerald-800">{value}</div>
+      {label && <div className="text-[11px] uppercase tracking-wide text-slate-500">{label}</div>}
+    </div>
+  );
+}
+
+function useCountUp(target, isInView, duration = 1.4) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    if (!isInView) return;
+    let start = null;
+    let raf;
+    const step = (ts) => {
+      if (start === null) start = ts;
+      const progress = Math.min((ts - start) / (duration * 1000), 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(Math.floor(eased * target));
+      if (progress < 1) raf = requestAnimationFrame(step);
     };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [isInView, target, duration]);
+  return value;
+}
 
-    return (
-        <>
-            <Head title="Welcome" />
-            <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
-                <img
-                    id="background"
-                    className="absolute -left-20 top-0 max-w-[877px]"
-                    src="https://laravel.com/assets/img/welcome/background.svg"
+function Counter({ value, suffix = "" }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.6 });
+  const count = useCountUp(value, isInView);
+  return (
+    <span ref={ref} className="font-mono tabular-nums">
+      {count.toLocaleString()}
+      {suffix}
+    </span>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div className="animate-pulse rounded-2xl border border-slate-200 bg-white p-4">
+      <div className="mb-4 h-40 rounded-xl bg-slate-100" />
+      <div className="mb-2 h-4 w-3/4 rounded bg-slate-100" />
+      <div className="h-3 w-1/2 rounded bg-slate-100" />
+    </div>
+  );
+}
+
+/* ------------------------------ Navbar -------------------------------- */
+
+function Navbar() {
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <header
+      className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
+        scrolled ? "border-slate-200 bg-white/90 backdrop-blur-md shadow-sm" : "border-transparent bg-white/70 backdrop-blur-sm"
+      }`}
+    >
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 lg:px-8">
+        <Link href="/" className="flex items-center gap-2.5">
+          <span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-emerald-100">
+            <ApplicationLogo className="block h-12 w-12 max-h-12 max-w-12 object-contain" />
+          </span>
+          <span className="font-display text-lg font-semibold tracking-tight text-slate-900">
+            
+          </span>
+        </Link>
+
+        <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
+          {NAV_LINKS.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              className="text-sm font-medium text-slate-600 transition-colors hover:text-emerald-700 focus-visible:text-emerald-700"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="hidden items-center gap-3 lg:flex">
+          <Link
+            href="/login"
+            className="text-sm font-medium text-slate-600 hover:text-emerald-700 transition duration-150 active:scale-95 active:translate-y-0.5"
+          >
+            Login
+          </Link>
+          <Link
+            href="/register"
+            className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition duration-150 hover:border-emerald-600 hover:text-emerald-700 active:scale-95 active:translate-y-0.5"
+          >
+            Register
+          </Link>
+          <a
+            href="/book"
+            className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-emerald-800/20 transition-transform hover:-translate-y-0.5 hover:bg-emerald-800"
+          >
+            Book Consultation
+          </a>
+        </div>
+
+        <button
+          type="button"
+          className="grid h-10 w-10 place-items-center rounded-lg text-slate-700 lg:hidden"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          onClick={() => setOpen((o) => !o)}
+        >
+          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden border-t border-slate-200 bg-white lg:hidden"
+          >
+            <nav className="flex flex-col gap-1 px-5 py-4" aria-label="Mobile">
+              {NAV_LINKS.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-emerald-50 hover:text-emerald-700"
+                >
+                  {link.label}
+                </a>
+              ))}
+              <div className="mt-2 flex flex-col gap-2 border-t border-slate-100 pt-3">
+                <Link
+                  href="/login"
+                  onClick={() => setOpen(false)}
+                  className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition duration-150 active:scale-95 active:translate-y-0.5"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setOpen(false)}
+                  className="rounded-full border border-slate-300 px-4 py-2.5 text-center text-sm font-medium text-slate-700 transition duration-150 active:scale-95 active:translate-y-0.5"
+                >
+                  Register
+                </Link>
+                <a
+                  href="/book"
+                  className="rounded-full bg-emerald-700 px-4 py-2.5 text-center text-sm font-semibold text-white"
+                >
+                  Book Consultation
+                </a>
+              </div>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
+  );
+}
+
+/* ------------------------------- Hero ---------------------------------- */
+
+function Hero() {
+  const heroImages = [
+    "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1400&q=80&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1592417817038-d13fd7342605?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cGVvcGxlJTIwYW5kJTIwZm9vZHxlbnwwfHwwfHx8MA%3D%3D",
+    "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1400&q=80&auto=format&fit=crop",
+  ];
+
+  const [index, setIndex] = useState(0);
+  const timer = useRef(null);
+
+  useEffect(() => {
+    timer.current = setInterval(() => setIndex((i) => (i + 1) % heroImages.length), 4500);
+    return () => clearInterval(timer.current);
+  }, []);
+
+  return (
+    <section id="home" className="relative overflow-hidden bg-white">
+      {/* Parallax-style ambient background */}
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-emerald-100/70 blur-3xl"
+        animate={{ y: [0, 24, 0] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-32 top-40 h-96 w-96 rounded-full bg-sky-100/70 blur-3xl"
+        animate={{ y: [0, -20, 0] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 pb-16 pt-14 lg:grid-cols-2 lg:gap-10 lg:px-8 lg:pb-24 lg:pt-20">
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="h-[420px] sm:h-[480px] flex flex-col justify-center"
+        >
+          <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-emerald-700 ring-1 ring-emerald-100">
+            <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
+            Personalized, evidence-based nutrition & clinical care
+          </span>
+
+          <h1 className="mt-6 font-display text-lg font-semibold leading-tight tracking-tight text-emerald-700 sm:text-2xl lg:text-3xl">
+            Our clinic focuses on the Art of Living, empowering people to achieve healthier, more balanced, and fulfilling lives through integrated nutrition, movement, mental well-being, preventive care, and sustainable lifestyle choices.
+          </h1>
+
+          <p className="mt-6 max-w-prose text-lg leading-relaxed text-slate-600">
+            RUNUTRIDIET combines clinical expertise with accessible coaching: personalized meal plans, evidence-led protocols, and ongoing support to help you
+            make small changes that last. No fads — just practical, measurable improvements.
+          </p>
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a
+              href="/book"
+              className="inline-flex items-center gap-2 rounded-full bg-emerald-700 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-emerald-800/20 transition-transform hover:-translate-y-0.5 hover:bg-emerald-800"
+            >
+              Book Consultation
+              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+            </a>
+            <a
+              href="#courses"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 transition-colors hover:border-emerald-600 hover:text-emerald-700"
+            >
+              Explore Courses
+            </a>
+            <a
+              href="#services"
+              className="inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-slate-600 hover:text-emerald-700"
+            >
+              Our Services
+              <ChevronRight className="h-4 w-4" aria-hidden="true" />
+            </a>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          className="relative"
+        >
+          <div className="relative overflow-hidden rounded-[2rem] shadow-2xl shadow-emerald-900/15 ring-1 ring-white/80 hover:shadow-emerald-900/20">
+            <img
+              src={heroImages[index]}
+              alt={`People and food — hero ${index + 1}`}
+              className="h-[420px] w-full object-cover sm:h-[480px] transition-transform duration-700 ease-out hover:scale-105"
+            />
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" aria-hidden="true" />
+
+            <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-white/90 px-3 py-2 shadow">
+              {heroImages.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => { setIndex(i); clearInterval(timer.current); }}
+                  aria-label={`Show hero ${i + 1}`}
+                  className={`h-2 w-8 rounded-full transition-all ${i === index ? "bg-emerald-700" : "bg-slate-200"}`}
                 />
-                <div className="relative flex min-h-screen flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white">
-                    <div className="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-                        <header className="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
-                            <div className="flex lg:col-start-2 lg:justify-center">
-                                <svg
-                                    className="h-12 w-auto text-white lg:h-16 lg:text-[#FF2D20]"
-                                    viewBox="0 0 62 65"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        d="M61.8548 14.6253C61.8778 14.7102 61.8895 14.7978 61.8897 14.8858V28.5615C61.8898 28.737 61.8434 28.9095 61.7554 29.0614C61.6675 29.2132 61.5409 29.3392 61.3887 29.4265L49.9104 36.0351V49.1337C49.9104 49.4902 49.7209 49.8192 49.4118 49.9987L25.4519 63.7916C25.3971 63.8227 25.3372 63.8427 25.2774 63.8639C25.255 63.8714 25.2338 63.8851 25.2101 63.8913C25.0426 63.9354 24.8666 63.9354 24.6991 63.8913C24.6716 63.8838 24.6467 63.8689 24.6205 63.8589C24.5657 63.8389 24.5084 63.8215 24.456 63.7916L0.501061 49.9987C0.348882 49.9113 0.222437 49.7853 0.134469 49.6334C0.0465019 49.4816 0.000120578 49.3092 0 49.1337L0 8.10652C0 8.01678 0.0124642 7.92953 0.0348998 7.84477C0.0423783 7.8161 0.0598282 7.78993 0.0697995 7.76126C0.0884958 7.70891 0.105946 7.65531 0.133367 7.6067C0.152063 7.5743 0.179485 7.54812 0.20192 7.51821C0.230588 7.47832 0.256763 7.43719 0.290416 7.40229C0.319084 7.37362 0.356476 7.35243 0.388883 7.32751C0.425029 7.29759 0.457436 7.26518 0.498568 7.2415L12.4779 0.345059C12.6296 0.257786 12.8015 0.211853 12.9765 0.211853C13.1515 0.211853 13.3234 0.257786 13.475 0.345059L25.4531 7.2415H25.4556C25.4955 7.26643 25.5292 7.29759 25.5653 7.32626C25.5977 7.35119 25.6339 7.37362 25.6625 7.40104C25.6974 7.43719 25.7224 7.47832 25.7523 7.51821C25.7735 7.54812 25.8021 7.5743 25.8196 7.6067C25.8483 7.65656 25.8645 7.70891 25.8844 7.76126C25.8944 7.78993 25.9118 7.8161 25.9193 7.84602C25.9423 7.93096 25.954 8.01853 25.9542 8.10652V33.7317L35.9355 27.9844V14.8846C35.9355 14.7973 35.948 14.7088 35.9704 14.6253C35.9792 14.5954 35.9954 14.5692 36.0053 14.5405C36.0253 14.4882 36.0427 14.4346 36.0702 14.386C36.0888 14.3536 36.1163 14.3274 36.1375 14.2975C36.1674 14.2576 36.1923 14.2165 36.2272 14.1816C36.2559 14.1529 36.292 14.1317 36.3244 14.1068C36.3618 14.0769 36.3942 14.0445 36.4341 14.0208L48.4147 7.12434C48.5663 7.03694 48.7383 6.99094 48.9133 6.99094C49.0883 6.99094 49.2602 7.03694 49.4118 7.12434L61.3899 14.0208C61.4323 14.0457 61.4647 14.0769 61.5021 14.1055C61.5333 14.1305 61.5694 14.1529 61.5981 14.1803C61.633 14.2165 61.6579 14.2576 61.6878 14.2975C61.7103 14.3274 61.7377 14.3536 61.7551 14.386C61.7838 14.4346 61.8 14.4882 61.8199 14.5405C61.8312 14.5692 61.8474 14.5954 61.8548 14.6253ZM59.893 27.9844V16.6121L55.7013 19.0252L49.9104 22.3593V33.7317L59.8942 27.9844H59.893ZM47.9149 48.5566V37.1768L42.2187 40.4299L25.953 49.7133V61.2003L47.9149 48.5566ZM1.99677 9.83281V48.5566L23.9562 61.199V49.7145L12.4841 43.2219L12.4804 43.2194L12.4754 43.2169C12.4368 43.1945 12.4044 43.1621 12.3682 43.1347C12.3371 43.1097 12.3009 43.0898 12.2735 43.0624L12.271 43.0586C12.2386 43.0275 12.2162 42.9888 12.1887 42.9539C12.1638 42.9203 12.1339 42.8916 12.114 42.8567L12.1127 42.853C12.0903 42.8156 12.0766 42.7707 12.0604 42.7283C12.0442 42.6909 12.023 42.656 12.013 42.6161C12.0005 42.5688 11.998 42.5177 11.9931 42.4691C11.9881 42.4317 11.9781 42.3943 11.9781 42.3569V15.5801L6.18848 12.2446L1.99677 9.83281ZM12.9777 2.36177L2.99764 8.10652L12.9752 13.8513L22.9541 8.10527L12.9752 2.36177H12.9777ZM18.1678 38.2138L23.9574 34.8809V9.83281L19.7657 12.2459L13.9749 15.5801V40.6281L18.1678 38.2138ZM48.9133 9.14105L38.9344 14.8858L48.9133 20.6305L58.8909 14.8846L48.9133 9.14105ZM47.9149 22.3593L42.124 19.0252L37.9323 16.6121V27.9844L43.7219 31.3174L47.9149 33.7317V22.3593ZM24.9533 47.987L39.59 39.631L46.9065 35.4555L36.9352 29.7145L25.4544 36.3242L14.9907 42.3482L24.9533 47.987Z"
-                                        fill="currentColor"
-                                    />
-                                </svg>
-                            </div>
-                            <nav className="-mx-3 flex flex-1 justify-end">
-                                {auth.user ? (
-                                    <Link
-                                        href={route('dashboard')}
-                                        className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                    >
-                                        Dashboard
-                                    </Link>
-                                ) : (
-                                    <>
-                                        <Link
-                                            href={route('login')}
-                                            className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                        >
-                                            Log in
-                                        </Link>
-                                        <Link
-                                            href={route('register')}
-                                            className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                        >
-                                            Register
-                                        </Link>
-                                    </>
-                                )}
-                            </nav>
-                        </header>
-
-                        <main className="mt-6">
-                            <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-                                <a
-                                    href="https://laravel.com/docs"
-                                    id="docs-card"
-                                    className="flex flex-col items-start gap-6 overflow-hidden rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#FF2D20] md:row-span-3 lg:p-10 lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#FF2D20]"
-                                >
-                                    <div
-                                        id="screenshot-container"
-                                        className="relative flex w-full flex-1 items-stretch"
-                                    >
-                                        <img
-                                            src="https://laravel.com/assets/img/welcome/docs-light.svg"
-                                            alt="Laravel documentation screenshot"
-                                            className="aspect-video h-full w-full flex-1 rounded-[10px] object-cover object-top drop-shadow-[0px_4px_34px_rgba(0,0,0,0.06)] dark:hidden"
-                                            onError={handleImageError}
-                                        />
-                                        <img
-                                            src="https://laravel.com/assets/img/welcome/docs-dark.svg"
-                                            alt="Laravel documentation screenshot"
-                                            className="hidden aspect-video h-full w-full flex-1 rounded-[10px] object-cover object-top drop-shadow-[0px_4px_34px_rgba(0,0,0,0.25)] dark:block"
-                                        />
-                                        <div className="absolute -bottom-16 -left-16 h-40 w-[calc(100%+8rem)] bg-gradient-to-b from-transparent via-white to-white dark:via-zinc-900 dark:to-zinc-900"></div>
-                                    </div>
-
-                                    <div className="relative flex items-center gap-6 lg:items-end">
-                                        <div
-                                            id="docs-card-content"
-                                            className="flex items-start gap-6 lg:flex-col"
-                                        >
-                                            <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FF2D20]/10 sm:size-16">
-                                                <svg
-                                                    className="size-5 sm:size-6"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path
-                                                        fill="#FF2D20"
-                                                        d="M23 4a1 1 0 0 0-1.447-.894L12.224 7.77a.5.5 0 0 1-.448 0L2.447 3.106A1 1 0 0 0 1 4v13.382a1.99 1.99 0 0 0 1.105 1.79l9.448 4.728c.14.065.293.1.447.1.154-.005.306-.04.447-.105l9.453-4.724a1.99 1.99 0 0 0 1.1-1.789V4ZM3 6.023a.25.25 0 0 1 .362-.223l7.5 3.75a.251.251 0 0 1 .138.223v11.2a.25.25 0 0 1-.362.224l-7.5-3.75a.25.25 0 0 1-.138-.22V6.023Zm18 11.2a.25.25 0 0 1-.138.224l-7.5 3.75a.249.249 0 0 1-.329-.099.249.249 0 0 1-.033-.12V9.772a.251.251 0 0 1 .138-.224l7.5-3.75a.25.25 0 0 1 .362.224v11.2Z"
-                                                    />
-                                                    <path
-                                                        fill="#FF2D20"
-                                                        d="m3.55 1.893 8 4.048a1.008 1.008 0 0 0 .9 0l8-4.048a1 1 0 0 0-.9-1.785l-7.322 3.706a.506.506 0 0 1-.452 0L4.454.108a1 1 0 0 0-.9 1.785H3.55Z"
-                                                    />
-                                                </svg>
-                                            </div>
-
-                                            <div className="pt-3 sm:pt-5 lg:pt-0">
-                                                <h2 className="text-xl font-semibold text-black dark:text-white">
-                                                    Documentation
-                                                </h2>
-
-                                                <p className="mt-4 text-sm/relaxed">
-                                                    Laravel has wonderful
-                                                    documentation covering every
-                                                    aspect of the framework.
-                                                    Whether you are a newcomer
-                                                    or have prior experience
-                                                    with Laravel, we recommend
-                                                    reading our documentation
-                                                    from beginning to end.
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <svg
-                                            className="size-6 shrink-0 stroke-[#FF2D20]"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth="1.5"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
-                                            />
-                                        </svg>
-                                    </div>
-                                </a>
-
-                                <a
-                                    href="https://laracasts.com"
-                                    className="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#FF2D20] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#FF2D20]"
-                                >
-                                    <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FF2D20]/10 sm:size-16">
-                                        <svg
-                                            className="size-5 sm:size-6"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <g fill="#FF2D20">
-                                                <path d="M24 8.25a.5.5 0 0 0-.5-.5H.5a.5.5 0 0 0-.5.5v12a2.5 2.5 0 0 0 2.5 2.5h19a2.5 2.5 0 0 0 2.5-2.5v-12Zm-7.765 5.868a1.221 1.221 0 0 1 0 2.264l-6.626 2.776A1.153 1.153 0 0 1 8 18.123v-5.746a1.151 1.151 0 0 1 1.609-1.035l6.626 2.776ZM19.564 1.677a.25.25 0 0 0-.177-.427H15.6a.106.106 0 0 0-.072.03l-4.54 4.543a.25.25 0 0 0 .177.427h3.783c.027 0 .054-.01.073-.03l4.543-4.543ZM22.071 1.318a.047.047 0 0 0-.045.013l-4.492 4.492a.249.249 0 0 0 .038.385.25.25 0 0 0 .14.042h5.784a.5.5 0 0 0 .5-.5v-2a2.5 2.5 0 0 0-1.925-2.432ZM13.014 1.677a.25.25 0 0 0-.178-.427H9.101a.106.106 0 0 0-.073.03l-4.54 4.543a.25.25 0 0 0 .177.427H8.4a.106.106 0 0 0 .073-.03l4.54-4.543ZM6.513 1.677a.25.25 0 0 0-.177-.427H2.5A2.5 2.5 0 0 0 0 3.75v2a.5.5 0 0 0 .5.5h1.4a.106.106 0 0 0 .073-.03l4.54-4.543Z" />
-                                            </g>
-                                        </svg>
-                                    </div>
-
-                                    <div className="pt-3 sm:pt-5">
-                                        <h2 className="text-xl font-semibold text-black dark:text-white">
-                                            Laracasts
-                                        </h2>
-
-                                        <p className="mt-4 text-sm/relaxed">
-                                            Laracasts offers thousands of video
-                                            tutorials on Laravel, PHP, and
-                                            JavaScript development. Check them
-                                            out, see for yourself, and massively
-                                            level up your development skills in
-                                            the process.
-                                        </p>
-                                    </div>
-
-                                    <svg
-                                        className="size-6 shrink-0 self-center stroke-[#FF2D20]"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
-                                        />
-                                    </svg>
-                                </a>
-
-                                <a
-                                    href="https://laravel-news.com"
-                                    className="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#FF2D20] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#FF2D20]"
-                                >
-                                    <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FF2D20]/10 sm:size-16">
-                                        <svg
-                                            className="size-5 sm:size-6"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <g fill="#FF2D20">
-                                                <path d="M8.75 4.5H5.5c-.69 0-1.25.56-1.25 1.25v4.75c0 .69.56 1.25 1.25 1.25h3.25c.69 0 1.25-.56 1.25-1.25V5.75c0-.69-.56-1.25-1.25-1.25Z" />
-                                                <path d="M24 10a3 3 0 0 0-3-3h-2V2.5a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2V20a3.5 3.5 0 0 0 3.5 3.5h17A3.5 3.5 0 0 0 24 20V10ZM3.5 21.5A1.5 1.5 0 0 1 2 20V3a.5.5 0 0 1 .5-.5h14a.5.5 0 0 1 .5.5v17c0 .295.037.588.11.874a.5.5 0 0 1-.484.625L3.5 21.5ZM22 20a1.5 1.5 0 1 1-3 0V9.5a.5.5 0 0 1 .5-.5H21a1 1 0 0 1 1 1v10Z" />
-                                                <path d="M12.751 6.047h2a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-2A.75.75 0 0 1 12 7.3v-.5a.75.75 0 0 1 .751-.753ZM12.751 10.047h2a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-2A.75.75 0 0 1 12 11.3v-.5a.75.75 0 0 1 .751-.753ZM4.751 14.047h10a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-10A.75.75 0 0 1 4 15.3v-.5a.75.75 0 0 1 .751-.753ZM4.75 18.047h7.5a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-7.5A.75.75 0 0 1 4 19.3v-.5a.75.75 0 0 1 .75-.753Z" />
-                                            </g>
-                                        </svg>
-                                    </div>
-
-                                    <div className="pt-3 sm:pt-5">
-                                        <h2 className="text-xl font-semibold text-black dark:text-white">
-                                            Laravel News
-                                        </h2>
-
-                                        <p className="mt-4 text-sm/relaxed">
-                                            Laravel News is a community driven
-                                            portal and newsletter aggregating
-                                            all of the latest and most important
-                                            news in the Laravel ecosystem,
-                                            including new package releases and
-                                            tutorials.
-                                        </p>
-                                    </div>
-
-                                    <svg
-                                        className="size-6 shrink-0 self-center stroke-[#FF2D20]"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
-                                        />
-                                    </svg>
-                                </a>
-
-                                <div className="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800">
-                                    <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FF2D20]/10 sm:size-16">
-                                        <svg
-                                            className="size-5 sm:size-6"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <g fill="#FF2D20">
-                                                <path d="M16.597 12.635a.247.247 0 0 0-.08-.237 2.234 2.234 0 0 1-.769-1.68c.001-.195.03-.39.084-.578a.25.25 0 0 0-.09-.267 8.8 8.8 0 0 0-4.826-1.66.25.25 0 0 0-.268.181 2.5 2.5 0 0 1-2.4 1.824.045.045 0 0 0-.045.037 12.255 12.255 0 0 0-.093 3.86.251.251 0 0 0 .208.214c2.22.366 4.367 1.08 6.362 2.118a.252.252 0 0 0 .32-.079 10.09 10.09 0 0 0 1.597-3.733ZM13.616 17.968a.25.25 0 0 0-.063-.407A19.697 19.697 0 0 0 8.91 15.98a.25.25 0 0 0-.287.325c.151.455.334.898.548 1.328.437.827.981 1.594 1.619 2.28a.249.249 0 0 0 .32.044 29.13 29.13 0 0 0 2.506-1.99ZM6.303 14.105a.25.25 0 0 0 .265-.274 13.048 13.048 0 0 1 .205-4.045.062.062 0 0 0-.022-.07 2.5 2.5 0 0 1-.777-.982.25.25 0 0 0-.271-.149 11 11 0 0 0-5.6 2.815.255.255 0 0 0-.075.163c-.008.135-.02.27-.02.406.002.8.084 1.598.246 2.381a.25.25 0 0 0 .303.193 19.924 19.924 0 0 1 5.746-.438ZM9.228 20.914a.25.25 0 0 0 .1-.393 11.53 11.53 0 0 1-1.5-2.22 12.238 12.238 0 0 1-.91-2.465.248.248 0 0 0-.22-.187 18.876 18.876 0 0 0-5.69.33.249.249 0 0 0-.179.336c.838 2.142 2.272 4 4.132 5.353a.254.254 0 0 0 .15.048c1.41-.01 2.807-.282 4.117-.802ZM18.93 12.957l-.005-.008a.25.25 0 0 0-.268-.082 2.21 2.21 0 0 1-.41.081.25.25 0 0 0-.217.2c-.582 2.66-2.127 5.35-5.75 7.843a.248.248 0 0 0-.09.299.25.25 0 0 0 .065.091 28.703 28.703 0 0 0 2.662 2.12.246.246 0 0 0 .209.037c2.579-.701 4.85-2.242 6.456-4.378a.25.25 0 0 0 .048-.189 13.51 13.51 0 0 0-2.7-6.014ZM5.702 7.058a.254.254 0 0 0 .2-.165A2.488 2.488 0 0 1 7.98 5.245a.093.093 0 0 0 .078-.062 19.734 19.734 0 0 1 3.055-4.74.25.25 0 0 0-.21-.41 12.009 12.009 0 0 0-10.4 8.558.25.25 0 0 0 .373.281 12.912 12.912 0 0 1 4.826-1.814ZM10.773 22.052a.25.25 0 0 0-.28-.046c-.758.356-1.55.635-2.365.833a.25.25 0 0 0-.022.48c1.252.43 2.568.65 3.893.65.1 0 .2 0 .3-.008a.25.25 0 0 0 .147-.444c-.526-.424-1.1-.917-1.673-1.465ZM18.744 8.436a.249.249 0 0 0 .15.228 2.246 2.246 0 0 1 1.352 2.054c0 .337-.08.67-.23.972a.25.25 0 0 0 .042.28l.007.009a15.016 15.016 0 0 1 2.52 4.6.25.25 0 0 0 .37.132.25.25 0 0 0 .096-.114c.623-1.464.944-3.039.945-4.63a12.005 12.005 0 0 0-5.78-10.258.25.25 0 0 0-.373.274c.547 2.109.85 4.274.901 6.453ZM9.61 5.38a.25.25 0 0 0 .08.31c.34.24.616.561.8.935a.25.25 0 0 0 .3.127.631.631 0 0 1 .206-.034c2.054.078 4.036.772 5.69 1.991a.251.251 0 0 0 .267.024c.046-.024.093-.047.141-.067a.25.25 0 0 0 .151-.23A29.98 29.98 0 0 0 15.957.764a.25.25 0 0 0-.16-.164 11.924 11.924 0 0 0-2.21-.518.252.252 0 0 0-.215.076A22.456 22.456 0 0 0 9.61 5.38Z" />
-                                            </g>
-                                        </svg>
-                                    </div>
-
-                                    <div className="pt-3 sm:pt-5">
-                                        <h2 className="text-xl font-semibold text-black dark:text-white">
-                                            Vibrant Ecosystem
-                                        </h2>
-
-                                        <p className="mt-4 text-sm/relaxed">
-                                            Laravel's robust library of
-                                            first-party tools and libraries,
-                                            such as{' '}
-                                            <a
-                                                href="https://forge.laravel.com"
-                                                className="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white dark:focus-visible:ring-[#FF2D20]"
-                                            >
-                                                Forge
-                                            </a>
-                                            ,{' '}
-                                            <a
-                                                href="https://vapor.laravel.com"
-                                                className="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                            >
-                                                Vapor
-                                            </a>
-                                            ,{' '}
-                                            <a
-                                                href="https://nova.laravel.com"
-                                                className="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                            >
-                                                Nova
-                                            </a>
-                                            ,{' '}
-                                            <a
-                                                href="https://envoyer.io"
-                                                className="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                            >
-                                                Envoyer
-                                            </a>
-                                            , and{' '}
-                                            <a
-                                                href="https://herd.laravel.com"
-                                                className="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                            >
-                                                Herd
-                                            </a>{' '}
-                                            help you take your projects to the
-                                            next level. Pair them with powerful
-                                            open source libraries like{' '}
-                                            <a
-                                                href="https://laravel.com/docs/billing"
-                                                className="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                            >
-                                                Cashier
-                                            </a>
-                                            ,{' '}
-                                            <a
-                                                href="https://laravel.com/docs/dusk"
-                                                className="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                            >
-                                                Dusk
-                                            </a>
-                                            ,{' '}
-                                            <a
-                                                href="https://laravel.com/docs/broadcasting"
-                                                className="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                            >
-                                                Echo
-                                            </a>
-                                            ,{' '}
-                                            <a
-                                                href="https://laravel.com/docs/horizon"
-                                                className="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                            >
-                                                Horizon
-                                            </a>
-                                            ,{' '}
-                                            <a
-                                                href="https://laravel.com/docs/sanctum"
-                                                className="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                            >
-                                                Sanctum
-                                            </a>
-                                            ,{' '}
-                                            <a
-                                                href="https://laravel.com/docs/telescope"
-                                                className="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                            >
-                                                Telescope
-                                            </a>
-                                            , and more.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </main>
-
-                        <footer className="py-16 text-center text-sm text-black dark:text-white/70">
-                            Laravel v{laravelVersion} (PHP v{phpVersion})
-                        </footer>
-                    </div>
-                </div>
+              ))}
             </div>
-        </>
-    );
+
+            <button
+              aria-label="Previous"
+              onClick={() => { setIndex((i) => (i - 1 + heroImages.length) % heroImages.length); clearInterval(timer.current); }}
+              className="absolute left-3 top-1/2 hidden -translate-y-1/2 rounded-full bg-white/90 p-2 shadow sm:block"
+            >
+              <ChevronLeft className="h-4 w-4 text-slate-700" />
+            </button>
+            <button
+              aria-label="Next"
+              onClick={() => { setIndex((i) => (i + 1) % heroImages.length); clearInterval(timer.current); }}
+              className="absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-full bg-white/90 p-2 shadow sm:block"
+            >
+              <ChevronRight className="h-4 w-4 text-slate-700" />
+            </button>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="absolute -left-6 top-8 hidden rounded-2xl bg-white/95 p-4 shadow-xl ring-1 ring-slate-100 backdrop-blur sm:block"
+          >
+            <div className="flex items-center gap-1 text-amber-500">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
+              ))}
+            </div>
+            <Readout value="4.9 / 5" label="Client rating" className="mt-1" />
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Floating stat cards */}
+      <div className="relative mx-auto max-w-7xl px-5 pb-16 lg:px-8">
+        <Stagger className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+          {HERO_STATS.map((stat) => (
+            <motion.div
+              key={stat.label}
+              variants={fadeUp}
+              className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-900/5 transition-shadow hover:shadow-md sm:p-5"
+            >
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-50 text-emerald-700">
+                <stat.icon className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <div>
+                <div className="font-mono text-lg font-semibold text-slate-900">
+                  {stat.value}
+                  <span className="text-emerald-700">{stat.suffix}</span>
+                </div>
+                <div className="text-xs text-slate-500">{stat.label}</div>
+              </div>
+            </motion.div>
+          ))}
+        </Stagger>
+      </div>
+    </section>
+  );
+}
+
+/* --------------------------- Trusted Partners --------------------------- */
+
+function TrustedPartners() {
+  return (
+    <section className="border-y border-slate-100 bg-slate-50/60 py-12">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <Reveal>
+          <p className="text-center text-xs font-semibold uppercase tracking-widest text-slate-400">
+            Trusted by hospitals, universities, NGOs, government and corporate partners
+          </p>
+        </Reveal>
+        <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
+          {PARTNER_GROUPS.map((group, gi) => (
+            <Reveal key={group.label} className="text-center sm:text-left" amount={0.1}>
+              <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
+                {group.label}
+              </p>
+              <ul className="space-y-1.5">
+                {group.names.map((name) => (
+                  <li key={name} className="font-display text-sm font-medium text-slate-500">
+                    {name}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* --------------------------------- About --------------------------------- */
+
+function About() {
+  return (
+    <section id="clinic" className="py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <div className="grid gap-14 lg:grid-cols-2 lg:gap-16">
+          <Reveal>
+            <span className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
+              About RUNUTRIDIET
+            </span>
+            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+              A clinic , built on the same evidence.
+            </h2>
+            <p className="mt-5 text-base leading-relaxed text-slate-600">
+              Our clinic focuses on the Art of Living—helping people build healthier, more balanced, and
+               fulfilling lives through an integrated approach to physical health, nutrition, movement, 
+               mental well-being, and everyday lifestyle choices.
+                We believe true wellness is not simply the absence of illness,
+                 but the ability to live with energy, purpose, confidence, and balance. 
+                 Through personalized nutrition guidance, lifestyle coaching, wellness education,
+                  preventive care, and practical healthy-living strategies, we empower individuals and 
+                  families to understand their bodies, make better choices,
+                   and develop sustainable habits that support a healthier and happier life.
+
+            </p>
+            <div className="mt-8 grid gap-5 sm:grid-cols-3">
+              <div>
+                <p className="text-sm font-semibold text-slate-900">Mission</p>
+                <p className="mt-1 text-sm leading-relaxed text-slate-600">
+                  Make evidence-based nutrition care and training accessible
+                  everywhere it's needed.
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-900">Vision</p>
+                <p className="mt-1 text-sm leading-relaxed text-slate-600">
+                  A world where nutrition guidance is always clinically
+                  grounded, never guesswork.
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-900">Values</p>
+                <p className="mt-1 text-sm leading-relaxed text-slate-600">
+                  Evidence, access, and practitioner accountability, in that
+                  order.
+                </p>
+              </div>
+            </div>
+          </Reveal>
+
+          <Stagger className="grid gap-5 sm:grid-cols-1">
+            {CORE_VALUES.map((value) => (
+              <motion.div
+                key={value.title}
+                variants={fadeUp}
+                className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm shadow-slate-900/5"
+              >
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-sky-50 text-sky-700">
+                  <value.icon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <div>
+                  <p className="font-display text-lg font-semibold text-slate-900">
+                    {value.title}
+                  </p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+                    {value.copy}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </Stagger>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------- Services -------------------------------- */
+
+function Services() {
+  return (
+    <section id="services" className="bg-slate-50/60 py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <Reveal className="max-w-2xl">
+          <span className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
+            Services
+          </span>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            Clinical support for every stage of life.
+          </h2>
+        </Reveal>
+
+        <Stagger className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {SERVICES.map((service) => (
+            <motion.div
+              key={service.title}
+              variants={fadeUp}
+              className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all hover:-translate-y-1 hover:shadow-lg"
+            >
+              <span className="grid h-12 w-12 place-items-center rounded-xl bg-emerald-50 text-emerald-700 transition-colors group-hover:bg-emerald-700 group-hover:text-white">
+                <service.icon className="h-6 w-6" aria-hidden="true" />
+              </span>
+              <h3 className="mt-5 font-display text-lg font-semibold text-slate-900">
+                {service.title}
+              </h3>
+              <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">
+                {service.desc}
+              </p>
+              <a
+                href="/services"
+                className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+              >
+                Learn more
+                <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+              </a>
+            </motion.div>
+          ))}
+        </Stagger>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- Why Choose Us ------------------------------ */
+
+function WhyChooseUs() {
+  return (
+    <section className="py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <Reveal className="max-w-2xl">
+          <span className="text-xs font-semibold uppercase tracking-widest text-sky-700">
+            Why Choose Us
+          </span>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            Every credential, verified. Every plan, personal.
+          </h2>
+        </Reveal>
+
+        <Stagger className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3">
+          {WHY_CHOOSE_US.map((item) => (
+            <motion.div
+              key={item.title}
+              variants={fadeUp}
+              className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm shadow-slate-900/5"
+            >
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-50 text-emerald-700">
+                <item.icon className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <p className="text-sm font-semibold text-slate-800">{item.title}</p>
+            </motion.div>
+          ))}
+        </Stagger>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------- Statistics ------------------------------- */
+
+function Statistics() {
+  return (
+    <section className="relative overflow-hidden bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-700 py-16 text-white lg:py-20">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <Stagger className="grid grid-cols-2 gap-8 sm:grid-cols-5">
+          {STATISTICS.map((stat) => (
+            <motion.div key={stat.label} variants={fadeUp} className="text-center">
+              <div className="font-mono text-3xl font-semibold sm:text-4xl">
+                <Counter value={stat.value} suffix={stat.suffix} />
+              </div>
+              <p className="mt-2 text-xs uppercase tracking-wide text-emerald-100/80 sm:text-sm">
+                {stat.label}
+              </p>
+            </motion.div>
+          ))}
+        </Stagger>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------- CPD Academy ------------------------------ */
+
+function CourseCard({ course }) {
+  const { auth } = usePage().props;
+  const isAuthenticated = Boolean(auth?.user);
+  const identifier = course.slug ?? course.id;
+  const enrollHref = isAuthenticated
+    ? `/courses/${identifier}/enroll`
+    : `/login?redirect=${encodeURIComponent(`/courses/${identifier}/enroll`)}`;
+  const imageSrc = course.image ?? course.img ?? course.thumbnail;
+
+  return (
+    <motion.div
+      variants={fadeUp}
+      className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-900/5 transition-all hover:-translate-y-1 hover:shadow-lg"
+    >
+      <div className="relative h-44 overflow-hidden">
+        <img
+          src={imageSrc}
+          alt={`Illustration for the ${course.title} course`}
+          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+        />
+        <span className="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 font-mono text-[11px] font-semibold text-emerald-800 shadow-sm">
+          {course.credits} CPD credits
+        </span>
+      </div>
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-display text-base font-semibold leading-snug text-slate-900">
+          {course.title}
+        </h3>
+        <p className="mt-1 text-sm text-slate-500">{course.instructor}</p>
+
+        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 font-mono text-xs text-slate-500">
+          <span className="inline-flex items-center gap-1">
+            <Clock className="h-3.5 w-3.5" aria-hidden="true" /> {course.duration}
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <Users className="h-3.5 w-3.5" aria-hidden="true" /> {course.students}
+          </span>
+          <span className="inline-flex items-center gap-1 text-amber-600">
+            <Star className="h-3.5 w-3.5 fill-current" aria-hidden="true" /> {course.rating}
+          </span>
+        </div>
+
+        <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+          <span className="font-mono text-lg font-semibold text-slate-900">{course.price}</span>
+          <Link
+            href={enrollHref}
+            className="rounded-full bg-emerald-700 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-800"
+          >
+            Enroll
+          </Link>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function CPDAcademy({ courses = [] }) {
+  return (
+    <section id="academy" className="bg-gradient-to-b from-sky-50/70 to-white py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <Reveal className="max-w-2xl">
+            <span className="text-xs font-semibold uppercase tracking-widest text-sky-700">
+              CPD Academy
+            </span>
+            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+              Accredited continuing education, taught by practicing clinicians.
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-slate-600">
+              Every course carries verified CPD credit, is reviewed by our
+              accreditation board annually, and ends in a certificate you can
+              publicly verify.
+            </p>
+          </Reveal>
+          <div id="courses" className="flex gap-3">
+            <a
+              href="/courses"
+              className="rounded-full bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800"
+            >
+              Browse Courses
+            </a>
+            <a
+              href="#instructor"
+              className="rounded-full border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition-colors hover:border-emerald-600 hover:text-emerald-700"
+            >
+              Become Instructor
+            </a>
+          </div>
+        </div>
+
+        <Stagger className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {courses.length > 0 ? (
+            courses.map((course) => (
+              <CourseCard key={course.id ?? course.slug} course={course} />
+            ))
+          ) : (
+            <p className="col-span-full text-sm text-slate-500">
+              No courses are published yet.
+            </p>
+          )}
+        </Stagger>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- Learning Features --------------------------- */
+
+function LearningFeatures() {
+  return (
+    <section className="py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <Reveal className="max-w-2xl">
+          <span className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
+            Learning Experience
+          </span>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            Built like a classroom, tracked like a chart.
+          </h2>
+        </Reveal>
+
+        <Stagger className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-3">
+          {LEARNING_FEATURES.map((feature) => (
+            <motion.div
+              key={feature.title}
+              variants={fadeUp}
+              className="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm shadow-slate-900/5"
+            >
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-sky-50 text-sky-700">
+                <feature.icon className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <div>
+                <p className="font-display text-sm font-semibold text-slate-900">
+                  {feature.title}
+                </p>
+                <p className="mt-1 text-sm leading-relaxed text-slate-600">{feature.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </Stagger>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------- Webinars --------------------------------- */
+
+function Webinars() {
+  return (
+    <section id="webinars" className="bg-slate-50/60 py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <Reveal className="max-w-2xl">
+          <span className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
+            Upcoming Webinars
+          </span>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            Free sessions with our clinical faculty.
+          </h2>
+        </Reveal>
+
+        <Stagger className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {WEBINARS.map((webinar) => (
+            <motion.div
+              key={webinar.title}
+              variants={fadeUp}
+              className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-900/5 transition-shadow hover:shadow-lg"
+            >
+              <div className="relative h-40">
+                <img
+                  src={webinar.img}
+                  alt={`Promotional image for the webinar ${webinar.title}`}
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                />
+                <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1 font-mono text-[11px] font-semibold text-emerald-800 shadow-sm">
+                  <Calendar className="h-3 w-3" aria-hidden="true" /> {webinar.date}
+                </span>
+              </div>
+              <div className="p-5">
+                <h3 className="font-display text-base font-semibold leading-snug text-slate-900">
+                  {webinar.title}
+                </h3>
+                <p className="mt-1.5 text-sm text-slate-500">
+                  {webinar.speaker} &middot; {webinar.time}
+                </p>
+                <a
+                  href="#register"
+                  className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+                >
+                  Register
+                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                </a>
+              </div>
+            </motion.div>
+          ))}
+        </Stagger>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------ Marketplace --------------------------------- */
+
+function ProductCard({ product }) {
+  return (
+    <motion.div
+      variants={fadeUp}
+      className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-900/5 transition-all hover:-translate-y-1 hover:shadow-lg"
+    >
+      <div className="relative h-44 overflow-hidden">
+        <img
+          src={product.image ?? product.img ?? product.thumbnail}
+          alt={product.name}
+          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+        />
+        {product.tag && (
+          <span className="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 font-mono text-[11px] font-semibold text-emerald-800 shadow-sm">
+            {product.tag}
+          </span>
+        )}
+      </div>
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-display text-base font-semibold leading-snug text-slate-900">
+          {product.name}
+        </h3>
+        {product.focus && <p className="mt-1 text-sm text-slate-500">{product.focus}</p>}
+
+        <div className="mt-4 space-y-1 font-mono text-xs text-slate-500">
+          {product.format && <p>{product.format}</p>}
+          {product.serving && <p>Serving: {product.serving}</p>}
+          {product.pairsWith && <p>Pairs with: {product.pairsWith}</p>}
+        </div>
+
+        <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+          <span className="font-mono text-lg font-semibold text-slate-900">{product.price}</span>
+          <Link
+            href={`/shop/${product.slug ?? product.id}`}
+            className="rounded-full bg-emerald-700 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-800"
+          >
+            View product
+          </Link>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function Marketplace({ products = [] }) {
+  const carouselRef = useRef(null);
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+    let stopped = false;
+    const interval = setInterval(() => {
+      if (stopped) return;
+      const max = el.scrollWidth - el.clientWidth;
+      if (el.scrollLeft >= max - 2) {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        el.scrollBy({ left: Math.max(el.clientWidth * 0.6, 240), behavior: "smooth" });
+      }
+    }, 3500);
+    const onEnter = () => (stopped = true);
+    const onLeave = () => (stopped = false);
+    el.addEventListener("mouseenter", onEnter);
+    el.addEventListener("mouseleave", onLeave);
+    return () => {
+      clearInterval(interval);
+      el.removeEventListener("mouseenter", onEnter);
+      el.removeEventListener("mouseleave", onLeave);
+    };
+  }, [products]);
+
+  return (
+    <section id="marketplace" className="py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <Reveal className="max-w-2xl">
+          <span className="text-xs font-semibold uppercase tracking-widest text-sky-700">
+            Nutrition Marketplace
+          </span>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            Everything your plan calls for, in one place.
+          </h2>
+        </Reveal>
+
+        <Stagger className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {MARKETPLACE_CATEGORIES.map((cat) => (
+            <motion.div
+              key={cat.title}
+              variants={fadeUp}
+              className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all hover:-translate-y-1 hover:shadow-lg"
+            >
+              <span className="grid h-12 w-12 place-items-center rounded-xl bg-emerald-50 text-emerald-700 transition-colors group-hover:bg-emerald-700 group-hover:text-white">
+                <cat.icon className="h-6 w-6" aria-hidden="true" />
+              </span>
+              <h3 className="mt-5 font-display text-lg font-semibold text-slate-900">
+                {cat.title}
+              </h3>
+              <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{cat.desc}</p>
+              <Link
+                href={`/shop?category=${encodeURIComponent(cat.title)}`}
+                className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+              >
+                <ShoppingBag className="h-4 w-4" aria-hidden="true" />
+                Browse {cat.title.toLowerCase()}
+              </Link>
+            </motion.div>
+          ))}
+        </Stagger>
+
+        {products.length > 0 && (
+          <div className="mt-16">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <h3 className="font-display text-2xl font-semibold tracking-tight text-slate-900">
+                Featured products
+              </h3>
+              <Link
+                href="/shop"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+              >
+                Browse full shop
+                <ChevronRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
+
+            <div ref={carouselRef} className="mt-6 flex gap-5 overflow-x-auto scroll-smooth py-2">
+              {products.map((product) => (
+                <div key={product.id ?? product.slug} className="min-w-[260px] flex-shrink-0">
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------- Experts ------------------------------------ */
+
+function Experts({ practitioners = [] }) {
+  return (
+    <section id="experts" className="bg-slate-50/60 py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <Reveal className="max-w-2xl">
+          <span className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
+            Meet Our Experts
+          </span>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            Licensed, verified, and practicing.
+          </h2>
+        </Reveal>
+
+        <Stagger className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {practitioners.length > 0 ? (
+            practitioners.map((expert, i) => (
+              <motion.div
+                key={expert.id ?? `${expert.name}-${i}`}
+                variants={fadeUp}
+                className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-900/5 transition-shadow hover:shadow-lg"
+              >
+                <div className="h-56 overflow-hidden">
+                  <img
+                    src={expert.image ?? expert.img ?? expert.photo}
+                    alt={`Portrait of ${expert.name}, ${expert.qualification}`}
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="p-5">
+                  <h3 className="font-display text-base font-semibold text-slate-900">
+                    {expert.name}
+                  </h3>
+                  <p className="text-sm text-emerald-700">{expert.qualification}</p>
+                  <p className="mt-2 text-sm text-slate-600">{expert.focus}</p>
+                  <Readout value={expert.experience} label="Experience" className="mt-3" />
+                  <a
+                    href="/book"
+                    className="mt-4 inline-flex w-full items-center justify-center rounded-full border border-slate-300 py-2.5 text-xs font-semibold text-slate-700 transition-colors hover:border-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"
+                  >
+                    Book Appointment
+                  </a>
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            <p className="col-span-full text-sm text-slate-500">
+              No practitioners listed yet.
+            </p>
+          )}
+        </Stagger>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- Success Stories -------------------------------- */
+
+function Testimonials({ testimonials = [] }) {
+  const [index, setIndex] = useState(0);
+  const count = testimonials.length;
+
+  const next = useCallback(() => setIndex((i) => (count ? (i + 1) % count : 0)), [count]);
+  const prev = useCallback(
+    () => setIndex((i) => (count ? (i - 1 + count) % count : 0)),
+    [count]
+  );
+
+  useEffect(() => {
+    if (count < 2) return;
+    const t = setInterval(next, 6000);
+    return () => clearInterval(t);
+  }, [next, count]);
+
+  if (count === 0) return null;
+
+  const current = testimonials[index];
+
+  return (
+    <section className="py-20 lg:py-28" aria-roledescription="carousel" aria-label="Client and professional testimonials">
+      <div className="mx-auto max-w-4xl px-5 text-center lg:px-8">
+        <Quote className="mx-auto h-9 w-9 text-emerald-200" aria-hidden="true" />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.4 }}
+          >
+            <blockquote className="mt-6 font-display text-2xl font-medium leading-snug text-slate-800 sm:text-3xl">
+              &ldquo;{current.quote}&rdquo;
+            </blockquote>
+            <p className="mt-6 text-sm font-semibold text-slate-900">
+              {current.name}
+            </p>
+            <p className="text-sm text-slate-500">{current.role}</p>
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="mt-8 flex items-center justify-center gap-4">
+          <button
+            type="button"
+            onClick={prev}
+            aria-label="Previous testimonial"
+            className="grid h-10 w-10 place-items-center rounded-full border border-slate-300 text-slate-600 transition-colors hover:border-emerald-600 hover:text-emerald-700"
+          >
+            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+          </button>
+          <div className="flex gap-2">
+            {testimonials.map((t, i) => (
+              <button
+                key={t.id ?? i}
+                type="button"
+                onClick={() => setIndex(i)}
+                aria-label={`Go to testimonial ${i + 1}`}
+                className={`h-2 rounded-full transition-all ${
+                  i === index ? "w-6 bg-emerald-700" : "w-2 bg-slate-300"
+                }`}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={next}
+            aria-label="Next testimonial"
+            className="grid h-10 w-10 place-items-center rounded-full border border-slate-300 text-slate-600 transition-colors hover:border-emerald-600 hover:text-emerald-700"
+          >
+            <ChevronRight className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------ Research & Blog -------------------------------- */
+
+function ResearchBlog({ articles = [] }) {
+  return (
+    <section id="research" className="bg-slate-50/60 py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <Reveal className="max-w-2xl">
+          <span className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
+            Research &amp; Blog
+          </span>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            Nutrition tips and medical research, in plain language.
+          </h2>
+        </Reveal>
+
+        <Stagger className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {articles.length > 0 ? articles.map((article) => (
+            <motion.article
+              key={article.id ?? article.slug ?? article.title}
+              variants={fadeUp}
+              className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-900/5 transition-shadow hover:shadow-lg"
+            >
+              <div className="h-44 overflow-hidden">
+                <img
+                  src={article.image ?? article.img ?? article.thumbnail}
+                  alt=""
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                />
+              </div>
+              <div className="p-5">
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                  {article.category}
+                </p>
+                <h3 className="mt-2 font-display text-base font-semibold leading-snug text-slate-900">
+                  {article.title}
+                </h3>
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="font-mono text-xs text-slate-400">{article.date}</span>
+                  <Link
+                    href={`/blog/${article.slug ?? article.id}`}
+                    className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+                  >
+                    Read more
+                    <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </Link>
+                </div>
+              </div>
+            </motion.article>
+          )) : (
+            <p className="col-span-full text-sm text-slate-500">
+              No articles published yet.
+            </p>
+          )}
+        </Stagger>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------- App CTA ---------------------------------- */
+
+function AppCTA() {
+  return (
+    <section className="py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-emerald-800 px-8 py-14 text-white sm:px-14 lg:py-16">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-emerald-600/40 blur-3xl"
+          />
+          <div className="relative grid items-center gap-10 lg:grid-cols-2">
+            <Reveal>
+              <span className="text-xs font-semibold uppercase tracking-widest text-emerald-200">
+                Mobile App
+              </span>
+              <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+                Your plan, your courses, your certificates — in your pocket.
+              </h2>
+              <p className="mt-4 max-w-md text-emerald-50/90">
+                Track meals, join live classes, and message your dietitian
+                from anywhere with the RUNUTRIDIET app.
+              </p>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <a
+                  href="#playstore"
+                  className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-emerald-800 shadow-sm transition-transform hover:-translate-y-0.5"
+                >
+                  <PlayCircle className="h-5 w-5" aria-hidden="true" />
+                  Google Play
+                </a>
+                <a
+                  href="#appstore"
+                  className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-emerald-800 shadow-sm transition-transform hover:-translate-y-0.5"
+                >
+                  <Apple className="h-5 w-5" aria-hidden="true" />
+                  App Store
+                </a>
+              </div>
+            </Reveal>
+
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6 }}
+              className="mx-auto w-40 rounded-[2rem] border-4 border-white/20 bg-emerald-700/60 p-2 shadow-2xl sm:w-48"
+            >
+              <div className="overflow-hidden rounded-[1.4rem]">
+                <img
+                  src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=500&q=80&auto=format&fit=crop"
+                  alt="RUNUTRIDIET mobile app showing a daily nutrition dashboard"
+                  className="h-72 w-full object-cover sm:h-80"
+                />
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------- Newsletter --------------------------------- */
+
+function Newsletter() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!email) return;
+    setSubmitted(true);
+  };
+
+  return (
+    <section className="border-y border-emerald-100 bg-gradient-to-b from-emerald-50/60 to-white py-16">
+      <div className="mx-auto max-w-3xl px-5 text-center lg:px-8">
+        <Mail className="mx-auto h-8 w-8 text-emerald-700" aria-hidden="true" />
+        <h2 className="mt-4 font-display text-2xl font-semibold text-slate-900 sm:text-3xl">
+          Nutrition insight, straight to your inbox.
+        </h2>
+        <p className="mt-2 text-sm text-slate-600">
+          One email a month: research summaries, new courses, and clinic updates.
+        </p>
+
+        {submitted ? (
+          <p className="mt-6 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-5 py-3 text-sm font-semibold text-emerald-700">
+            <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+            You're subscribed — welcome aboard.
+          </p>
+        ) : (
+          <form onSubmit={handleSubmit} className="mx-auto mt-6 flex max-w-md flex-col gap-3 sm:flex-row">
+            <label htmlFor="newsletter-email" className="sr-only">
+              Email address
+            </label>
+            <input
+              id="newsletter-email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="flex-1 rounded-full border border-slate-300 bg-white px-5 py-3 text-sm text-slate-800 shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+            />
+            <button
+              type="submit"
+              className="rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800"
+            >
+              Subscribe
+            </button>
+          </form>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------- Final CTA ----------------------------------- */
+
+function FinalCTA() {
+  return (
+    <section id="book" className="relative overflow-hidden py-20 lg:py-28">
+      <div className="mx-auto max-w-5xl px-5 text-center lg:px-8">
+        <Reveal>
+          <h2 className="font-display text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
+            Start Your Journey Toward Better Health
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-base text-slate-600">
+            Whether you need a clinician or a credential, RUNUTRIDIET starts
+            with the same first step: a conversation.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <a
+              href="/book"
+              className="inline-flex items-center gap-2 rounded-full bg-emerald-700 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-emerald-800/20 transition-transform hover:-translate-y-0.5 hover:bg-emerald-800"
+            >
+              Book Consultation
+              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+            </a>
+            <a
+              href="#academy"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 transition-colors hover:border-emerald-600 hover:text-emerald-700"
+            >
+              Explore CPD Academy
+            </a>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------- Footer ------------------------------------- */
+
+function Footer() {
+  return (
+    <footer id="contact" className="border-t border-slate-200 bg-white pt-16 shadow-[0_-20px_60px_rgba(15,23,42,0.03)]">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(5,1fr)] lg:gap-8">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="grid h-12 w-12 place-items-center rounded-2xl bg-white shadow-md ring-1 ring-emerald-100">
+                <ApplicationLogo className="h-9 w-9" aria-hidden="true" />
+              </span>
+              <span className="font-display text-lg font-semibold text-slate-900">
+                RUNUTRIDIET
+              </span>
+            </div>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-500">
+              Clinical nutrition care and accredited professional education,
+              on one platform. Not a substitute for emergency medical care.
+            </p>
+            <div className="mt-5 space-y-2 text-sm text-slate-500">
+              <p className="inline-flex items-center gap-2">
+                <Mail className="h-4 w-4 text-emerald-700" aria-hidden="true" /> info@runutridiet.com
+              </p>
+              <p className="inline-flex items-center gap-2">
+                <Phone className="h-4 w-4 text-emerald-700" aria-hidden="true" /> +250785221105
+              </p>
+              <p className="inline-flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-emerald-700" aria-hidden="true" /> Kigali, Rwanda
+              </p>
+            </div>
+            <div className="mt-5 flex gap-3">
+              {[Instagram, Twitter, Linkedin, Youtube].map((Icon, i) => (
+                <a
+                  key={i}
+                  href="#social"
+                  aria-label="Social media link"
+                  className="grid h-9 w-9 place-items-center rounded-full border border-slate-200 text-slate-500 transition-colors hover:border-emerald-600 hover:text-emerald-700"
+                >
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {FOOTER_COLUMNS.map((col) => (
+            <nav key={col.title} aria-label={col.title}>
+              <p className="text-sm font-semibold text-slate-900">{col.title}</p>
+              <ul className="mt-4 space-y-2.5">
+                {col.links.map((link) => (
+                  <li key={link}>
+                    <a href="#" className="text-sm text-slate-500 hover:text-emerald-700">
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+        </div>
+
+        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-slate-100 py-6 text-xs text-slate-400 sm:flex-row">
+          <p>&copy; {new Date().getFullYear()}  RUNUTRIDIET. All rights reserved.</p>
+          <p>Registered dietitians · Licensed clinicians · Accredited CPD provider</p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ------------------------------ Scroll to Top ----------------------------------- */
+
+function FloatingWhatsApp() {
+  const phoneNumber = "250785221105";
+  const message = encodeURIComponent(
+    "Hello RUNUTRIDIET, I have a question about your services."
+  );
+  const [hover, setHover] = useState(false);
+
+  return (
+    <a
+      href={`https://wa.me/${phoneNumber}?text=${message}`}
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Chat with RUNUTRIDIET on WhatsApp"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      className="group fixed right-4 sm:right-8 top-1/2 z-[60] -translate-y-1/2 flex items-center"
+    >
+      <AnimatePresence>
+        {hover && (
+          <motion.span
+            initial={{ opacity: 0, x: 10, scale: 0.95 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 10, scale: 0.95 }}
+            className="mr-3 hidden rounded-full bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white shadow-xl sm:block"
+          >
+            Chat with us on WhatsApp
+          </motion.span>
+        )}
+      </AnimatePresence>
+
+      <span className="relative grid h-16 w-16 place-items-center rounded-full bg-[#25D366] text-white shadow-[0_12px_35px_rgba(37,211,102,0.40)] ring-4 ring-white transition-all duration-300 group-hover:scale-110 group-hover:bg-[#20bd5a] group-hover:shadow-[0_16px_42px_rgba(37,211,102,0.50)]">
+        <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-20" />
+
+        <svg
+          viewBox="0 0 32 32"
+          className="relative h-9 w-9"
+          aria-hidden="true"
+          fill="currentColor"
+        >
+          <path d="M16 3.2C8.93 3.2 3.2 8.93 3.2 16c0 2.25.59 4.37 1.72 6.23L3 29l6.94-1.82A12.72 12.72 0 0 0 16 28.8c7.07 0 12.8-5.73 12.8-12.8S23.07 3.2 16 3.2Zm0 23.27c-1.97 0-3.9-.53-5.58-1.53l-.4-.24-4.12 1.08 1.1-4.01-.26-.41A10.86 10.86 0 1 1 16 26.47Z" />
+          <path
+            d="M22.8 18.63c-.37-.19-2.16-1.07-2.49-1.19-.33-.12-.57-.19-.81.19-.24.37-.93 1.19-1.14 1.43-.21.24-.42.28-.79.09-.37-.19-1.56-.57-2.97-1.82-1.1-.98-1.84-2.19-2.05-2.56-.21-.37-.02-.57.16-.75.17-.17.37-.42.56-.63.19-.21.24-.36.37-.6.12-.24.06-.45-.03-.63-.09-.19-.81-1.95-1.11-2.67-.29-.7-.59-.61-.81-.62h-.69c-.24 0-.63.09-.96.45-.33.37-1.26 1.23-1.26 3s1.29 3.48 1.47 3.72c.18.24 2.54 3.88 6.16 5.44.86.37 1.53.59 2.05.75.86.27 1.64.23 2.26.14.69-.1 2.16-.88 2.46-1.73.3-.85.3-1.58.21-1.73-.09-.15-.33-.24-.69-.42Z"
+            fill="white"
+          />
+        </svg>
+
+        <span className="absolute bottom-0.5 right-0.5 h-4 w-4 rounded-full border-[3px] border-white bg-[#25D366]" />
+      </span>
+    </a>
+  );
+}
+function ScrollToTop() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 640);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.button
+          type="button"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 12 }}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          aria-label="Scroll back to top"
+          className="fixed bottom-6 right-6 z-40 grid h-11 w-11 place-items-center rounded-full bg-emerald-700 text-white shadow-lg shadow-emerald-900/20 transition-colors hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
+        >
+          <ArrowUp className="h-5 w-5" aria-hidden="true" />
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* ------------------------------------ Page --------------------------------------- */
+
+/**
+ * Props expected from HomeController@index, e.g.:
+ *
+ *   return Inertia::render('Home', [
+ *       'courses'       => ...,
+ *       'articles'      => ...,
+ *       'practitioners' => ...,
+ *       'testimonials'  => ...,
+ *       'products'      => ...,
+ *   ]);
+ *
+ * Field names below (image, slug, id, etc.) are read with fallbacks
+ * (course.image ?? course.img ?? course.thumbnail) to tolerate minor
+ * naming differences — adjust the resources/controllers to match
+ * whichever names your resource transformers actually emit.
+ */
+export default function Home({
+  courses = [],
+  articles = [],
+  practitioners = [],
+  testimonials = [],
+  products = [],
+}) {
+  return (
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-white via-white to-slate-50 font-sans text-slate-800 antialiased">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+        .font-display { font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif; }
+        .font-sans { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+        .font-mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+        html { scroll-behavior: smooth; }
+        body { background: #f8fafc; }
+        ::selection { background: rgba(16, 185, 129, 0.18); color: #064e3b; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { background: #a7f3d0; border-radius: 999px; border: 2px solid #f8fafc; }
+        ::-webkit-scrollbar-thumb:hover { background: #34d399; }
+        a, button, input { -webkit-tap-highlight-color: transparent; }
+        @media (prefers-reduced-motion: reduce) {
+          html { scroll-behavior: auto; }
+          *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        }
+      `}</style>
+
+      <Navbar />
+      <main>
+        <Hero />
+        <TrustedPartners />
+        <About />
+        <WhyChooseUs />
+        <Services />
+        <Experts practitioners={practitioners} />
+        <Statistics />
+        <CPDAcademy courses={courses} />
+        <LearningFeatures />
+        <Webinars />
+        <Marketplace products={products} />
+        <Testimonials testimonials={testimonials} />
+        <ResearchBlog articles={articles} />
+        <AppCTA />
+        <Newsletter />
+        <FinalCTA />
+      </main>
+      <Footer />
+      <FloatingWhatsApp />
+      <ScrollToTop />
+    </div>
+  );
 }

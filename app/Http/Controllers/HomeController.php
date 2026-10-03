@@ -100,4 +100,12 @@ class HomeController extends Controller
                 ->get(),
         ]);
     }
+    public function show(string $slug)
+{
+    $article = Article::where('slug', $slug)->firstOrFail();
+
+    return Inertia::render('Blog/Show', [
+        'article' => $article,
+    ]);
+}
 }
