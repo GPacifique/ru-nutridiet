@@ -12,6 +12,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CertificateVerificationController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ShopController;
@@ -51,6 +52,28 @@ use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ReportController;
 
 /*
+| New admin controllers (one per sidebar item in AdminLayout.jsx).
+| These classes do not exist yet; create them with, for example:
+|   php artisan make:controller Admin/ArticleController --resource
+*/
+
+use App\Http\Controllers\Admin\ExamController as AdminExamController;
+use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
+use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementController;
+use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
+use App\Http\Controllers\Admin\TenderController as AdminTenderController;
+use App\Http\Controllers\Admin\AdvertisementController as AdminAdvertisementController;
+use App\Http\Controllers\Admin\PractitionerController as AdminPractitionerController;
+use App\Http\Controllers\Admin\VerificationRequestController as AdminVerificationRequestController;
+use App\Http\Controllers\Admin\CpdActivityController as AdminCpdActivityController;
+use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
+use App\Http\Controllers\Admin\MessageController as AdminMessageController;
+use App\Http\Controllers\Admin\NewsletterController as AdminNewsletterController;
+
+/*
 |--------------------------------------------------------------------------
 | Learner / Instructor / Client / Practitioner Controllers
 |--------------------------------------------------------------------------
@@ -70,18 +93,23 @@ use App\Http\Controllers\Practitioner\DashboardController as PractitionerDashboa
 |--------------------------------------------------------------------------
 | Public Routes
 |--------------------------------------------------------------------------
-*/use App\Http\Controllers\ArticleController;
-
-Route::get('/blog/{slug}', [ArticleController::class, 'show'])
-    ->name('blog.show');
+*/
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/services', fn () => Inertia::render('Services/Index'))->name('services');
 
-// Blog (declared once)
+// Blog.
+// /blog/{slug} is served by ArticleController (the Article model binds by slug).
+// The old BlogController@show used the same URI and the same route name
+// "blog.show". The first registration always won, so it never ran, and the
+// duplicate name makes `php artisan route:cache` fail. It is removed here.
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
-Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/blog/{article:slug}', [ArticleController::class, 'show'])->name('blog.show');
+
+// ArticleCard.jsx links with route('articles.show', ...). Same page as blog.show,
+// kept as a named alias so both route names work.
+Route::get('/articles/{article:slug}', [ArticleController::class, 'show'])->name('articles.show');
 
 // Courses
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
@@ -246,6 +274,11 @@ Route::middleware(['auth', 'verified'])
 |--------------------------------------------------------------------------
 | Admin Routes
 |--------------------------------------------------------------------------
+|
+| One block per sidebar group in AdminLayout.jsx. Every URL below matches a
+| sidebar href, so flipping `live: true` on that item is all the front end
+| needs once its controller exists.
+|
 */
 
 Route::middleware(['auth', 'verified', 'role:admin'])
@@ -255,28 +288,90 @@ Route::middleware(['auth', 'verified', 'role:admin'])
 
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
+        /* ---------------------------- Learning ---------------------------- */
+
         Route::resource('courses', AdminCourseController::class);
         Route::resource('course-categories', CourseCategoryController::class);
         Route::resource('lessons', AdminLessonController::class);
         Route::resource('quizzes', AdminQuizController::class);
+        Route::resource('exams', AdminExamController::class);
 
-        // Questions: previously public, now admin-only.
+        // Questions: admin-only.
         // Nested store keeps the quiz context: POST /admin/quizzes/{quiz}/questions
         Route::post('/quizzes/{quiz}/questions', [QuestionController::class, 'store'])
             ->name('quizzes.questions.store');
         Route::resource('questions', QuestionController::class)->except(['store']);
 
+        /* ----------------------------- Content ---------------------------- */
+
+        // Article binds by slug (Article::getRouteKeyName), so URLs look like
+        // /admin/articles/my-post/edit
+        // Inline images for the rich text editor. Declared before the resource.
+        Route::post('/articles/upload-image', [AdminArticleController::class, 'uploadImage'])
+            ->name('articles.upload-image');
+
+        Route::resource('articles', AdminArticleController::class);
+
+        Route::resource('announcements', AdminAnnouncementController::class);
+
+        Route::resource('testimonials', AdminTestimonialController::class);
+        Route::patch('/testimonials/{testimonial}/approve', [AdminTestimonialController::class, 'approve'])
+            ->name('testimonials.approve');
+        Route::patch('/testimonials/{testimonial}/reject', [AdminTestimonialController::class, 'reject'])
+            ->name('testimonials.reject');
+
+        Route::resource('tenders', AdminTenderController::class);
+        Route::resource('advertisements', AdminAdvertisementController::class);
+
+        /* ------------------------------ People ---------------------------- */
+
         Route::resource('users', UserController::class);
+        Route::resource('practitioners', AdminPractitionerController::class);
 
         Route::resource('enrollments', AdminEnrollmentController::class)
             ->only(['index', 'show', 'destroy']);
 
         Route::resource('certificates', AdminCertificateController::class);
 
+        // Review queue: list, open, approve / reject.
+        Route::resource('verification-requests', AdminVerificationRequestController::class)
+            ->only(['index', 'show', 'update']);
+        Route::patch('/verification-requests/{verification_request}/approve', [AdminVerificationRequestController::class, 'approve'])
+            ->name('verification-requests.approve');
+        Route::patch('/verification-requests/{verification_request}/reject', [AdminVerificationRequestController::class, 'reject'])
+            ->name('verification-requests.reject');
+
+        Route::resource('cpd-activities', AdminCpdActivityController::class)
+            ->only(['index', 'show', 'update', 'destroy']);
+
+        Route::resource('appointments', AdminAppointmentController::class)
+            ->only(['index', 'show', 'update', 'destroy']);
+
+        /* ------------------------------- Shop ----------------------------- */
+
+        Route::resource('products', AdminProductController::class);
+
+        Route::resource('orders', AdminOrderController::class)
+            ->only(['index', 'show', 'update']);
+
+        Route::resource('reviews', AdminReviewController::class)
+            ->only(['index', 'destroy']);
+
         Route::resource('payments', PaymentController::class)
             ->only(['index', 'show']);
 
-        // Reports
+        /* ------------------------------- Inbox ---------------------------- */
+
+        Route::resource('messages', AdminMessageController::class)
+            ->only(['index', 'show', 'destroy']);
+        Route::patch('/messages/{message}/read', [AdminMessageController::class, 'markRead'])
+            ->name('messages.read');
+
+        Route::resource('newsletter', AdminNewsletterController::class)
+            ->only(['index', 'destroy']);
+
+        /* ----------------------------- Insights --------------------------- */
+
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/revenue', [ReportController::class, 'revenue'])->name('reports.revenue');
         Route::get('/reports/enrollments', [ReportController::class, 'enrollments'])->name('reports.enrollments');

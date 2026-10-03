@@ -1358,6 +1358,11 @@ function Testimonials({ testimonials = [] }) {
     </section>
   );
 }
+          const imageUrl = (path) => {
+    if (!path) return null;
+    if (/^(https?:)?\/\//.test(path) || path.startsWith('/')) return path; // already a full URL
+    return `/storage/${path}`;                                             // path from the public disk
+};
 
 /* ------------------------------ Research & Blog -------------------------------- */
 
@@ -1373,6 +1378,8 @@ function ResearchBlog({ articles = [] }) {
             Nutrition tips and medical research, in plain language.
           </h2>
         </Reveal>
+        // Put this once, above the component (or in a shared file)
+
 
         <Stagger className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {articles.length > 0 ? articles.map((article) => (
@@ -1381,13 +1388,19 @@ function ResearchBlog({ articles = [] }) {
               variants={fadeUp}
               className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-900/5 transition-shadow hover:shadow-lg"
             >
+    
               <div className="h-44 overflow-hidden">
                 <img
-                  src={article.image ?? article.img ?? article.thumbnail}
-                  alt=""
-                  loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-                />
+    src={imageUrl(article.thumbnail || article.image || article.img)}
+    alt={article.title}
+    loading="lazy"
+    decoding="async"
+    onError={(e) => {
+        e.currentTarget.onerror = null;          // stop it retrying in a loop
+        e.currentTarget.style.display = 'none';  // or swap in a placeholder
+    }}
+    className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+/>
               </div>
               <div className="p-5">
                 <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">

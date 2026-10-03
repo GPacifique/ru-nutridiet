@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
-import GuestLayout from '@/Layouts/GuestLayout';
+import PublicNavigation from '@/Layouts/PublicNavigation';
 import ArticleCard from '@/Components/ArticleCard';
 import WireStrip from '@/Components/WireStrip';
 
@@ -11,7 +11,7 @@ export default function Show({ category, articles }) {
     const list = articles?.data ?? articles ?? [];
 
     return (
-        <GuestLayout>
+        <PublicNavigation>
             <Head title={category.name} />
 
             <section className="max-w-7xl mx-auto px-4 md:px-6 pt-10 pb-6 border-b border-[#D7DBDE]">
@@ -31,6 +31,6 @@ export default function Show({ category, articles }) {
                     </p>
                 )}
             </section>
-        </GuestLayout>
+        </PublicNavigation>
     );
 }

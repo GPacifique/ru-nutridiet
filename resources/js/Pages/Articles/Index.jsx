@@ -1,8 +1,8 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
-import GuestLayout from '@/Layouts/GuestLayout';
 import ArticleCard from '@/Components/ArticleCard';
 import WireStrip from '@/Components/WireStrip';
+import PublicNavigation from '@/Layouts/PublicNavigation';
 
 /**
  * props: { articles: { data: Article[], links: [], meta: {} } }
@@ -12,7 +12,7 @@ export default function Index({ articles }) {
     const links = articles?.links ?? [];
 
     return (
-        <GuestLayout>
+        <   PublicNavigation>
             <Head title="Articles" />
 
             <section className="max-w-7xl mx-auto px-4 md:px-6 pt-10 pb-6 border-b border-[#D7DBDE]">
@@ -45,6 +45,6 @@ export default function Index({ articles }) {
                     </div>
                 )}
             </section>
-        </GuestLayout>
+        </PublicNavigation>
     );
 }

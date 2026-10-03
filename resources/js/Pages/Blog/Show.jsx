@@ -1,316 +1,234 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import {
-    ArrowLeft,
-    ArrowUpRight,
-    CalendarDays,
-    ChevronRight,
-    User,
-} from 'lucide-react';
+import PublicNavigation from '@/Layouts/PublicNavigation';
+import { ARTICLE_CONTENT_CLASSES } from '@/Components/articleContent';
+import { ArrowLeft, ArrowRight, BookOpen, CalendarDays, Clock } from 'lucide-react';
 
-export default function Show({ article, relatedArticles = [] }) {
+/* ------------------------------------------------------------------ */
+/* Helpers                                                             */
+/* ------------------------------------------------------------------ */
 
-    const imageUrl = (thumbnail) => {
-        if (!thumbnail) {
-            return '/images/blog-placeholder.jpg';
-        }
+const imageUrl = (thumbnail) => {
+    if (!thumbnail) return null;
+    if (/^(https?:)?\/\//.test(thumbnail) || thumbnail.startsWith('/')) return thumbnail;
+    return `/storage/${thumbnail}`;
+};
 
-        if (
-            thumbnail.startsWith('http://') ||
-            thumbnail.startsWith('https://') ||
-            thumbnail.startsWith('/')
-        ) {
-            return thumbnail;
-        }
+const formatDate = (date) =>
+    date
+        ? new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+        : '';
 
-        return `/storage/${thumbnail}`;
-    };
+const readingMinutes = (html = '') => {
+    const words = html.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+    return Math.max(1, Math.ceil(words / 200));
+};
 
+const initials = (name = '') =>
+    name
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0].toUpperCase())
+        .join('');
 
-    const formatDate = (date) => {
-        if (!date) return '';
+// Thumbnail with a branded fallback if it is missing or returns 404.
+function Cover({ thumbnail, alt, className = '', ...props }) {
+    const [failed, setFailed] = useState(false);
+    const src = imageUrl(thumbnail);
 
-        return new Date(date).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
-    };
+    if (!src || failed) {
+        return (
+            <div
+                role="img"
+                aria-label={alt}
+                className={`flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-emerald-100 ${className}`}
+            >
+                <BookOpen className="h-10 w-10 text-emerald-300" aria-hidden="true" />
+            </div>
+        );
+    }
 
+    return <img src={src} alt={alt} decoding="async" onError={() => setFailed(true)} className={className} {...props} />;
+}
+
+/* ------------------------------------------------------------------ */
+/* Page                                                                */
+/* ------------------------------------------------------------------ */
+
+export default function Show({ article, post, related = [], relatedArticles = [] }) {
+    const item = article ?? post ?? {};
+    const more = (related.length ? related : relatedArticles).filter((a) => a.id !== item.id).slice(0, 3);
+    const hasCover = Boolean(imageUrl(item.thumbnail));
 
     return (
         <>
-            <Head title={`${article.title} | RunuNutridiet`} />
+            <Head title={`${item.title ?? 'Article'} | RunuNutridiet`}>
+                {item.excerpt && <meta name="description" content={item.excerpt} />}
+                <meta property="og:title" content={item.title} />
+                {item.excerpt && <meta property="og:description" content={item.excerpt} />}
+                {hasCover && <meta property="og:image" content={imageUrl(item.thumbnail)} />}
+            </Head>
 
-            <div className="min-h-screen bg-white text-slate-900">
+            <PublicNavigation>
+                <div className="min-h-screen overflow-x-hidden bg-[#f8faf9] text-slate-900">
+                    {/* ============================ HEADER ============================ */}
+                    <header className="border-b border-slate-200 bg-white">
+                        <div className="mx-auto max-w-3xl px-4 pb-10 pt-8 sm:px-6 sm:pb-14 sm:pt-12">
+                            <Link
+                                href="/blog"
+                                className="inline-flex min-h-[44px] items-center gap-2 rounded-lg text-sm font-semibold text-emerald-700 hover:text-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 sm:min-h-0"
+                            >
+                                <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                                All articles
+                            </Link>
 
-                {/* =====================================================
-                    TOP NAVIGATION
-                ====================================================== */}
-                <div className="border-b border-slate-100">
-                    <div className="mx-auto max-w-7xl px-5 py-5 sm:px-6 lg:px-8">
+                            {item.category && (
+                                <p className="mt-6 text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">
+                                    {item.category}
+                                </p>
+                            )}
 
-                        <Link
-                            href="/blog"
-                            className="group inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition hover:text-emerald-700"
-                        >
-                            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 transition group-hover:border-emerald-200 group-hover:bg-emerald-50">
-                                <ArrowLeft className="h-4 w-4" />
-                            </span>
+                            <h1 className="mt-3 text-balance text-3xl font-bold leading-[1.15] tracking-tight text-slate-950 [overflow-wrap:anywhere] sm:text-4xl lg:text-5xl">
+                                {item.title}
+                            </h1>
 
-                            Back to Journal
-                        </Link>
+                            {item.excerpt && (
+                                <p className="mt-5 text-lg leading-8 text-slate-600 sm:text-xl">{item.excerpt}</p>
+                            )}
 
-                    </div>
-                </div>
+                            <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-slate-500">
+                                {item.author?.name && (
+                                    <span className="inline-flex items-center gap-2.5">
+                                        <span
+                                            aria-hidden="true"
+                                            className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-800"
+                                        >
+                                            {initials(item.author.name)}
+                                        </span>
+                                        <span className="font-medium text-slate-800">{item.author.name}</span>
+                                    </span>
+                                )}
 
+                                {item.published_at && (
+                                    <span className="inline-flex items-center gap-1.5">
+                                        <CalendarDays className="h-4 w-4" aria-hidden="true" />
+                                        <time dateTime={item.published_at}>{formatDate(item.published_at)}</time>
+                                    </span>
+                                )}
 
-                {/* =====================================================
-                    ARTICLE HEADER
-                ====================================================== */}
-                <header>
-
-                    <div className="mx-auto max-w-5xl px-5 pb-10 pt-12 text-center sm:px-6 sm:pt-16 lg:px-8 lg:pt-20">
-
-                        {/* Category */}
-                        {article.category && (
-                            <div className="mb-6">
-                                <span className="inline-flex rounded-full bg-emerald-50 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.12em] text-emerald-700">
-                                    {article.category}
+                                <span className="inline-flex items-center gap-1.5">
+                                    <Clock className="h-4 w-4" aria-hidden="true" />
+                                    {readingMinutes(item.content)} min read
                                 </span>
                             </div>
-                        )}
-
-
-                        {/* Title */}
-                        <h1 className="mx-auto max-w-4xl text-4xl font-bold leading-[1.08] tracking-[-0.04em] text-slate-950 sm:text-5xl lg:text-6xl">
-                            {article.title}
-                        </h1>
-
-
-                        {/* Excerpt */}
-                        {article.excerpt && (
-                            <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-600 sm:text-xl">
-                                {article.excerpt}
-                            </p>
-                        )}
-
-
-                        {/* Metadata */}
-                        <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm text-slate-500">
-
-                            {article.author?.name && (
-                                <div className="inline-flex items-center gap-2">
-                                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
-                                        <User className="h-4 w-4" />
-                                    </span>
-
-                                    <span className="font-medium text-slate-700">
-                                        {article.author.name}
-                                    </span>
-                                </div>
-                            )}
-
-                            {article.published_at && (
-                                <>
-                                    <span className="h-1 w-1 rounded-full bg-slate-300" />
-
-                                    <span className="inline-flex items-center gap-2">
-                                        <CalendarDays className="h-4 w-4" />
-                                        {formatDate(article.published_at)}
-                                    </span>
-                                </>
-                            )}
-
                         </div>
+                    </header>
 
-                    </div>
-
-
-                    {/* =================================================
-                        HERO IMAGE
-                    ================================================== */}
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
-                        <figure className="overflow-hidden rounded-2xl bg-slate-100 sm:rounded-3xl">
-
-                            <div className="relative aspect-[16/8] min-h-[260px] max-h-[620px] w-full">
-
-                                <img
-                                    src={imageUrl(article.thumbnail)}
-                                    alt={article.title}
-                                    className="absolute inset-0 h-full w-full object-cover"
-                                    onError={(e) => {
-                                        e.currentTarget.src =
-                                            '/images/blog-placeholder.jpg';
-                                    }}
+                    {/* ============================ ARTICLE =========================== */}
+                    <main id="main-content" className="px-4 pb-16 sm:px-6 sm:pb-20">
+                        {hasCover && (
+                            <div className="mx-auto -mt-0 max-w-5xl pt-8 sm:pt-12">
+                                <Cover
+                                    thumbnail={item.thumbnail}
+                                    alt={item.title ?? ''}
+                                    fetchpriority="high"
+                                    className="aspect-[16/9] w-full rounded-2xl object-cover shadow-sm ring-1 ring-black/5 sm:rounded-3xl"
                                 />
-
                             </div>
+                        )}
 
-                        </figure>
+                        <article className="mx-auto max-w-3xl pt-10 sm:pt-14">
+                            <div
+                                className={`${ARTICLE_CONTENT_CLASSES} sm:text-[1.0625rem] sm:leading-8`}
+                                dangerouslySetInnerHTML={{ __html: item.content ?? '' }}
+                            />
 
-                    </div>
+                            <div className="mt-12 flex flex-col gap-4 border-t border-slate-200 pt-8 sm:flex-row sm:items-center sm:justify-between">
+                                <Link
+                                    href="/blog"
+                                    className="inline-flex min-h-[44px] items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+                                >
+                                    <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                                    Back to all articles
+                                </Link>
+                            </div>
+                        </article>
+                    </main>
 
-                </header>
-
-
-                {/* =====================================================
-                    ARTICLE BODY
-                ====================================================== */}
-                <main className="mx-auto max-w-3xl px-5 py-12 sm:px-6 lg:py-16">
-
-                    <article
-                        className="
-                            prose
-                            prose-lg
-                            max-w-none
-
-                            prose-headings:font-bold
-                            prose-headings:tracking-tight
-                            prose-headings:text-slate-950
-
-                            prose-h2:mt-12
-                            prose-h2:text-3xl
-
-                            prose-h3:mt-10
-                            prose-h3:text-2xl
-
-                            prose-p:text-[17px]
-                            prose-p:leading-[1.9]
-                            prose-p:text-slate-700
-
-                            prose-a:font-semibold
-                            prose-a:text-emerald-700
-                            prose-a:no-underline
-                            hover:prose-a:underline
-
-                            prose-strong:font-bold
-                            prose-strong:text-slate-900
-
-                            prose-ul:my-6
-                            prose-ol:my-6
-                            prose-li:text-slate-700
-                            prose-li:leading-8
-
-                            prose-blockquote:border-l-4
-                            prose-blockquote:border-emerald-500
-                            prose-blockquote:bg-emerald-50
-                            prose-blockquote:px-6
-                            prose-blockquote:py-4
-                            prose-blockquote:rounded-r-xl
-                            prose-blockquote:not-italic
-                            prose-blockquote:text-slate-700
-
-                            prose-img:my-10
-                            prose-img:w-full
-                            prose-img:rounded-2xl
-                            prose-img:object-cover
-
-                            prose-figure:my-10
-                            prose-figcaption:text-center
-                            prose-figcaption:text-sm
-                            prose-figcaption:text-slate-500
-                        "
-                        dangerouslySetInnerHTML={{
-                            __html: article.content,
-                        }}
-                    />
-
-
-                    {/* =================================================
-                        ARTICLE FOOTER
-                    ================================================== */}
-                    <div className="mt-14 border-t border-slate-200 pt-8">
-
-                        <Link
-                            href="/blog"
-                            className="group inline-flex items-center gap-3 text-sm font-bold text-emerald-700"
-                        >
-                            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-200 transition group-hover:bg-emerald-700 group-hover:text-white">
-                                <ArrowLeft className="h-4 w-4" />
-                            </span>
-
-                            Explore more articles
-                        </Link>
-
-                    </div>
-
-                </main>
-
-
-                {/* =====================================================
-                    RELATED ARTICLES
-                ====================================================== */}
-                {relatedArticles.length > 0 && (
-                    <section className="border-t border-slate-200 bg-slate-50">
-
-                        <div className="mx-auto max-w-7xl px-5 py-14 sm:px-6 lg:px-8 lg:py-20">
-
-                            <div className="mb-8">
-                                <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">
-                                    Continue reading
-                                </p>
-
-                                <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-950">
-                                    More from the journal
+                    {/* ========================== RELATED ============================ */}
+                    {more.length > 0 && (
+                        <section className="border-t border-slate-200 bg-white px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
+                            <div className="mx-auto max-w-7xl">
+                                <h2 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
+                                    Keep reading
                                 </h2>
-                            </div>
 
-
-                            <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-
-                                {relatedArticles.map((related) => (
-
-                                    <Link
-                                        key={related.id}
-                                        href={`/blog/${related.slug}`}
-                                        className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-1 hover:shadow-lg"
-                                    >
-
-                                        <div className="aspect-[16/10] overflow-hidden bg-slate-100">
-
-                                            <img
-                                                src={imageUrl(related.thumbnail)}
-                                                alt={related.title}
+                                <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                                    {more.map((a) => (
+                                        <article
+                                            key={a.id}
+                                            className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition focus-within:ring-2 focus-within:ring-emerald-600 focus-within:ring-offset-2 hover:border-slate-300 hover:shadow-lg motion-reduce:transition-none"
+                                        >
+                                            <Cover
+                                                thumbnail={a.thumbnail}
+                                                alt={a.title}
                                                 loading="lazy"
-                                                className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                                                className="aspect-[16/10] w-full object-cover"
                                             />
-
-                                        </div>
-
-
-                                        <div className="p-6">
-
-                                            {related.category && (
-                                                <span className="text-xs font-bold uppercase tracking-wide text-emerald-700">
-                                                    {related.category}
-                                                </span>
-                                            )}
-
-                                            <h3 className="mt-2 text-xl font-bold leading-snug text-slate-950">
-                                                {related.title}
-                                            </h3>
-
-                                            <div className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-emerald-700">
-                                                Read article
-                                                <ArrowUpRight className="h-4 w-4" />
+                                            <div className="flex flex-1 flex-col p-5">
+                                                {a.category && (
+                                                    <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+                                                        {a.category}
+                                                    </p>
+                                                )}
+                                                <h3 className="mt-2 text-lg font-bold leading-snug text-slate-950 [overflow-wrap:anywhere]">
+                                                    <Link
+                                                        href={`/blog/${a.slug}`}
+                                                        className="after:absolute after:inset-0 focus:outline-none group-hover:text-emerald-700"
+                                                    >
+                                                        {a.title}
+                                                    </Link>
+                                                </h3>
+                                                {a.excerpt && (
+                                                    <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">
+                                                        {a.excerpt}
+                                                    </p>
+                                                )}
                                             </div>
-
-                                        </div>
-
-                                    </Link>
-
-                                ))}
-
+                                        </article>
+                                    ))}
+                                </div>
                             </div>
+                        </section>
+                    )}
 
+                    {/* ============================ CTA ============================ */}
+                    <section className="px-4 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-14 sm:px-6 sm:pb-16 lg:px-8 lg:pb-24">
+                        <div className="relative mx-auto max-w-5xl overflow-hidden rounded-2xl bg-emerald-800 px-5 py-10 text-center sm:rounded-3xl sm:px-10 sm:py-14">
+                            <div
+                                aria-hidden="true"
+                                className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-emerald-600/40 blur-3xl"
+                            />
+                            <div className="relative">
+                                <h2 className="text-balance text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                                    Turn this advice into a plan that fits you
+                                </h2>
+                                <p className="mx-auto mt-3 max-w-xl text-[15px] leading-7 text-emerald-100 sm:text-base">
+                                    Book a consultation and get nutrition guidance built around your goals and routine.
+                                </p>
+                                <Link
+                                    href="/book"
+                                    className="mt-7 inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-white px-7 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-800 motion-reduce:transition-none sm:w-auto"
+                                >
+                                    Book a consultation
+                                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                                </Link>
+                            </div>
                         </div>
-
                     </section>
-                )}
-
-            </div>
+                </div>
+            </PublicNavigation>
         </>
     );
 }
