@@ -8,7 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class CourseController extends Controller
+class CourseEnrollmentController extends Controller
 {
     /**
      * Display learner courses
