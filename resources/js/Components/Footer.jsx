@@ -1,143 +1,36 @@
-import React from "react";
-import { Link } from "@inertiajs/react";
-import {
-    FaFacebookF,
-    FaTwitter,
-    FaInstagram,
-    FaLinkedinIn,
-    FaMapMarkerAlt,
-    FaPhoneAlt,
-    FaEnvelope,
-} from "react-icons/fa";
+import { Link } from '@inertiajs/react';
+import ApplicationLogo from '@/Components/ApplicationLogo';
 
-export default function Footer() {
+export default function Footer({ brand }) {
+    const groups = [
+        { title: 'Shop', links: [['Shop', route('shop')], ['Marketplace', route('marketplace')], ['Cart', route('cart')], ['My orders', route('orders.index')]] },
+        { title: 'Learn', links: [['Courses', route('courses.index')], ['Blog', route('blog.index')], ['Services', route('services')]] },
+        { title: 'Care', links: [['Book an appointment', route('book')], ['Contact', route('contact')]] },
+        { title: 'Account', links: [['Log in', route('login')], ['Register', route('register')]] },
+    ];
     return (
-        <footer className="bg-gray-900 text-gray-300 mt-16">
-            <div className="max-w-7xl mx-auto px-6 py-14 grid grid-cols-1 md:grid-cols-4 gap-10">
-
-                {/* Brand */}
-                <div>
-                    <h2 className="text-3xl font-bold text-white">
-                        InzuNest
-                    </h2>
-                    <p className="mt-4 text-sm leading-relaxed">
-                        Find your dream property with ease. InzuNest connects
-                        buyers, sellers, renters, and agents through a modern
-                        digital real estate experience.
-                    </p>
-
-                    {/* Social Icons */}
-                    <div className="flex gap-3 mt-5">
-                        <a
-                            href="#"
-                            className="bg-gray-800 p-2 rounded-full hover:bg-blue-500 transition"
-                        >
-                            <FaFacebookF />
-                        </a>
-                        <a
-                            href="#"
-                            className="bg-gray-800 p-2 rounded-full hover:bg-blue-500 transition"
-                        >
-                            <FaTwitter />
-                        </a>
-                        <a
-                            href="#"
-                            className="bg-gray-800 p-2 rounded-full hover:bg-blue-500 transition"
-                        >
-                            <FaInstagram />
-                        </a>
-                        <a
-                            href="#"
-                            className="bg-gray-800 p-2 rounded-full hover:bg-blue-500 transition"
-                        >
-                            <FaLinkedinIn />
-                        </a>
-                    </div>
+        <footer className="bg-[#0A2B20] text-white">
+            <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-5 lg:px-8">
+                <div className="lg:col-span-1">
+                    <Link href={route('home')} className="flex items-center gap-3">
+                        <ApplicationLogo className="h-10 w-auto fill-current text-white" />
+                        <span className="font-display text-xl font-bold">{brand.name}</span>
+                    </Link>
+                    <p className="mt-4 text-white/70">{brand.slogan}</p>
                 </div>
-
-                {/* Quick Links */}
-                <div>
-                    <h3 className="text-white font-semibold mb-4 text-lg">
-                        Quick Links
-                    </h3>
-                    <ul className="space-y-3 text-sm">
-                        <li>
-                            <Link href="/" className="hover:text-blue-400">
-                                Home
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/properties" className="hover:text-blue-400">
-                                Properties
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/agents" className="hover:text-blue-400">
-                                Agents
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/contact" className="hover:text-blue-400">
-                                Contact
-                            </Link>
-                        </li>
-                    </ul>
-                </div>
-
-                {/* Services */}
-                <div>
-                    <h3 className="text-white font-semibold mb-4 text-lg">
-                        Services
-                    </h3>
-                    <ul className="space-y-3 text-sm">
-                        <li>Buy Property</li>
-                        <li>Rent Property</li>
-                        <li>Sell Property</li>
-                        <li>Property Listing</li>
-                    </ul>
-                </div>
-
-                {/* Contact */}
-                <div>
-                    <h3 className="text-white font-semibold mb-4 text-lg">
-                        Contact Us
-                    </h3>
-
-                    <div className="space-y-3 text-sm">
-                        <p className="flex items-center gap-2">
-                            <FaEnvelope className="text-blue-400" />
-                            support@runutridiet.com
-                        </p>
-
-                        <p className="flex items-center gap-2">
-                            <FaPhoneAlt className="text-blue-400" />
-                            +250 785 221 105
-                        </p>
-
-                        <p className="flex items-center gap-2">
-                            <FaMapMarkerAlt className="text-blue-400" />
-                            Kigali, Rwanda
-                        </p>
-                    </div>
-                </div>
+                {groups.map((g) => (
+                    <nav key={g.title} aria-label={g.title} className="lg:col-span-1">
+                        <h3 className="font-semibold text-[#F2B632]">{g.title}</h3>
+                        <ul className="mt-4 space-y-2 text-sm text-white/80">
+                            {g.links.map(([label, href]) => (
+                                <li key={label}><Link href={href} className="hover:text-white hover:underline">{label}</Link></li>
+                            ))}
+                        </ul>
+                    </nav>
+                ))}
             </div>
-
-            {/* Bottom Section */}
-            <div className="border-t border-gray-800">
-                <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col md:flex-row justify-between items-center text-sm">
-                    <p>
-                        © {new Date().getFullYear()} InzuNest. All rights reserved.
-                    </p>
-
-                    <div className="flex gap-4 mt-3 md:mt-0">
-                        <Link href="/privacy" className="hover:text-blue-400">
-                            Privacy Policy
-                        </Link>
-                        <Link href="/terms" className="hover:text-blue-400">
-                            Terms
-                        </Link>
-                    </div>
-                </div>
+            <div className="border-t border-white/10 py-5 text-center text-sm text-white/60">
+                © {new Date().getFullYear()} {brand.name}. All rights reserved.
             </div>
         </footer>
     );

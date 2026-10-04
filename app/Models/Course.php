@@ -8,10 +8,12 @@ use App\Models\CourseEnrollment;
 use App\Models\CreditRecord;
 use App\Models\Certificate;
 use App\Models\CourseCategory;
+use App\Models\Quiz;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Course extends Model
 {
@@ -90,5 +92,16 @@ public function courselesson(): BelongsTo
     public function category(): BelongsTo
 {
     return $this->belongsTo(CourseCategory::class);
+}
+
+
+public function quizzes(): HasMany
+{
+    return $this->hasMany(Quiz::class);
+}
+
+public function exam(): HasOne
+{
+    return $this->hasOne(Exam::class);
 }
 }

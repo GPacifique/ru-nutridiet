@@ -6,15 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     {{-- Basic SEO --}}
-    <title inertia>{{ config('app.name', 'Runutridiet') }}</title>
-<title inertia>{{ config('app.name', 'RUNUTRIDIET') }}</title>
+    <title inertia>{{ config('app.name', 'runutridiet') }}</title>
+<title inertia>{{ config('app.name', 'runutridiet') }}</title>
 
 <meta
     name="description"
     content="RUNUTRIDIET provides evidence-based clinical nutrition care, professional education, CPD courses, certifications, lifestyle coaching, and personalized nutrition programs."
 />
 
-<meta name="keywords" content="nutrition, dietitian, clinical nutrition, CPD courses, nutrition education, lifestyle coaching, Rwanda, RUNUTRIDIET">
+<meta name="keywords" content="nutrition,life coaching, dietitian, clinical nutrition, CPD courses, nutrition education, lifestyle coaching, Rwanda, RUNUTRIDIET">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-BS1KYRKYJ4"></script>
 <script>
@@ -129,7 +129,7 @@
         $jsonLd = [
             '@context' => 'https://schema.org',
             '@type' => 'Organization',
-            'name' => 'RUNUTRIDIET',
+            'name' => 'runutridiet',
             'url' => url('/'),
             'logo' => asset('images/runutridiet-og.jpg'),
             'description' => 'RUNUTRIDIET helps you improve your nutrition, fitness, healthy lifestyle and overall wellbeing through expert guidance, courses and personalized coaching.',
@@ -149,6 +149,9 @@
     @viteReactRefresh
     @vite(['resources/js/app.jsx'])
     @inertiaHead
+    @env ('local')
+        <script src="http://localhost:3000/browser-sync/browser-sync-client.js"></script>
+    @endenv
 </head>
 <body class="font-sans antialiased">
     @inertia

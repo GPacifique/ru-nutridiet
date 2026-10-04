@@ -50,51 +50,20 @@ class CourseController extends Controller
         ]);
     }
 
-    /**
-     * Store course.
-     */
-    public function store(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'course_category_id' => ['required', 'exists:course_categories,id'],
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'thumbnail' => ['nullable', 'image', 'max:2048'],
-            'is_published' => ['boolean'],
-        ]);
 
-        $validated['slug'] = Str::slug($validated['title']);
-
-        if ($request->hasFile('thumbnail')) {
-            $validated['thumbnail'] = $request
-                ->file('thumbnail')
-                ->store('courses', 'public');
-        }
-
-        Course::create($validated);
-
-        return redirect()
-            ->route('admin.courses.index')
-            ->with('success', 'Course created successfully.');
-    }
-
-    /**
-     * Display course.
-     */
     public function show(Course $course): Response
-    {
-        $course->load([
-            'category',
-            'lessons',
-            'quizzes',
-            'enrollments.user',
-        ]);
+{
+    $course->load([
+        'category',
+        'instructor',
+        'lessons',
+        'enrollments.user',
+    ]);
 
-        return Inertia::render('Admin/Courses/Show', [
-            'course' => $course,
-        ]);
-    }
+    return Inertia::render('Admin/Courses/Show', [
+        'course' => $course,
+    ]);
+}
 
     /**
      * Show edit form.
@@ -113,36 +82,7 @@ class CourseController extends Controller
     /**
      * Update course.
      */
-    public function update(Request $request, Course $course): RedirectResponse
-    {
-        $validated = $request->validate([
-            'course_category_id' => ['required', 'exists:course_categories,id'],
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'thumbnail' => ['nullable', 'image', 'max:2048'],
-            'is_published' => ['boolean'],
-        ]);
-
-        $validated['slug'] = Str::slug($validated['title']);
-
-        if ($request->hasFile('thumbnail')) {
-
-            if ($course->thumbnail) {
-                Storage::disk('public')->delete($course->thumbnail);
-            }
-
-            $validated['thumbnail'] = $request
-                ->file('thumbnail')
-                ->store('courses', 'public');
-        }
-
-        $course->update($validated);
-
-        return redirect()
-            ->route('admin.courses.index')
-            ->with('success', 'Course updated successfully.');
-    }
+   
 
     /**
      * Delete course.
@@ -159,4 +99,93 @@ class CourseController extends Controller
             ->route('admin.courses.index')
             ->with('success', 'Course deleted successfully.');
     }
+    public function store(Request $request): RedirectResponse
+{
+    $validated = $request->validate([
+        'category_id'  => ['nullable', 'exists:course_categories,id'],
+        'title'        => ['required', 'string', 'max:255'],
+        'description'  => ['nullable', 'string'],
+        'price'        => ['required', 'numeric', 'min:0'],
+        'credit_type'  => ['nullable', 'string', 'max:100'],
+        'credit_hours' => ['nullable', 'numeric', 'min:0'],
+        'thumbnail'    => ['nullable', 'image', 'max:2048'],
+        'is_published' => ['nullable', 'boolean'],
+    ]);
+
+    $publish = $request->boolean('is_published');
+
+    $data = collect($validated)->except(['thumbnail', 'is_published'])->all();
+    $data['slug']         = $this->uniqueSlug($validated['title']);
+    $data['status']       = $publish ? 'published' : 'draft';
+    $data['published_at'] = $publish ? now() : null;
+
+    if ($request->hasFile('thumbnail')) {
+        $data['thumbnail'] = $request->file('thumbnail')->store('courses', 'public');
+    }
+
+    Course::create($data);
+
+    return redirect()
+        ->route('admin.courses.index')
+        ->with('success', 'Course created successfully.');
+}
+
+
+
+public function update(Request $request, Course $course): RedirectResponse
+{
+    $validated = $request->validate([
+        'category_id'  => ['nullable', 'exists:course_categories,id'],
+        'title'        => ['required', 'string', 'max:255'],
+        'description'  => ['nullable', 'string'],
+        'price'        => ['required', 'numeric', 'min:0'],
+        'credit_type'  => ['nullable', 'string', 'max:100'],
+        'credit_hours' => ['nullable', 'numeric', 'min:0'],
+        'thumbnail'    => ['nullable', 'image', 'max:2048'],
+        'is_published' => ['nullable', 'boolean'],
+    ]);
+
+    $publish = $request->boolean('is_published');
+
+    $data = collect($validated)->except(['thumbnail', 'is_published'])->all();
+
+    // Only regenerate the slug when the title changed, so URLs stay stable.
+    if ($validated['title'] !== $course->title) {
+        $data['slug'] = $this->uniqueSlug($validated['title'], $course->id);
+    }
+
+    $data['status']       = $publish ? 'published' : 'draft';
+    $data['published_at'] = $publish ? ($course->published_at ?? now()) : null;
+
+    if ($request->hasFile('thumbnail')) {
+        if ($course->thumbnail) {
+            Storage::disk('public')->delete($course->thumbnail);
+        }
+
+        $data['thumbnail'] = $request->file('thumbnail')->store('courses', 'public');
+    }
+
+    $course->update($data);
+
+    return redirect()
+        ->route('admin.courses.index')
+        ->with('success', 'Course updated successfully.');
+}
+
+private function uniqueSlug(string $title, ?int $ignoreId = null): string
+{
+    $base = Str::slug($title);
+    $slug = $base;
+    $i = 2;
+
+    while (
+        Course::where('slug', $slug)
+            ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+            ->exists()
+    ) {
+        $slug = $base . '-' . $i++;
+    }
+
+    return $slug;
+}
 }

@@ -1,201 +1,318 @@
-import { Link } from '@inertiajs/react';
-import { ArrowLeft, Pencil, GripVertical, FileText, PlayCircle, ClipboardCheck } from 'lucide-react';
+import React from 'react';
+import { Head, Link } from '@inertiajs/react';
+import {
+    ArrowLeft,
+    BookOpen,
+    Clock,
+    FolderOpen,
+    Pencil,
+    Users,
+    Wallet,
+} from 'lucide-react';
+
+// Change this import if your admin layout lives somewhere else
+// (e.g. '@/Layouts/DashboardLayout').
 import AdminLayout from '@/Layouts/AdminLayout';
 
-const defaultCourse = {
-    id: 1,
-    title: 'Clinical Nutrition Assessment',
-    creditType: 'CPEU',
-    hours: 3,
-    price: 89,
-    status: 'published',
-    enrolled: 64,
-    revenue: 5696,
-    passRate: 94,
+const currency = (value) =>
+    Number(value ?? 0).toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    });
+
+const formatDate = (value) => {
+    if (!value) return '—';
+
+    const date = new Date(value);
+
+    return Number.isNaN(date.getTime())
+        ? '—'
+        : date.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+          });
 };
 
-const defaultLessons = [
-    { id: 1, title: 'Anthropometric measurement in practice', type: 'video', duration: '18 min' },
-    { id: 2, title: 'Biochemical markers: reading the panel', type: 'video', duration: '24 min' },
-    { id: 3, title: 'Clinical assessment interview technique', type: 'text', duration: '12 min read' },
-    { id: 4, title: 'Case study: combining the four methods', type: 'video', duration: '15 min' },
-];
-
-const defaultExam = { questionCount: 20, passingScore: 80, timeLimitMinutes: 45, maxAttempts: 2 };
-
-const defaultEnrollments = [
-    { id: 1, learner: 'Maria Owens', status: 'certified', enrolledAt: 'Jul 12' },
-    { id: 2, learner: 'David Kimani', status: 'exam_passed', enrolledAt: 'Jul 15' },
-    { id: 3, learner: 'Sofia Bianchi', status: 'in_progress', enrolledAt: 'Jul 21' },
-    { id: 4, learner: 'James Okoro', status: 'purchased', enrolledAt: 'Jul 26' },
-];
-
-function currency(n) {
-    return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
-}
-
-const ENROLLMENT_LABELS = {
-    purchased: { label: 'Purchased', style: 'bg-[#EEF1EC] text-[#5B6B62]' },
-    in_progress: { label: 'In progress', style: 'bg-[#EAF0EC] text-[#3C4A42]' },
-    exam_passed: { label: 'Exam passed', style: 'bg-[#E4EFEB] text-[#2F6F5E]' },
-    certified: { label: 'Certified', style: 'bg-[#2F6F5E] text-white' },
+const statusStyles = {
+    draft: 'bg-yellow-100 text-yellow-700',
+    published: 'bg-green-100 text-green-700',
+    archived: 'bg-gray-200 text-gray-700',
 };
 
-function Stat({ label, value }) {
-    return (
-        <div className="px-6 py-4 first:pl-0 last:pr-0">
-            <p className="text-[11px] uppercase tracking-[0.14em] text-[#5B6B62]">{label}</p>
-            <p className="mt-1 font-['IBM_Plex_Mono'] text-xl tabular-nums text-[#1F2A24]">{value}</p>
-        </div>
-    );
-}
+// route() throws if a name is missing, so only link to routes that exist.
+const hasRoute = (name) => {
+    try {
+        return route().has(name);
+    } catch {
+        return false;
+    }
+};
 
-export default function Show({
-    course = defaultCourse,
-    lessons = defaultLessons,
-    exam = defaultExam,
-    enrollments = defaultEnrollments,
-}) {
+export default function Show({ course }) {
+    // The controller currently loads only `category`. Lessons and enrollments
+    // appear automatically if you add them to show() later.
+    const lessons = course.lessons ?? null;
+    const enrollments = course.enrollments ?? null;
+
+    const lessonsCount = lessons ? lessons.length : course.lessons_count;
+    const studentsCount = enrollments
+        ? enrollments.length
+        : course.enrollments_count;
+
+    const stats = [
+        {
+            label: 'Price',
+            value: Number(course.price) > 0 ? currency(course.price) : 'Free',
+            icon: Wallet,
+            tone: 'bg-yellow-50 text-yellow-600',
+        },
+        {
+            label: 'Credit Hours',
+            value: Number(course.credit_hours || 0),
+            icon: Clock,
+            tone: 'bg-purple-50 text-purple-600',
+        },
+        {
+            label: 'Category',
+            value: course.category?.name ?? 'Uncategorized',
+            icon: FolderOpen,
+            tone: 'bg-blue-50 text-blue-600',
+        },
+        ...(lessonsCount !== undefined
+            ? [
+                  {
+                      label: 'Lessons',
+                      value: lessonsCount,
+                      icon: BookOpen,
+                      tone: 'bg-indigo-50 text-indigo-600',
+                  },
+              ]
+            : []),
+        ...(studentsCount !== undefined
+            ? [
+                  {
+                      label: 'Students',
+                      value: studentsCount,
+                      icon: Users,
+                      tone: 'bg-green-50 text-green-600',
+                  },
+              ]
+            : []),
+    ];
+
     return (
         <AdminLayout>
-            <Link
-                href="/admin/courses"
-                className="mb-6 inline-flex items-center gap-1.5 text-sm text-[#5B6B62] hover:text-[#1F2A24]"
-            >
-                <ArrowLeft size={15} />
-                Back to courses
-            </Link>
+            <Head title={`Course: ${course.title}`} />
 
-            {/* Header */}
-            <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-                <div>
-                    <p className="text-[11px] uppercase tracking-[0.14em] text-[#5B6B62]">
-                        {course.creditType} · {course.hours}h · {course.status}
-                    </p>
-                    <h1 className="mt-1 font-['Fraunces'] text-2xl font-medium text-[#1F2A24]">{course.title}</h1>
-                </div>
-                <Link
-                    href={`/admin/courses/${course.id}/edit`}
-                    className="inline-flex items-center gap-1.5 rounded border border-[#D8DDD5] bg-white px-4 py-2 text-sm font-medium text-[#1F2A24] hover:bg-[#F7F8F5]"
-                >
-                    <Pencil size={14} />
-                    Edit details
-                </Link>
-            </div>
+            <div className="space-y-8">
+                {/* Header */}
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    <Link
+                        href={route('admin.courses.index')}
+                        className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
+                    >
+                        <ArrowLeft className="h-4 w-4" />
+                        Back to Courses
+                    </Link>
 
-            {/* Stats strip */}
-            <div className="mb-10 flex flex-wrap divide-x divide-[#E7EBE3] rounded border border-[#D8DDD5] bg-white px-6">
-                <Stat label="Enrolled" value={course.enrolled} />
-                <Stat label="Revenue" value={currency(course.revenue)} />
-                <Stat label="Pass rate" value={course.passRate !== null ? `${course.passRate}%` : '—'} />
-                <Stat label="Price" value={currency(course.price)} />
-            </div>
-
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-                {/* Lessons */}
-                <div className="lg:col-span-2">
-                    <div className="mb-3 flex items-center justify-between">
-                        <h2 className="font-['Fraunces'] text-lg font-medium">Lessons</h2>
-                        <Link href={`/admin/courses/${course.id}/lessons/create`} className="text-sm text-[#2F6F5E] hover:underline">
-                            Add lesson
+                    {hasRoute('admin.courses.edit') && (
+                        <Link
+                            href={route('admin.courses.edit', course.id)}
+                            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                        >
+                            <Pencil className="h-4 w-4" />
+                            Edit Course
                         </Link>
-                    </div>
+                    )}
+                </div>
 
-                    {lessons.length === 0 ? (
-                        <div className="rounded border border-dashed border-[#D8DDD5] bg-white px-6 py-10 text-center">
-                            <p className="text-sm text-[#5B6B62]">
-                                No lessons yet — add one to start building this course.
+                {/* Overview */}
+                <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                    <div className="grid grid-cols-1 lg:grid-cols-3">
+                        <div className="min-h-[220px] bg-gray-100">
+                            {course.thumbnail ? (
+                                <img
+                                    src={`/storage/${course.thumbnail}`}
+                                    alt={course.title}
+                                    className="h-full min-h-[220px] w-full object-cover"
+                                />
+                            ) : (
+                                <div className="flex h-full min-h-[220px] items-center justify-center bg-blue-50">
+                                    <BookOpen className="h-16 w-16 text-blue-300" />
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="p-6 lg:col-span-2">
+                            <div className="flex flex-wrap gap-2">
+                                <span
+                                    className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${
+                                        statusStyles[course.status] ??
+                                        'bg-gray-100 text-gray-700'
+                                    }`}
+                                >
+                                    {course.status ?? 'unknown'}
+                                </span>
+
+                                {course.credit_type && (
+                                    <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700">
+                                        {course.credit_type}
+                                    </span>
+                                )}
+                            </div>
+
+                            <h1 className="mt-4 text-2xl font-bold text-gray-900">
+                                {course.title}
+                            </h1>
+
+                            <p className="mt-1 text-sm text-gray-500">
+                                /{course.slug}
+                            </p>
+
+                            <p className="mt-4 whitespace-pre-line text-gray-600">
+                                {course.description || 'No description yet.'}
+                            </p>
+
+                            <dl className="mt-6 grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
+                                <div>
+                                    <dt className="text-gray-500">
+                                        Instructor
+                                    </dt>
+                                    <dd className="mt-1 font-semibold text-gray-900">
+                                        {course.instructor?.name ?? 'Not assigned'}
+                                    </dd>
+                                </div>
+
+                                <div>
+                                    <dt className="text-gray-500">Published</dt>
+                                    <dd className="mt-1 font-semibold text-gray-900">
+                                        {formatDate(course.published_at)}
+                                    </dd>
+                                </div>
+
+                                <div>
+                                    <dt className="text-gray-500">Created</dt>
+                                    <dd className="mt-1 font-semibold text-gray-900">
+                                        {formatDate(course.created_at)}
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+                    {stats.map(({ label, value, icon: Icon, tone }) => (
+                        <div
+                            key={label}
+                            className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+                        >
+                            <div
+                                className={`inline-flex rounded-lg p-2 ${tone}`}
+                            >
+                                <Icon className="h-5 w-5" />
+                            </div>
+                            <p className="mt-3 text-xs text-gray-500">{label}</p>
+                            <p className="mt-1 truncate text-xl font-bold text-gray-900">
+                                {value}
                             </p>
                         </div>
-                    ) : (
-                        <ul className="divide-y divide-[#E7EBE3] rounded border border-[#D8DDD5] bg-white">
-                            {lessons.map((lesson, i) => (
-                                <li key={lesson.id} className="flex items-center gap-3 px-4 py-3">
-                                    <GripVertical size={15} className="shrink-0 cursor-grab text-[#98A398]" />
-                                    <span className="font-['IBM_Plex_Mono'] text-xs tabular-nums text-[#5B6B62]">
-                                        {String(i + 1).padStart(2, '0')}
-                                    </span>
-                                    {lesson.type === 'video' ? (
-                                        <PlayCircle size={16} className="shrink-0 text-[#2F6F5E]" />
-                                    ) : (
-                                        <FileText size={16} className="shrink-0 text-[#2F6F5E]" />
-                                    )}
-                                    <Link
-                                        href={`/admin/courses/${course.id}/lessons/${lesson.id}/edit`}
-                                        className="flex-1 truncate text-sm text-[#1F2A24] hover:text-[#2F6F5E]"
+                    ))}
+                </div>
+
+                {/* Lessons (only when the controller loads them) */}
+                {lessons && (
+                    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
+                        <div className="border-b border-gray-200 p-5">
+                            <h2 className="text-lg font-bold text-gray-900">
+                                Lessons ({lessons.length})
+                            </h2>
+                        </div>
+
+                        <div className="divide-y divide-gray-100">
+                            {lessons.length > 0 ? (
+                                lessons.map((lesson, index) => (
+                                    <div
+                                        key={lesson.id}
+                                        className="flex items-center gap-4 p-4"
                                     >
-                                        {lesson.title}
-                                    </Link>
-                                    <span className="shrink-0 text-xs text-[#5B6B62]">{lesson.duration}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-
-                    {/* Exam summary */}
-                    <div className="mb-3 mt-8 flex items-center justify-between">
-                        <h2 className="font-['Fraunces'] text-lg font-medium">Exam</h2>
-                        <Link href={`/admin/courses/${course.id}/exam/edit`} className="text-sm text-[#2F6F5E] hover:underline">
-                            Edit exam
-                        </Link>
-                    </div>
-                    <div className="flex items-center gap-3 rounded border border-[#D8DDD5] bg-white px-4 py-4">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#E4EFEB] text-[#2F6F5E]">
-                            <ClipboardCheck size={17} />
-                        </span>
-                        <div className="grid flex-1 grid-cols-4 gap-4">
-                            <div>
-                                <p className="text-[11px] uppercase tracking-[0.14em] text-[#5B6B62]">Questions</p>
-                                <p className="font-['IBM_Plex_Mono'] text-sm tabular-nums">{exam.questionCount}</p>
-                            </div>
-                            <div>
-                                <p className="text-[11px] uppercase tracking-[0.14em] text-[#5B6B62]">Passing score</p>
-                                <p className="font-['IBM_Plex_Mono'] text-sm tabular-nums">{exam.passingScore}%</p>
-                            </div>
-                            <div>
-                                <p className="text-[11px] uppercase tracking-[0.14em] text-[#5B6B62]">Time limit</p>
-                                <p className="font-['IBM_Plex_Mono'] text-sm tabular-nums">{exam.timeLimitMinutes} min</p>
-                            </div>
-                            <div>
-                                <p className="text-[11px] uppercase tracking-[0.14em] text-[#5B6B62]">Max attempts</p>
-                                <p className="font-['IBM_Plex_Mono'] text-sm tabular-nums">{exam.maxAttempts}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Recent enrollments */}
-                <div>
-                    <div className="mb-3 flex items-center justify-between">
-                        <h2 className="font-['Fraunces'] text-lg font-medium">Recent enrollments</h2>
-                        <Link
-                            href={`/admin/learners?course=${course.id}`}
-                            className="text-sm text-[#2F6F5E] hover:underline"
-                        >
-                            View all
-                        </Link>
-                    </div>
-
-                    {enrollments.length === 0 ? (
-                        <div className="rounded border border-dashed border-[#D8DDD5] bg-white px-6 py-10 text-center">
-                            <p className="text-sm text-[#5B6B62]">No one has enrolled yet.</p>
-                        </div>
-                    ) : (
-                        <ul className="divide-y divide-[#E7EBE3] rounded border border-[#D8DDD5] bg-white">
-                            {enrollments.map((e) => (
-                                <li key={e.id} className="flex items-center justify-between gap-3 px-4 py-3">
-                                    <div className="min-w-0">
-                                        <p className="truncate text-sm font-medium text-[#1F2A24]">{e.learner}</p>
-                                        <p className="text-xs text-[#5B6B62]">Enrolled {e.enrolledAt}</p>
+                                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
+                                            {index + 1}
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="truncate font-medium text-gray-900">
+                                                {lesson.title}
+                                            </p>
+                                            <p className="mt-0.5 text-xs capitalize text-gray-500">
+                                                {[
+                                                    lesson.type,
+                                                    lesson.duration_minutes > 0
+                                                        ? `${lesson.duration_minutes} min`
+                                                        : null,
+                                                ]
+                                                    .filter(Boolean)
+                                                    .join(' · ') || '—'}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs ${ENROLLMENT_LABELS[e.status].style}`}>
-                                        {ENROLLMENT_LABELS[e.status].label}
-                                    </span>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
+                                ))
+                            ) : (
+                                <p className="p-8 text-center text-sm text-gray-500">
+                                    No lessons added yet.
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* Enrollments (only when the controller loads them) */}
+                {enrollments && (
+                    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
+                        <div className="border-b border-gray-200 p-5">
+                            <h2 className="text-lg font-bold text-gray-900">
+                                Enrolled Students ({enrollments.length})
+                            </h2>
+                        </div>
+
+                        {enrollments.length > 0 ? (
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-200 text-sm">
+                                    <thead className="bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-500">
+                                        <tr>
+                                            <th className="px-5 py-3">Student</th>
+                                            <th className="px-5 py-3">Email</th>
+                                            <th className="px-5 py-3">Enrolled</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {enrollments.map((enrollment) => (
+                                            <tr key={enrollment.id}>
+                                                <td className="px-5 py-3 font-medium text-gray-900">
+                                                    {enrollment.user?.name ?? '—'}
+                                                </td>
+                                                <td className="px-5 py-3 text-gray-600">
+                                                    {enrollment.user?.email ?? '—'}
+                                                </td>
+                                                <td className="px-5 py-3 text-gray-600">
+                                                    {formatDate(
+                                                        enrollment.enrolled_at ??
+                                                            enrollment.created_at
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <p className="p-8 text-center text-sm text-gray-500">
+                                No students have enrolled yet.
+                            </p>
+                        )}
+                    </div>
+                )}
             </div>
         </AdminLayout>
     );
