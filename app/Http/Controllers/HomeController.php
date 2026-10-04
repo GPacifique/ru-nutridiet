@@ -9,6 +9,9 @@ use App\Models\Testimonial;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\SocialPost;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 
 class HomeController extends Controller
 {
@@ -39,6 +42,21 @@ class HomeController extends Controller
      */
     public function index(Request $request): Response
     {
+            $socialPosts = Cache::remember('home.social_posts', now()->addMinutes(15), function () {
+    // Returns an empty list if the table isn't migrated yet,
+    // so the homepage never crashes because of the feed.
+    if (! Schema::hasTable('social_posts')) {
+        return [];
+    }
+
+    return SocialPost::where('is_published', true)
+        ->latest('posted_at')
+        ->limit(18)
+        ->get()
+        ->map->toFeed()
+        ->values()
+        ->all();
+});
         return Inertia::render('Home', [
             'courses' => Course::query()
                 ->where('status', 'published')
@@ -78,6 +96,7 @@ class HomeController extends Controller
                     'date' => $article->published_at?->format('M j, Y'),
                     'image' => $article->thumbnail,
                 ]),
+            
 
             'practitioners' => Practitioner::query()
                 ->active()
@@ -92,6 +111,7 @@ class HomeController extends Controller
                     'experience' => $practitioner->experience, // accessor: "14 yrs"
                     'image' => $practitioner->thumbnail,
                 ]),
+                'socialPosts' => $socialPosts,
 
             'testimonials' => Testimonial::query()
                 // NOT yet confirmed — adjust if `is_approved` doesn't exist.

@@ -22,7 +22,7 @@ import ApplicationLogo from "@/Components/ApplicationLogo";
 const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Clinic", href: "/#clinic" },
-  { label: "Services", href: "/#services" },
+  { label: "Services", href: "/services" },
   { label: "CPD Academy", href: "/#academy" },
   { label: "Courses", href: "/courses" },
   { label: "Marketplace", href: "/#marketplace" },

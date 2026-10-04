@@ -1,91 +1,77 @@
-import React, { useState } from "react";
-import { Head, router } from "@inertiajs/react";
-import PublicNavigation from "@/Components/PublicNavigation";
+import { useForm, usePage, Head } from '@inertiajs/react';
 
 export default function Contact() {
-    const [form, setForm] = useState({
-        name: "",
-        email: "",
-        message: "",
-    });
+    const { flash } = usePage().props;
 
-    const [loading, setLoading] = useState(false);
+    const { data, setData, post, processing, errors, reset } = useForm({
+        name: '',
+        email: '',
+        message: '',
+    });
 
     const submit = (e) => {
         e.preventDefault();
-        setLoading(true);
-
-        router.post("/contact", form, {
-            onFinish: () => setLoading(false),
-            onSuccess: () =>
-                setForm({ name: "", email: "", message: "" }),
+        post('/contact', {
+            preserveScroll: true,
+            onSuccess: () => reset(),
         });
     };
 
     return (
         <>
-            <Head title="Contact Us" />
+            <Head title="Contact" />
 
-            <div className="min-h-screen bg-gray-100">
+            <div className="max-w-xl mx-auto p-6">
+                <h1 className="text-2xl font-bold mb-6">Contact us</h1>
 
-                {/* HERO */}
-                <section className="bg-blue-600 text-white text-center py-20">
-                    <h1 className="text-4xl font-bold">Contact Us</h1>
-                    <p className="mt-2">
-                        We are here to help you find your dream property
-                    </p>
-                </section>
+                {flash?.success && (
+                    <div className="mb-4 rounded border border-green-300 bg-green-50 p-3 text-green-800">
+                        {flash.success}
+                    </div>
+                )}
 
-                {/* FORM */}
-                <section className="max-w-3xl mx-auto px-6 py-12">
-                    <form
-                        onSubmit={submit}
-                        className="bg-white p-6 rounded-xl shadow space-y-4"
-                    >
+                <form onSubmit={submit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Name</label>
                         <input
                             type="text"
-                            placeholder="Your Name"
-                            className="border p-3 rounded w-full"
-                            value={form.name}
-                            onChange={(e) =>
-                                setForm({ ...form, name: e.target.value })
-                            }
-                            required
+                            value={data.name}
+                            onChange={(e) => setData('name', e.target.value)}
+                            className="w-full rounded border p-2"
                         />
+                        {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name}</p>}
+                    </div>
 
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Email</label>
                         <input
                             type="email"
-                            placeholder="Your Email"
-                            className="border p-3 rounded w-full"
-                            value={form.email}
-                            onChange={(e) =>
-                                setForm({ ...form, email: e.target.value })
-                            }
-                            required
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                            className="w-full rounded border p-2"
                         />
+                        {errors.email && <p className="text-sm text-red-600 mt-1">{errors.email}</p>}
+                    </div>
 
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Message</label>
                         <textarea
-                            placeholder="Your Message"
-                            className="border p-3 rounded w-full h-32"
-                            value={form.message}
-                            onChange={(e) =>
-                                setForm({ ...form, message: e.target.value })
-                            }
-                            required
+                            rows={5}
+                            value={data.message}
+                            onChange={(e) => setData('message', e.target.value)}
+                            className="w-full rounded border p-2"
                         />
+                        {errors.message && <p className="text-sm text-red-600 mt-1">{errors.message}</p>}
+                    </div>
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 flex items-center justify-center gap-2"
-                        >
-                            {loading && (
-                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            )}
-                            {loading ? "Sending..." : "Send Message"}
-                        </button>
-                    </form>
-                </section>
+                    <button
+                        type="submit"
+                        disabled={processing}
+                        className="rounded bg-blue-600 px-4 py-2 text-white disabled:opacity-50"
+                    >
+                        {processing ? 'Sending...' : 'Send message'}
+                    </button>
+                </form>
             </div>
         </>
     );

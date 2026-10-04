@@ -60,6 +60,7 @@ export const NAV_GROUPS = [
         title: 'Inbox',
         items: [
             { label: 'Messages', href: '/admin/messages', live: true },
+            { label: 'Contact messages', href: '/admin/contacts', live: true },
             { label: 'Newsletter', href: '/admin/newsletter', live: true },
         ],
     },

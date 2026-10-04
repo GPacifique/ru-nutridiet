@@ -3,58 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ContactController extends Controller
 {
-    // STORE CONTACT (public form)
-    public function store(Request $request)
+    public function create(): Response
     {
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email',
-            'message' => 'required|string',
+        return Inertia::render('Contact');
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'name'    => ['required', 'string', 'max:255'],
+            'email'   => ['required', 'email', 'max:255'],
+            'message' => ['required', 'string', 'max:5000'],
         ]);
 
-        Contact::create($request->only([
-            'name',
-            'email',
-            'message'
-        ]));
+        Contact::create($data);
 
-        return back()->with('success', 'Message sent successfully!');
+        return back()->with('success', 'Thanks, your message has been sent.');
     }
-
-    // ADMIN INBOX (Inertia page)
-    public function inbox()
-    {
-        return Inertia::render('Admin/Contacts/Index', [
-            'contacts' => Contact::latest()->get()
-        ]);
-    }
-
-    // MARK AS READ
-    public function markAsRead($id)
-    {
-        $contact = Contact::findOrFail($id);
-        $contact->update(['is_read' => true]);
-
-        return back();
-    }
-
-    // DELETE MESSAGE
-    public function destroy($id)
-    {
-        $contact = Contact::findOrFail($id);
-        $contact->delete();
-
-        return back();
-    }
-    public function index()
-{
-    return Inertia::render('Admin/Contacts/Inbox', [
-        'contacts' => Contact::latest()->get()
-    ]);
-}
 }

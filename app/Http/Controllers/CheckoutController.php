@@ -3,280 +3,69 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
+use App\Support\Cart;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class CheckoutController extends Controller
 {
-    /**
-     * Display checkout page.
-     */
-    public function index(Request $request)
+    public function show(Request $request): Response
     {
-        $cart = $request->session()->get('cart', []);
+        $items = Cart::items();
 
-        if (empty($cart)) {
-            return redirect()
-                ->route('marketplace')
-                ->with('error', 'Your cart is empty.');
-        }
-
-        $items = collect($cart)
-            ->map(function ($item, $productId) {
-
-                $product = Product::with('category')
-                    ->where('id', $productId)
-                    ->where('status', 'active')
-                    ->first();
-
-                if (!$product) {
-                    return null;
-                }
-
-                $quantity = max(1, (int) $item['quantity']);
-
-                return [
-                    'id' => $product->id,
-                    'product' => $product,
-                    'quantity' => $quantity,
-                    'price' => (float) $product->price,
-                    'total' => (float) $product->price * $quantity,
-                ];
-            })
-            ->filter()
-            ->values();
-
-        if ($items->isEmpty()) {
-            $request->session()->forget('cart');
-
-            return redirect()
-                ->route('marketplace')
-                ->with('error', 'Your cart is empty.');
-        }
-
-        $subtotal = $items->sum('total');
-
-        return Inertia::render('Checkout/Index', [
-            'cart' => $items,
-            'subtotal' => $subtotal,
+        return Inertia::render('Checkout', [
+            'items' => $items,
+            'total' => Cart::total($items),
+            'user'  => $request->user()?->only('name', 'email'),
         ]);
     }
 
-
-    /**
-     * Create order.
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'first_name' => [
-                'required',
-                'string',
-                'max:100',
-            ],
+        $items = Cart::items();
 
-            'last_name' => [
-                'required',
-                'string',
-                'max:100',
-            ],
+        if (empty($items)) {
+            return redirect('/shop')->with('error', 'Your cart is empty.');
+        }
 
-            'email' => [
-                'required',
-                'email',
-                'max:255',
-            ],
-
-            'phone' => [
-                'required',
-                'string',
-                'max:30',
-            ],
-
-            'address' => [
-                'required',
-                'string',
-                'max:500',
-            ],
-
-            'city' => [
-                'required',
-                'string',
-                'max:100',
-            ],
-
-            'payment_method' => [
-                'required',
-                'in:momo,airtel_money,cash',
-            ],
-
-            'notes' => [
-                'nullable',
-                'string',
-                'max:1000',
-            ],
+        $data = $request->validate([
+            'name'           => ['required', 'string', 'max:255'],
+            'email'          => ['nullable', 'email', 'max:255'],
+            'phone'          => ['required', 'string', 'max:30'],
+            'address'        => ['nullable', 'string', 'max:500'],
+            'notes'          => ['nullable', 'string', 'max:2000'],
+            'payment_method' => ['required', 'in:momo,airtel,cash'],
         ]);
 
-        $cart = $request->session()->get('cart', []);
+        $order = DB::transaction(function () use ($data, $items, $request) {
+            $order = Order::create($data + [
+                'user_id' => $request->user()?->id,
+                'number'  => 'ORD-' . strtoupper(Str::random(8)),
+                'status'  => 'pending',
+                'total'   => Cart::total($items),
+            ]);
 
-        if (empty($cart)) {
-            return redirect()
-                ->route('marketplace')
-                ->with('error', 'Your cart is empty.');
-        }
-
-        try {
-
-            $order = DB::transaction(function () use (
-                $cart,
-                $validated,
-                $request
-            ) {
-
-                $subtotal = 0;
-
-                /*
-                |--------------------------------------------------------------------------
-                | Calculate total from database prices
-                |--------------------------------------------------------------------------
-                |
-                | Never trust prices sent by React/browser.
-                |
-                */
-
-                $cartProducts = [];
-
-                foreach ($cart as $productId => $item) {
-
-                    $product = Product::where('id', $productId)
-                        ->where('status', 'active')
-                        ->lockForUpdate()
-                        ->first();
-
-                    if (!$product) {
-                        continue;
-                    }
-
-                    $quantity = max(
-                        1,
-                        (int) ($item['quantity'] ?? 1)
-                    );
-
-                    $price = (float) $product->price;
-
-                    $lineTotal = $price * $quantity;
-
-                    $subtotal += $lineTotal;
-
-                    $cartProducts[] = [
-                        'product' => $product,
-                        'quantity' => $quantity,
-                        'price' => $price,
-                        'total' => $lineTotal,
-                    ];
-                }
-
-                if (empty($cartProducts)) {
-                    throw new \Exception(
-                        'No valid products found in cart.'
-                    );
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Create order
-                |--------------------------------------------------------------------------
-                */
-
-                $order = Order::create([
-                    'user_id' => $request->user()?->getAuthIdentifier(),
-
-                    'first_name' => $validated['first_name'],
-                    'last_name' => $validated['last_name'],
-
-                    'email' => $validated['email'],
-                    'phone' => $validated['phone'],
-
-                    'address' => $validated['address'],
-                    'city' => $validated['city'],
-
-                    'payment_method' =>
-                        $validated['payment_method'],
-
-                    'notes' =>
-                        $validated['notes'] ?? null,
-
-                    'subtotal' => $subtotal,
-
-                    'total' => $subtotal,
-
-                    'status' => 'pending',
-
-                    'payment_status' => 'pending',
+            foreach ($items as $i) {
+                $order->items()->create([
+                    'product_id' => $i['id'],
+                    'title'      => $i['title'],
+                    'price'      => $i['price'],
+                    'quantity'   => $i['quantity'],
                 ]);
+            }
 
-                /*
-                |--------------------------------------------------------------------------
-                | Create order items
-                |--------------------------------------------------------------------------
-                */
+            return $order;
+        });
 
-                foreach ($cartProducts as $item) {
+        Cart::clear();
 
-                    OrderItem::create([
-                        'order_id' => $order->id,
-
-                        'product_id' =>
-                            $item['product']->id,
-
-                        'quantity' =>
-                            $item['quantity'],
-
-                        'price' =>
-                            $item['price'],
-
-                        'total' =>
-                            $item['total'],
-                    ]);
-                }
-
-                return $order;
-            });
-
-            /*
-            |--------------------------------------------------------------------------
-            | Empty cart
-            |--------------------------------------------------------------------------
-            */
-
-            $request->session()->forget('cart');
-
-            /*
-            |--------------------------------------------------------------------------
-            | Redirect to order
-            |--------------------------------------------------------------------------
-            */
-
-            return redirect()
-                ->route('orders.show', $order)
-                ->with(
-                    'success',
-                    'Your order has been placed successfully.'
-                );
-
-        } catch (\Throwable $e) {
-
-            report($e);
-
-            return back()
-                ->withInput()
-                ->with(
-                    'error',
-                    'We could not process your order. Please try again.'
-                );
-        }
+        return redirect('/shop')->with(
+            'success',
+            "Order {$order->number} received. We will contact you on {$order->phone} to confirm payment."
+        );
     }
 }

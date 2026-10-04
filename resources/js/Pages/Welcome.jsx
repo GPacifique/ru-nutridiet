@@ -76,7 +76,7 @@ import {
 const NAV_LINKS = [
   { label: "Home", href: "#home" },
   { label: "About", href: "#clinic" },
-  { label: "Services", href: "#services" },
+  { label: "Services", href: "/services" },
   { label: "Experts", href: "#experts" },
   { label: "Academy", href: "#academy" },
   { label: "Webinars", href: "#webinars" },
@@ -574,7 +574,7 @@ function Hero() {
               Explore Courses
             </a>
             <a
-              href="#services"
+              href="/services"
               className="inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-slate-600 hover:text-emerald-700"
             >
               Our Services
@@ -1750,6 +1750,7 @@ export default function Home({
   practitioners = [],
   testimonials = [],
   products = [],
+  socialPosts = [],
 }) {
   return (
     <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-white via-white to-slate-50 font-sans text-slate-800 antialiased">
@@ -1787,6 +1788,7 @@ export default function Home({
         <Marketplace products={products} />
         <Testimonials testimonials={testimonials} />
         <ResearchBlog articles={articles} />
+        <SocialFeeds posts={socialPosts} />
         <AppCTA />
         <Newsletter />
         <FinalCTA />

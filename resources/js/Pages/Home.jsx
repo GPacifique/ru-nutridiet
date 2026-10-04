@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, usePage } from "@inertiajs/react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
-import ApplicationLogo from "@/Components/ApplicationLogo"
+import ApplicationLogo from "@/Components/ApplicationLogo";
+import SocialFeeds from "@/Components/SocialFeeds";
 import {
   Menu,
   X,
@@ -571,7 +572,7 @@ function Hero() {
               Explore Courses
             </a>
             <a
-              href="#services"
+              href="/services"
               className="inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-slate-600 hover:text-emerald-700"
             >
               Our Services
@@ -1431,6 +1432,8 @@ function ResearchBlog({ articles = [] }) {
     </section>
   );
 }
+/*------------------------------------SOCIAL FEEDS------------------------------------------*/
+<SocialFeeds/>
 
 /* -------------------------------- App CTA ---------------------------------- */
 

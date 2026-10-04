@@ -88,7 +88,23 @@ use App\Http\Controllers\CourseEnrollmentController;
 use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardController;
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
 use App\Http\Controllers\Practitioner\DashboardController as PractitionerDashboardController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Admin\ContactController as AdminContactController;
+Route::get('/shop', [ProductController::class, 'index'])->name('marketplace');
+Route::middleware('auth')->group(function () {
+    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+});
+Route::resource('products', ProductController::class);
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/contacts', [AdminContactController::class, 'index'])->name('contacts.index');
+    Route::get('/contacts/{contact}', [AdminContactController::class, 'show'])->name('contacts.show');
+    Route::patch('/contacts/{contact}/toggle-read', [AdminContactController::class, 'toggleRead'])->name('contacts.toggle-read');
+    Route::delete('/contacts/{contact}', [AdminContactController::class, 'destroy'])->name('contacts.destroy');
+});
 
+Route::get('/contact', fn () => Inertia::render('Contact'))->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -98,6 +114,13 @@ use App\Http\Controllers\Practitioner\DashboardController as PractitionerDashboa
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/services', fn () => Inertia::render('Services/Index'))->name('services');
+Route::get('/services/{id}', function (int $id) {
+    abort_unless($id >= 1 && $id <= 10, 404);
+    return Inertia::render('Services/Show', ['id' => $id]);
+})->whereNumber('id')->name('services.show');
+Route::get('/contact', function () {
+    return Inertia::render('Contact');
+})->name('contact');
 
 // Blog.
 // /blog/{slug} is served by ArticleController (the Article model binds by slug).
