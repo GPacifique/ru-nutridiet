@@ -44,7 +44,7 @@ const CourseCard = ({
                     {/* Price */}
                     <div className="absolute bottom-3 right-3 rounded-lg bg-white px-3 py-1.5 text-sm font-bold text-gray-900 shadow-md">
                         {course.price > 0
-                            ? `$${Number(course.price).toLocaleString()}`
+                            ? `RWF${Number(course.price).toLocaleString()}`
                             : 'Free'}
                     </div>
                 </div>
