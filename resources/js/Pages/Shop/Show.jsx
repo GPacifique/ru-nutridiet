@@ -1,6 +1,8 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import PublicNavigation from '@/Layouts/PublicNavigation';
 import ProductCard, { Stars, money } from '@/Components/ProductCard';
+import { useState } from 'react';
+import { resolveImage, PLACEHOLDER } from '@/lib/imageUrl';
 
 export default function Show({ product, relatedProducts = [], myReview = null }) {
     const { auth, flash } = usePage().props;
@@ -10,7 +12,8 @@ export default function Show({ product, relatedProducts = [], myReview = null })
         rating: myReview?.rating ?? 5,
         comment: myReview?.comment ?? '',
     });
-
+const imageSrc = resolveImage(product.image_url || product.image);
+const [imgFailed, setImgFailed] = useState(false);
     const submit = (e) => {
         e.preventDefault();
         form.post(`/products/${product.id}/reviews`, { preserveScroll: true });
@@ -31,12 +34,19 @@ export default function Show({ product, relatedProducts = [], myReview = null })
 
                 <div className="mt-6 grid gap-8 md:grid-cols-2">
                     <div className="aspect-square overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
-                        {product.image_url ? (
-                            <img src={product.image_url} alt={product.title} className="h-full w-full object-cover" />
-                        ) : (
-                            <div className="flex h-full items-center justify-center text-sm text-slate-400">No image</div>
-                        )}
-                    </div>
+    {imageSrc && !imgFailed ? (
+        <img
+            src={imageSrc}
+            alt={product.title}
+            className="h-full w-full object-cover"
+            onError={() => setImgFailed(true)}
+        />
+    ) : (
+        <div className="flex h-full items-center justify-center text-sm text-slate-400">
+            No image
+        </div>
+    )}
+</div>
 
                     <div>
                         {product.category && <p className="text-sm text-slate-500">{product.category.name}</p>}
