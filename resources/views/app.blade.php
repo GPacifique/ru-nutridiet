@@ -175,7 +175,7 @@
     @vite(['resources/js/app.jsx'])
     @inertiaHead
     @env ('local')
-        <script src="https://runutridiet/browser-sync/browser-sync-client.js"></script>
+        <script src="http://localhost:3000/browser-sync/browser-sync-client.js"></script>
     @endenv
 </head>
 <body class="font-sans antialiased">
