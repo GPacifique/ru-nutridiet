@@ -13,6 +13,7 @@ import {
     ShoppingBag,
     X,
 } from 'lucide-react';
+import PwaInstallPrompt from '@/Components/PwaInstallPrompt';
 /*
  * Public site navigation.
  *
@@ -455,6 +456,7 @@ export default function PublicNavigation({ children }) {
             <div id="site-content" tabIndex={-1} className="focus:outline-none">
                 {children}
             </div>
+            <PwaInstallPrompt />
         </>
     );
 }

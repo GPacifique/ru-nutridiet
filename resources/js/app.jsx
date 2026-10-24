@@ -7,6 +7,12 @@ import { createRoot } from "react-dom/client";
 
 const appName = import.meta.env.VITE_APP_NAME || "runutridiet";
 
+if ("serviceWorker" in navigator && import.meta.env.PROD) {
+    navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch((error) => {
+        console.error("PWA service worker registration failed:", error);
+    });
+}
+
 const pages = import.meta.glob("./Pages/**/*.jsx");
 
 createInertiaApp({
