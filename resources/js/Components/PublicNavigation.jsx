@@ -23,11 +23,11 @@ const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Clinic", href: "/#clinic" },
   { label: "Services", href: "/services" },
-  { label: "CPD Academy", href: "/#academy" },
+  { label: "CPD Academy", href: "/courses" },
   { label: "Courses", href: "/courses" },
-  { label: "Marketplace", href: "/#marketplace" },
-  { label: "Research", href: "/#research" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Marketplace", href: "/marketplace" },
+  { label: "Research", href: "/articles" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function PublicNav() {

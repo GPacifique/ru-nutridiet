@@ -13,7 +13,6 @@ import {
     ShoppingBag,
     X,
 } from 'lucide-react';
-import ApplicationLogo from '@/Components/ApplicationLogo';
 /*
  * Public site navigation.
  *
@@ -61,10 +60,15 @@ function Brand({ onClick }) {
         <Link
             href="/"
             onClick={onClick}
-            className="group flex items-center gap-2.5 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+            aria-label="RUNUTRIDIET home"
+            className="group flex min-w-0 items-center gap-3 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
         >
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-700 text-white shadow-sm transition group-hover:bg-emerald-800 motion-reduce:transition-none">
-                <ApplicationLogo />
+            <span className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-emerald-50 ring-1 ring-emerald-900/5 transition group-hover:bg-emerald-100 motion-reduce:transition-none">
+                <img src="/logoru.jpg" alt="" className="h-full w-full object-contain" />
+            </span>
+            <span className="min-w-0 leading-tight">
+                <span className="block truncate text-sm font-extrabold tracking-[0.08em] text-emerald-950">RUNUTRIDIET</span>
+                <span className="mt-1 block truncate text-[10px] font-medium uppercase tracking-[0.16em] text-slate-500">Eat to prevent|Eat to treat</span>
             </span>
         </Link>
     );
@@ -75,7 +79,8 @@ function CartButton({ count, onClick }) {
         <Link
             href="/cart"
             onClick={onClick}
-            className="relative flex h-11 w-11 items-center justify-center rounded-full text-slate-700 transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 motion-reduce:transition-none lg:h-10 lg:w-10"
+            aria-label={`Open cart${count > 0 ? `, ${count} ${count === 1 ? 'item' : 'items'}` : ''}`}
+            className="relative flex h-11 w-11 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-emerald-50 hover:text-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 motion-reduce:transition-none lg:h-10 lg:w-10"
         >
             <ShoppingBag className="h-5 w-5" aria-hidden="true" />
             <span className="sr-only">Cart{count > 0 ? `, ${count} ${count === 1 ? 'item' : 'items'}` : ''}</span>
@@ -120,7 +125,7 @@ function AccountMenu({ user }) {
                 onClick={() => setOpen((v) => !v)}
                 aria-expanded={open}
                 aria-haspopup="true"
-                className="flex h-10 items-center gap-2 rounded-full border border-slate-200 bg-white py-1 pl-1 pr-3 text-sm font-medium text-slate-700 transition hover:border-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 motion-reduce:transition-none"
+                className="flex h-10 items-center gap-2 rounded-full border border-slate-200 bg-white py-1 pl-1 pr-3 text-sm font-medium text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 motion-reduce:transition-none"
             >
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-800">
                     {initials(user.name)}
@@ -134,7 +139,7 @@ function AccountMenu({ user }) {
             </button>
 
             {open && (
-                <div className="absolute right-0 z-50 mt-2 w-64 origin-top-right rounded-xl border border-slate-200 bg-white p-2 shadow-xl">
+                <div className="absolute right-0 z-50 mt-3 w-64 origin-top-right rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/10">
                     <div className="border-b border-slate-100 px-3 pb-3 pt-2">
                         <p className="truncate text-sm font-semibold text-slate-900">{user.name}</p>
                         <p className="truncate text-xs text-slate-500">{user.email}</p>
@@ -238,15 +243,15 @@ export default function PublicNavigation({ children }) {
             </a>
 
             <header
-                className={`sticky top-0 z-40 border-b bg-white/90 backdrop-blur-md transition-shadow motion-reduce:transition-none ${
-                    scrolled ? 'border-slate-200 shadow-sm' : 'border-transparent'
+                className={`sticky top-0 z-40 border-b bg-white/95 backdrop-blur-xl transition-[box-shadow,border-color] duration-300 motion-reduce:transition-none ${
+                    scrolled ? 'border-slate-200 shadow-[0_8px_24px_-16px_rgba(15,23,42,0.35)]' : 'border-slate-200/70'
                 }`}
             >
-                <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto flex h-[4.75rem] max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:gap-5 lg:px-8">
                     <Brand />
 
                     {/* Desktop links */}
-                    <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">
+                    <nav aria-label="Main" className="hidden items-center gap-0.5 lg:flex">
                         {LINKS.map((link) => {
                             const active = isActive(url, link);
                             return (
@@ -254,24 +259,20 @@ export default function PublicNavigation({ children }) {
                                     key={link.href}
                                     href={link.href}
                                     aria-current={active ? 'page' : undefined}
-                                    className={`relative rounded-lg px-3.5 py-2 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 motion-reduce:transition-none ${
-                                        active ? 'text-emerald-800' : 'text-slate-600 hover:text-slate-950'
+                                    className={`rounded-full px-3 py-2 text-[13px] font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 motion-reduce:transition-none ${
+                                        active
+                                            ? 'bg-emerald-50 text-emerald-900'
+                                            : 'text-slate-600 hover:bg-slate-50 hover:text-emerald-900'
                                     }`}
                                 >
                                     {link.label}
-                                    {active && (
-                                        <span
-                                            aria-hidden="true"
-                                            className="absolute inset-x-3.5 -bottom-[17px] h-0.5 rounded-full bg-emerald-700"
-                                        />
-                                    )}
                                 </Link>
                             );
                         })}
                     </nav>
 
                     {/* Desktop actions */}
-                    <div className="hidden items-center gap-2 lg:flex">
+                    <div className="hidden items-center gap-1.5 lg:flex">
                         <CartButton count={cartCount} />
 
                         {user ? (
@@ -280,13 +281,13 @@ export default function PublicNavigation({ children }) {
                             <>
                                 <Link
                                     href="/login"
-                                    className="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition hover:text-slate-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 motion-reduce:transition-none"
+                                    className="rounded-lg px-2.5 py-2 text-sm font-semibold text-slate-600 transition-colors hover:text-emerald-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 motion-reduce:transition-none"
                                 >
                                     Log in
                                 </Link>
                                 <Link
                                     href="/register"
-                                    className="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition hover:text-slate-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 motion-reduce:transition-none"
+                                    className="rounded-lg px-2.5 py-2 text-sm font-semibold text-slate-600 transition-colors hover:text-emerald-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 motion-reduce:transition-none"
                                 >
                                     Sign up
                                 </Link>
@@ -295,7 +296,7 @@ export default function PublicNavigation({ children }) {
 
                         <Link
                             href="/book"
-                            className="ml-1 inline-flex h-10 items-center gap-2 rounded-full bg-emerald-700 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 motion-reduce:transition-none"
+                            className="ml-1 inline-flex h-10 items-center gap-2 rounded-full bg-emerald-800 px-4 text-sm font-semibold text-white shadow-md shadow-emerald-950/15 transition hover:-translate-y-0.5 hover:bg-emerald-900 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 motion-reduce:transition-none"
                         >
                             <CalendarCheck className="h-4 w-4" aria-hidden="true" />
                             Book now
@@ -311,7 +312,7 @@ export default function PublicNavigation({ children }) {
                             onClick={() => setMobileOpen(true)}
                             aria-expanded={mobileOpen}
                             aria-controls="mobile-menu"
-                            className="flex h-11 w-11 items-center justify-center rounded-full text-slate-700 transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 motion-reduce:transition-none"
+                            className="flex h-11 w-11 items-center justify-center rounded-full text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 motion-reduce:transition-none"
                         >
                             <Menu className="h-6 w-6" aria-hidden="true" />
                             <span className="sr-only">Open menu</span>
@@ -330,23 +331,24 @@ export default function PublicNavigation({ children }) {
                         role="dialog"
                         aria-modal="true"
                         aria-label="Menu"
-                        className="absolute inset-y-0 right-0 flex w-[min(88vw,22rem)] flex-col bg-white shadow-2xl"
+                        className="absolute inset-y-0 right-0 flex w-[min(88vw,24rem)] flex-col bg-white shadow-2xl shadow-slate-950/20"
                     >
-                        <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-100 px-4">
+                        <div className="flex h-[4.75rem] shrink-0 items-center justify-between border-b border-slate-100 bg-gradient-to-r from-emerald-50/80 to-white px-5">
                             <Brand onClick={close} />
                             <button
                                 ref={closeRef}
                                 type="button"
                                 onClick={close}
-                                className="flex h-11 w-11 items-center justify-center rounded-full text-slate-700 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+                                className="flex h-11 w-11 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-white hover:text-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
                             >
                                 <X className="h-6 w-6" aria-hidden="true" />
                                 <span className="sr-only">Close menu</span>
                             </button>
                         </div>
 
-                        <nav aria-label="Mobile" className="flex-1 overflow-y-auto px-3 py-4">
-                            <ul className="space-y-1">
+                        <nav aria-label="Mobile" className="flex-1 overflow-y-auto px-4 py-5">
+                            <p className="px-4 pb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">Explore</p>
+                            <ul className="space-y-1.5">
                                 {LINKS.map((link) => {
                                     const active = isActive(url, link);
                                     return (
@@ -355,10 +357,10 @@ export default function PublicNavigation({ children }) {
                                                 href={link.href}
                                                 onClick={close}
                                                 aria-current={active ? 'page' : undefined}
-                                                className={`flex min-h-[48px] items-center rounded-xl px-4 text-base font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 ${
+                                                className={`flex min-h-[50px] items-center rounded-xl px-4 text-[15px] font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 ${
                                                     active
-                                                        ? 'bg-emerald-50 text-emerald-800'
-                                                        : 'text-slate-700 hover:bg-slate-50'
+                                                        ? 'bg-emerald-50 text-emerald-900 shadow-sm shadow-emerald-950/5'
+                                                        : 'text-slate-700 hover:bg-slate-50 hover:text-emerald-900'
                                                 }`}
                                             >
                                                 {link.label}
@@ -406,11 +408,11 @@ export default function PublicNavigation({ children }) {
                         </nav>
 
                         {/* Pinned actions */}
-                        <div className="shrink-0 space-y-3 border-t border-slate-100 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+                        <div className="shrink-0 space-y-3 border-t border-slate-100 bg-slate-50/70 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
                             <Link
                                 href="/book"
                                 onClick={close}
-                                className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-emerald-700 px-6 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+                                className="flex min-h-[50px] w-full items-center justify-center gap-2 rounded-full bg-emerald-800 px-6 text-sm font-semibold text-white shadow-md shadow-emerald-950/15 transition hover:bg-emerald-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
                             >
                                 <CalendarCheck className="h-4 w-4" aria-hidden="true" />
                                 Book a consultation

@@ -1,9 +1,9 @@
 import React from "react";
 import { Head, Link } from "@inertiajs/react";
-import PublicNavigation from "@/Components/PublicNavigation";
+import PublicNavigation from "@/Layouts/PublicNavigation";
 import {
     ClipboardCheck, Salad, GraduationCap, Sprout, Stethoscope, Baby, Dumbbell,
-    TrendingUp, Users, Leaf, Check, ArrowRight, CalendarCheck, Sparkles,
+    TrendingUp, Users, Leaf, Check, ArrowRight, CalendarCheck,
     BadgeCheck, Lightbulb, RefreshCw, UserCheck, ShoppingBag,
 } from "lucide-react";
 
@@ -47,13 +47,6 @@ function Icon3D({ icon: Icon, tone = "emerald", size = 48, src, alt = "", classN
         </span>
     );
 }
-
-const HERO_PHOTOS = [
-    "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=700&q=80&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=700&q=80&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=700&q=80&auto=format&fit=crop",
-];
-const hideBroken = (e) => { e.currentTarget.onerror = null; e.currentTarget.style.display = "none"; };
 
 /* Soft tinted backdrops for each card header, keyed by tone */
 const TINTS = {
@@ -139,7 +132,6 @@ export default function Index() {
 
     return (
         <>
-            <PublicNavigation />
             <Head title="Our Services | RU-NUTRIDIET" />
 
             <style>{`
@@ -148,62 +140,36 @@ export default function Index() {
                 .font-display{font-family:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;letter-spacing:-.02em}
                 .icon3d{transition:transform .35s cubic-bezier(.2,.8,.2,1)}
                 .tilt:hover .icon3d{transform:perspective(300px) rotateX(10deg) rotateY(-12deg) translateY(-3px) scale(1.06)}
-                @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-                .float-a{animation:floaty 7s ease-in-out infinite}
-                .float-b{animation:floaty 9s ease-in-out infinite reverse}
-                @media (prefers-reduced-motion:reduce){.float-a,.float-b{animation:none}.icon3d{transition:none}}
+                @media (prefers-reduced-motion:reduce){.icon3d{transition:none}}
             `}</style>
 
-            <div className="svc-root min-h-screen bg-gradient-to-b from-emerald-50/60 via-slate-50 to-white text-slate-900">
+            <div className="svc-root min-h-screen bg-white text-slate-800 antialiased">
                 {/* ============================ HERO ============================ */}
-                <section className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-green-800 to-emerald-600">
-                    <div className="pointer-events-none absolute inset-0 opacity-20">
-                        <div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-emerald-300 blur-3xl" />
-                        <div className="absolute -bottom-32 -left-20 h-96 w-96 rounded-full bg-sky-400 blur-3xl" />
-                    </div>
-
-                    <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-6 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-24">
-                        <div>
-                            <span className="inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 py-1.5 pl-1.5 pr-4 text-sm font-semibold text-white backdrop-blur">
-                                <Icon3D icon={Sparkles} tone="amber" size={28} />
-                                RU-NUTRIDIET
-                            </span>
-
-                            <h1 className="font-display mt-6 text-4xl font-bold leading-[1.05] text-white sm:text-5xl lg:text-6xl">
-                                Nutrition &amp;
-                                <span className="block bg-gradient-to-r from-emerald-200 via-lime-200 to-amber-200 bg-clip-text text-transparent">
-                                    Wellness Services
-                                </span>
-                            </h1>
-
-                            <p className="mt-6 max-w-xl text-lg leading-8 text-green-50/90">
-                                Professional nutrition and lifestyle services designed to help you make informed choices, improve your nutritional wellbeing, and build sustainable healthy habits.
-                            </p>
-
-                            <div className="mt-8 flex flex-wrap gap-4">
-                                <a
-                                    href="/services"
-                                    className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 font-bold text-green-800 shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-green-50"
-                                >
-                                    Explore Services
-                                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                                </a>
-                                <Link
-                                    href="/contact"
-                                    className="rounded-xl border border-white/40 bg-white/10 px-6 py-3.5 font-bold text-white backdrop-blur transition hover:bg-white/20"
-                                >
-                                    Contact Us
-                                </Link>
-                            </div>
-                        </div>
-
-                        <div className="relative hidden h-[400px] lg:block" aria-hidden="true">
-                            <img src={HERO_PHOTOS[0]} alt="" onError={hideBroken} className="float-a absolute right-0 top-0 h-60 w-52 rotate-3 rounded-[2rem] object-cover shadow-2xl shadow-black/40 ring-4 ring-white/80" />
-                            <img src={HERO_PHOTOS[1]} alt="" onError={hideBroken} className="float-b absolute left-2 top-24 h-56 w-48 -rotate-6 rounded-[2rem] object-cover shadow-2xl shadow-black/40 ring-4 ring-white/80" />
-                            <img src={HERO_PHOTOS[2]} alt="" onError={hideBroken} className="float-a absolute bottom-0 right-20 h-40 w-40 rotate-2 rounded-[2rem] object-cover shadow-2xl shadow-black/40 ring-4 ring-white/80" />
-                            <div className="float-b absolute left-0 top-2"><Icon3D icon={Stethoscope} tone="rose" size={62} /></div>
-                            <div className="float-a absolute right-2 top-[52%]"><Icon3D icon={Salad} tone="emerald" size={56} /></div>
-                            <div className="float-b absolute bottom-6 left-10"><Icon3D icon={Dumbbell} tone="orange" size={58} /></div>
+                <section className="border-b border-slate-100 bg-slate-50/60">
+                    <div className="mx-auto max-w-7xl px-5 py-14 lg:px-8 lg:py-20">
+                        <span className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
+                            Nutrition &amp; Wellness
+                        </span>
+                        <h1 className="font-display mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+                            Personalized services for a healthier you.
+                        </h1>
+                        <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600">
+                            Professional nutrition and lifestyle support to help you make informed choices, improve your wellbeing, and build healthy habits that last.
+                        </p>
+                        <div className="mt-8 flex flex-wrap gap-3">
+                            <a
+                                href="#services"
+                                className="inline-flex items-center gap-2 rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                            >
+                                Explore services
+                                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                            </a>
+                            <Link
+                                href="/contact"
+                                className="inline-flex items-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition-colors hover:border-emerald-600 hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                            >
+                                Contact us
+                            </Link>
                         </div>
                     </div>
                 </section>
@@ -211,9 +177,9 @@ export default function Index() {
                 {/* ============================ INTRO ============================ */}
                 <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
                     <div className="mx-auto max-w-3xl text-center">
-                        <span className="text-sm font-semibold uppercase tracking-widest text-green-700">Our Approach</span>
-                        <h2 className="font-display mt-3 text-3xl font-bold sm:text-4xl">Personalized nutrition for your journey</h2>
-                        <p className="mt-5 text-lg leading-8 text-slate-600">
+                        <span className="text-xs font-semibold uppercase tracking-widest text-emerald-700">Our approach</span>
+                        <h2 className="font-display mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Personalized nutrition for your journey</h2>
+                        <p className="mt-5 text-base leading-relaxed text-slate-600">
                             Every person has different nutritional needs. Our services are designed to provide practical, individualized guidance based on your goals, lifestyle, nutritional status, and circumstances.
                         </p>
                     </div>
@@ -331,3 +297,5 @@ export default function Index() {
         </>
     );
 }
+
+Index.layout = (page) => <PublicNavigation>{page}</PublicNavigation>;

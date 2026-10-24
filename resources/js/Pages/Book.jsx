@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm, usePage } from "@inertiajs/react";
 import { CheckCircle2, User as UserIcon } from "lucide-react";
-import PublicNavigation from "@/Components/PublicNavigation";
+import PublicNavigation from "@/Layouts/PublicNavigation";
 
 /* ------------------------------------------------------------------ */
 /*  Book.jsx — consultation booking page                               */

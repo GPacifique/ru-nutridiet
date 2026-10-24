@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, router } from "@inertiajs/react";
 import { Search, ChevronRight, BookOpen } from "lucide-react";
-import PublicNavigation from "@/Components/PublicNavigation";
+import PublicNavigation from "@/Layouts/PublicNavigation";
 
 /* ------------------------------------------------------------------ */
 /*  Courses/Index.jsx — public course catalog                         */
@@ -135,8 +135,6 @@ export default function Index({ courses, filters = {} }) {
         .font-mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
       `}</style>
 
-      <PublicNavigation courses={courses} />
-
       <header className="border-b border-slate-100 bg-slate-50/60">
         <div className="mx-auto max-w-7xl px-5 py-14 lg:px-8 lg:py-20">
           <span className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
@@ -206,3 +204,5 @@ export default function Index({ courses, filters = {} }) {
     </div>
   );
 }
+
+Index.layout = (page) => <PublicNavigation>{page}</PublicNavigation>;

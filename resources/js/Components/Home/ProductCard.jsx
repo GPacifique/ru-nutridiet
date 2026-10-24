@@ -15,7 +15,7 @@ export default function ProductCard({ product, currency }) {
                 <h3 className="font-semibold text-[#0F3D2E]"><Link href={product.url}>{product.name}</Link></h3>
                 {product.summary && <p className="mt-1 text-sm text-slate-600">{product.summary}</p>}
                 <div className="mt-auto flex items-center justify-between pt-4">
-                    <span className="font-bold text-[#B8325A]">{money(product.price, currency)}</span>
+                    <span className="font-bold text-[#B8325A]">${money(product.price, currency)}</span>
                     <button onClick={addToCart} className="rounded-full bg-[#0F3D2E] px-4 py-1.5 text-sm font-semibold text-white hover:bg-[#2F9E5B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2F9E5B]">
                         Add to cart
                     </button>

@@ -14,7 +14,7 @@ export default function CoursesSection({ courses = [], currency }) {
                         <div className="flex flex-1 flex-col p-5">
                             <h3 className="font-semibold text-[#0F3D2E]">{c.title}</h3>
                             {c.summary && <p className="mt-2 text-sm text-slate-600">{c.summary}</p>}
-                            {money(c.price, currency) && <p className="mt-auto pt-4 font-bold text-[#B8325A]">{money(c.price, currency)}</p>}
+                            {money(c.price, currency) && <p className="mt-auto pt-4 font-bold text-[#B8325A]">${money(c.price, currency)}</p>}
                         </div>
                     </Link>
                 ))}
