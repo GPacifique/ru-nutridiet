@@ -1,4 +1,6 @@
 import { Link } from '@inertiajs/react';
+import { useState } from 'react';
+import { PLACEHOLDER, resolveImage } from '@/lib/imageUrl';
 
 /** Format a price in RWF with no decimals. Change the suffix for another currency. */
 export const money = (v) => {
@@ -19,18 +21,28 @@ export function Stars({ value = 0 }) {
 }
 
 export default function ProductCard({ product }) {
+    const [imgFailed, setImgFailed] = useState(false);
+    const imageSrc = resolveImage(product.image_url) || resolveImage(product.image) || PLACEHOLDER;
+
     return (
         <Link
             href={`/products/${product.id}`}
             className="group block overflow-hidden rounded-lg border border-slate-200 bg-white transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
         >
             <div className="aspect-square overflow-hidden bg-slate-100">
-                {product.image_url ? (
+                {!imgFailed ? (
                     <img
-                        src={product.image_url}
+                        src={imageSrc}
                         alt={product.title}
                         loading="lazy"
                         className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                        onError={(event) => {
+                            if (event.currentTarget.src.endsWith(PLACEHOLDER)) {
+                                setImgFailed(true);
+                            } else {
+                                event.currentTarget.src = PLACEHOLDER;
+                            }
+                        }}
                     />
                 ) : (
                     <div className="flex h-full w-full items-center justify-center text-sm text-slate-400">

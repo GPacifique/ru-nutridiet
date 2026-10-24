@@ -12,7 +12,7 @@ export default function Show({ product, relatedProducts = [], myReview = null })
         rating: myReview?.rating ?? 5,
         comment: myReview?.comment ?? '',
     });
-const imageSrc = resolveImage(product.image_url || product.image);
+const imageSrc = resolveImage(product.image_url) || resolveImage(product.image) || PLACEHOLDER;
 const [imgFailed, setImgFailed] = useState(false);
     const submit = (e) => {
         e.preventDefault();
@@ -34,12 +34,18 @@ const [imgFailed, setImgFailed] = useState(false);
 
                 <div className="mt-6 grid gap-8 md:grid-cols-2">
                     <div className="aspect-square overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
-    {imageSrc && !imgFailed ? (
+    {!imgFailed ? (
         <img
             src={imageSrc}
             alt={product.title}
             className="h-full w-full object-cover"
-            onError={() => setImgFailed(true)}
+            onError={(event) => {
+                if (event.currentTarget.src.endsWith(PLACEHOLDER)) {
+                    setImgFailed(true);
+                } else {
+                    event.currentTarget.src = PLACEHOLDER;
+                }
+            }}
         />
     ) : (
         <div className="flex h-full items-center justify-center text-sm text-slate-400">
