@@ -147,6 +147,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="RUNUTRIDIET">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="RUNUTRIDIET">
     <meta name="msapplication-TileColor" content="#047857">
 

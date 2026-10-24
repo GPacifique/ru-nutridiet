@@ -90,6 +90,14 @@ use App\Http\Controllers\Client\DashboardController as ClientDashboardController
 use App\Http\Controllers\Practitioner\DashboardController as PractitionerDashboardController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
+Route::get('/sw.js', static function () {
+    return response()->file(resource_path('pwa/sw.js'), [
+        'Cache-Control' => 'no-cache',
+        'Content-Type' => 'application/javascript; charset=UTF-8',
+        'Service-Worker-Allowed' => '/',
+    ]);
+})->name('pwa.service-worker');
+
 Route::get('/shop', [ProductController::class, 'index'])->name('marketplace');
 Route::middleware('auth')->group(function () {
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
