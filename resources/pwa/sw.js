@@ -1,4 +1,4 @@
-const CACHE_NAME = 'runutridiet-pwa-v1';
+const CACHE_NAME = 'runutridiet-pwa-v2';
 const PRECACHE_URLS = [
     '/offline.html',
     '/site.webmanifest',

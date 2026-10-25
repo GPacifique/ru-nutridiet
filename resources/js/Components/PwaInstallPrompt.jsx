@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Download, X } from 'lucide-react';
+import {
+    clearPwaInstallPrompt,
+    getPwaInstallPrompt,
+    subscribeToPwaInstallPrompt,
+} from '../pwa';
 
 function isStandalone() {
     return window.matchMedia('(display-mode: standalone)').matches
@@ -13,29 +18,24 @@ function isAppleMobileDevice() {
 }
 
 export default function PwaInstallPrompt() {
-    const [installPrompt, setInstallPrompt] = useState(null);
+    const [installPrompt, setInstallPrompt] = useState(getPwaInstallPrompt);
     const [installed, setInstalled] = useState(false);
     const [showGuide, setShowGuide] = useState(false);
     const [message, setMessage] = useState('');
 
     useEffect(() => {
-        const handleBeforeInstallPrompt = (event) => {
-            event.preventDefault();
-            setInstallPrompt(event);
-        };
+        const unsubscribe = subscribeToPwaInstallPrompt(setInstallPrompt);
         const handleAppInstalled = () => {
             setInstalled(true);
-            setInstallPrompt(null);
             setShowGuide(false);
             setMessage('RUNUTRIDIET has been installed.');
         };
 
-        window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
         window.addEventListener('appinstalled', handleAppInstalled);
         setInstalled(isStandalone());
 
         return () => {
-            window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+            unsubscribe();
             window.removeEventListener('appinstalled', handleAppInstalled);
         };
     }, []);
@@ -50,10 +50,12 @@ export default function PwaInstallPrompt() {
         try {
             await installPrompt.prompt();
             const { outcome } = await installPrompt.userChoice;
+            clearPwaInstallPrompt();
             setInstallPrompt(null);
             setMessage(outcome === 'accepted' ? 'Installing RUNUTRIDIET...' : 'Installation was canceled.');
         } catch (error) {
             console.error('PWA installation prompt failed:', error);
+            clearPwaInstallPrompt();
             setInstallPrompt(null);
             setMessage('Could not open the installation prompt. Use your browser menu to install the app.');
             setShowGuide(true);

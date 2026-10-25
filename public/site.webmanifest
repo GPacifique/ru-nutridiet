@@ -6,7 +6,6 @@
     "scope": "/",
     "display": "standalone",
     "display_override": ["standalone", "minimal-ui"],
-    "orientation": "portrait",
     "background_color": "#ffffff",
     "theme_color": "#047857",
     "description": "Evidence-based nutrition care, wellness services, and professional education from RUNUTRIDIET.",
@@ -22,7 +21,13 @@
             "src": "/images/pwa-icon-512.png",
             "sizes": "512x512",
             "type": "image/png",
-            "purpose": "any maskable"
+            "purpose": "any"
+        },
+        {
+            "src": "/images/pwa-icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
         }
     ],
     "shortcuts": [
